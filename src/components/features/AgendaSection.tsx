@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 import { EventCard, type EventCardProps } from './event-card';
 import { Calendar } from 'lucide-react';
 
@@ -51,10 +52,16 @@ export const AgendaSection = ({
                 <div
                   key={`${event.title}-${event.date}-${index}`}
                   className="transition-transform duration-300 hover:-translate-y-1"
-                  onClick={() => onEventClick?.(event)}
+                  onClick={onEventClick ? () => onEventClick(event) : undefined}
                   role="listitem"
                 >
-                  <EventCard {...event} />
+                  {onEventClick ? (
+                    <EventCard {...event} />
+                  ) : (
+                    <Link href="/agenda" className="block w-full h-full">
+                      <EventCard {...event} onClick={undefined} />
+                    </Link>
+                  )}
                 </div>
               ))}
             </div>
@@ -62,13 +69,22 @@ export const AgendaSection = ({
             {/* Footer View All Button */}
             {showViewAllButton && (
               <div className="flex justify-center mt-16 pt-12 border-t border-black/5">
-                <button
-                  className="rounded-full px-8 py-3.5 text-xs font-semibold bg-black text-white hover:scale-[1.03] transition-all duration-300 font-inter uppercase tracking-[0.15em] shadow-md hover:shadow-lg cursor-pointer"
-                  onClick={onViewAllClick}
-                  type="button"
-                >
-                  Ver Todas as Giras →
-                </button>
+                {onViewAllClick ? (
+                  <button
+                    className="rounded-full px-8 py-3.5 text-xs font-semibold bg-black text-white hover:scale-[1.03] transition-all duration-300 font-inter uppercase tracking-[0.15em] shadow-md hover:shadow-lg cursor-pointer"
+                    onClick={onViewAllClick}
+                    type="button"
+                  >
+                    Ver Todas as Giras →
+                  </button>
+                ) : (
+                  <Link
+                    href="/agenda"
+                    className="rounded-full px-8 py-3.5 text-xs font-semibold bg-black text-white hover:scale-[1.03] transition-all duration-300 font-inter uppercase tracking-[0.15em] shadow-md hover:shadow-lg cursor-pointer inline-block text-center"
+                  >
+                    Ver Todas as Giras →
+                  </Link>
+                )}
               </div>
             )}
           </>
