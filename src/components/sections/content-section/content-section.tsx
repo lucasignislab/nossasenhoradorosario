@@ -8,9 +8,10 @@ interface ContentSectionProps {
   text: string;
   image: string;
   reverse?: boolean;
+  id?: string;
 }
 
-export const ContentSection = ({ title, subtitle = '', text, image, reverse = false }: ContentSectionProps) => {
+export const ContentSection = ({ title, subtitle = '', text, image, reverse = false, id }: ContentSectionProps) => {
   const sectionRef = useRef<HTMLElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0.5);
 
@@ -47,6 +48,7 @@ export const ContentSection = ({ title, subtitle = '', text, image, reverse = fa
 
   return (
     <section 
+      id={id}
       ref={sectionRef}
       className="py-32 md:py-44 lg:py-52 relative bg-[#FAF5EC] overflow-hidden"
     >
