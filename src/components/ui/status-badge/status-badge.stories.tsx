@@ -96,6 +96,9 @@ export const ComLabelCustomizado: Story = {
  * Comparação visual
  */
 export const TodosOsEstados: Story = {
+  args: {
+    status: 'pago',
+  },
   render: () => (
     <div style={{ display: 'flex', gap: '16px', alignItems: 'center', flexWrap: 'wrap' }}>
       <StatusBadge status="pago" />

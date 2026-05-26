@@ -90,6 +90,11 @@ export const UltimaAula: Story = {
  * Exemplo de layout do dashboard
  */
 export const MultipleStats: Story = {
+  args: {
+    icon: '📊',
+    title: 'Múltiplos',
+    value: 0,
+  },
   render: () => (
     <div
       style={{

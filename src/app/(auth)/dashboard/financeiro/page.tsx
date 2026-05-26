@@ -1,3 +1,5 @@
+'use client';
+
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { StatusBadge } from '@/components/ui/status-badge/status-badge';
 

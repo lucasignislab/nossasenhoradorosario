@@ -1,0 +1,23 @@
+
+> terreiro-senhora-do-rosario@0.1.0 dev
+> next dev
+
+▲ Next.js 16.1.7 (Turbopack)
+- Local:         http://localhost:3001
+- Network:       http://192.168.0.47:3001
+
+✓ Starting...
+✓ Ready in 886ms
+ GET / 200 in 2.6s (compile: 2.4s, render: 137ms)
+ GET / 200 in 119ms (compile: 66ms, render: 53ms)
+✓ Compiled in 253ms
+✓ Compiled in 50ms
+✓ Compiled in 61ms
+✓ Compiled in 603ms
+ GET / 200 in 405ms (compile: 304ms, render: 101ms)
+ GET / 200 in 185ms (compile: 10ms, render: 175ms)
+✓ Compiled in 263ms
+✓ Compiled in 191ms
+✓ Compiled in 237ms
+ GET / 200 in 264ms (compile: 140ms, render: 124ms)
+✓ Compiled in 208ms

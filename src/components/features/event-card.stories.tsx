@@ -93,6 +93,13 @@ export const SemDescricao: Story = {
  * Exemplo de layout com vários eventos
  */
 export const MultipleEvents: Story = {
+  args: {
+    entity: 'Múltiplos',
+    title: 'Múltiplos Eventos',
+    date: '20/03/2026',
+    time: '20:00',
+    status: 'confirmada',
+  },
   render: () => (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px', padding: '20px' }}>
       <EventCard

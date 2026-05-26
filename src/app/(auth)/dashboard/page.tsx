@@ -1,3 +1,5 @@
+'use client';
+
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { StatCard } from '@/components/ui/stat-card/stat-card';
 

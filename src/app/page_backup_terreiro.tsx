@@ -47,7 +47,7 @@ export default function Home() {
         subtitle="Um espaço de fé, amor e acolhimento espiritual sob a luz da Umbanda."
         buttonLabel="Ver Agenda de Giras"
         buttonHref="#agenda"
-        // Mantemos a imagem como fallback se o vídeo falhar
+        // Imagem representativa com velas/terra/defumação, em tom quente do Unsplash
         backgroundImage="https://images.unsplash.com/photo-1601314167099-232775b3ee61?q=80&w=1600&auto=format&fit=crop"
       />
 

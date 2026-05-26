@@ -12,17 +12,12 @@
   overflow: hidden;
 }
 
-/* Overlay terracota — evoca velas e terra */
+/* Overlay preto de 35% de visibilidade para destaque do texto */
 .hero::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    160deg,
-    rgba(13, 11, 8, 0.72) 0%,
-    rgba(139, 58, 42, 0.55) 50%,
-    rgba(42, 35, 24, 0.80) 100%
-  );
+  background-color: rgba(0, 0, 0, 0.35);
   z-index: 1;
 }
 
