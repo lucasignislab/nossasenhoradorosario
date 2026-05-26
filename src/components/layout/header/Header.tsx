@@ -15,13 +15,14 @@ export const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header
-      className="w-full border-b sticky top-0 z-50"
-      style={{
-        backgroundColor: 'var(--color-cream)',
-        borderColor: 'rgba(201, 162, 39, 0.25)',
-      }}
-    >
+    <div className="h-20 w-full relative z-50">
+      <header
+        className="w-full border-b fixed top-0 left-0 z-50"
+        style={{
+          backgroundColor: 'var(--color-cream)',
+          borderColor: 'rgba(201, 162, 39, 0.25)',
+        }}
+      >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
 
@@ -149,5 +150,6 @@ export const Header = () => {
         </nav>
       </div>
     </header>
+    </div>
   );
 };
