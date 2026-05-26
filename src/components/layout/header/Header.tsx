@@ -9,6 +9,7 @@ const navLinks = [
   { href: '/agenda', label: 'Giras' },
   { href: '/eventos', label: 'Eventos' },
   { href: '/blog', label: 'Blog' },
+  { href: '/design-system', label: 'Design System' },
 ];
 
 export const Header = () => {

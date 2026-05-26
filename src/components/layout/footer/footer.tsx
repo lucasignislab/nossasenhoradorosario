@@ -50,6 +50,7 @@ export const Footer = () => {
               <li><Link href="/agenda" className="hover:text-[var(--color-sacred-gold)] transition-colors duration-300">Agenda de Giras</Link></li>
               <li><Link href="/eventos" className="hover:text-[var(--color-sacred-gold)] transition-colors duration-300">Eventos</Link></li>
               <li><Link href="/blog" className="hover:text-[var(--color-sacred-gold)] transition-colors duration-300">Fundamentos e Blog</Link></li>
+              <li><Link href="/design-system" className="hover:text-[var(--color-sacred-gold)] transition-colors duration-300">Design System</Link></li>
             </ul>
           </div>
 
