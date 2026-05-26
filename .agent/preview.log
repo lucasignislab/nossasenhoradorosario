@@ -41,3 +41,16 @@
  GET /sobre 200 in 104ms (compile: 76ms, render: 29ms)
 ✓ Compiled in 1002ms
 ✓ Compiled in 341ms
+ GET /sobre 200 in 424ms (compile: 323ms, render: 101ms)
+ GET /sobre 200 in 27ms (compile: 7ms, render: 20ms)
+ GET /sobre 200 in 40ms (compile: 9ms, render: 31ms)
+ GET /sobre 200 in 258ms (compile: 35ms, render: 223ms)
+ GET /sobre 200 in 35ms (compile: 7ms, render: 27ms)
+ GET /sobre 200 in 31ms (compile: 5ms, render: 26ms)
+ GET /sobre 200 in 21ms (compile: 4ms, render: 18ms)
+ GET /sobre 200 in 34ms (compile: 5ms, render: 29ms)
+ GET /sobre 200 in 26ms (compile: 6ms, render: 21ms)
+ GET /agenda 200 in 1657ms (compile: 1627ms, render: 30ms)
+ GET /sobre 200 in 42ms (compile: 11ms, render: 32ms)
+ GET /agenda 200 in 83ms (compile: 29ms, render: 54ms)
+ GET /agenda 200 in 236ms (compile: 170ms, render: 66ms)
