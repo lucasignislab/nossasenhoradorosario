@@ -7,6 +7,7 @@ const navLinks = [
   { href: '/', label: 'Início' },
   { href: '/sobre', label: 'Sobre Nós' },
   { href: '/agenda', label: 'Giras' },
+  { href: '/eventos', label: 'Eventos' },
   { href: '/blog', label: 'Blog' },
 ];
 
