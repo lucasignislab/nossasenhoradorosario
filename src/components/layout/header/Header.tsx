@@ -26,13 +26,20 @@ export const Header = () => {
 
           {/* Logo */}
           <Link href="/" className="flex-shrink-0 flex items-center cursor-pointer">
-            <span
-              className="text-2xl font-bold tracking-tight"
-              style={{ fontFamily: 'var(--font-heading)', color: 'var(--color-dark)' }}
-            >
-              TERREIRO
-              <span style={{ color: 'var(--color-sacred-red)' }}> SENHORA</span>
-            </span>
+            <div className="flex flex-col text-left">
+              <span
+                className="text-[10px] font-bold tracking-[0.2em] uppercase"
+                style={{ fontFamily: 'var(--font-body)', color: 'var(--color-dark-muted)', opacity: 0.8 }}
+              >
+                T. U.
+              </span>
+              <span 
+                className="text-xl font-bold tracking-tight -mt-1.5"
+                style={{ fontFamily: 'var(--font-heading)', color: 'var(--color-dark)' }}
+              >
+                Senhora do<span style={{ color: 'var(--color-sacred-red)' }}> Rosário</span>
+              </span>
+            </div>
           </Link>
 
           {/* Navegação Desktop */}

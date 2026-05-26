@@ -140,7 +140,7 @@ export const Hero = ({
 
       {/* Overlay com gradiente é aplicado via pseudo-elemento no CSS (z-index 1) */}
       <div className="hero__content">
-        <span className="hero__eyebrow">Serenidade e Axé</span>
+        <span className="hero__eyebrow">T. U. Senhora do Rosário</span>
         <h1 className="hero__title">{title}</h1>
         <div className="hero__divider" aria-hidden="true" />
         <p className="hero__subtitle">{subtitle}</p>

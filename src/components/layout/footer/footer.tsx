@@ -28,9 +28,14 @@ export const Footer = () => {
 
           {/* Coluna 1: Sobre / Logo */}
           <div className="col-span-1 md:col-span-1 flex flex-col gap-4">
-            <span className="text-2xl font-normal tracking-tight text-white font-[var(--font-heading)]">
-              TERREIRO<span className="text-[var(--color-sacred-red)] font-semibold"> SENHORA</span>
-            </span>
+            <div className="flex flex-col text-left">
+              <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-white/50 font-inter">
+                T. U.
+              </span>
+              <span className="text-xl font-bold tracking-tight text-white font-[var(--font-heading)] -mt-1.5">
+                Senhora do<span className="text-[var(--color-sacred-red)] font-semibold"> Rosário</span>
+              </span>
+            </div>
             <p className="text-sm leading-relaxed text-[var(--color-cream)]/70">
               Um espaço dedicado à caridade, ao amor e ao desenvolvimento espiritual através dos fundamentos da Umbanda e Guias de Luz.
             </p>
