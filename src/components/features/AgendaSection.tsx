@@ -1,7 +1,8 @@
 'use client';
 
-import '../../styles/agenda-section.css';
+import React from 'react';
 import { EventCard, type EventCardProps } from './event-card';
+import { Calendar } from 'lucide-react';
 
 export interface AgendaSectionProps {
   /** Lista de eventos a exibir (máximo 3) */
@@ -18,29 +19,6 @@ export interface AgendaSectionProps {
   onViewAllClick?: () => void;
 }
 
-const CalendarEmptyIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="48"
-    height="48"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className="opacity-50 mx-auto mb-4"
-    style={{ color: 'var(--color-sacred-gold, #C9A227)' }}
-  >
-    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-    <line x1="16" y1="2" x2="16" y2="6" />
-    <line x1="8" y1="2" x2="8" y2="6" />
-    <line x1="3" y1="10" x2="21" y2="10" />
-    <path d="M10 14h4" />
-    <path d="M12 12v4" />
-  </svg>
-);
-
 export const AgendaSection = ({
   events,
   title = 'Próximas Giras',
@@ -50,22 +28,29 @@ export const AgendaSection = ({
   onViewAllClick,
 }: AgendaSectionProps) => {
   return (
-    <section className="agenda-section" id="agenda">
-      <div className="agenda-section__container">
-        <div className="agenda-section__header">
-          <h2 className="agenda-section__title" style={{ fontFamily: 'var(--font-heading)' }}>{title}</h2>
-          <p className="agenda-section__subtitle">
-            Confira os próximos eventos no nosso terreiro
-          </p>
+    <section className="py-32 md:py-40 bg-[#FAF5EC]" id="agenda">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+        
+        {/* Header */}
+        <div className="text-center max-w-3xl mx-auto mb-16 md:mb-24">
+          <span className="block text-xs font-semibold tracking-[0.25em] uppercase text-[#6F6F6F] mb-4 font-inter">
+            Agenda de Trabalhos
+          </span>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-normal text-black mb-8 font-[var(--font-heading)] leading-[0.95] tracking-tight">
+            {title}
+          </h2>
+          {/* Divisor minimalista fino */}
+          <div className="w-16 h-[1px] bg-black/15 mx-auto" />
         </div>
 
         {events && events.length > 0 ? (
           <>
-            <div className="agenda-section__grid" role="list">
+            {/* Grid de Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" role="list">
               {events.map((event, index) => (
                 <div
                   key={`${event.title}-${event.date}-${index}`}
-                  className="agenda-section__card"
+                  className="transition-transform duration-300 hover:-translate-y-1"
                   onClick={() => onEventClick?.(event)}
                   role="listitem"
                 >
@@ -74,20 +59,13 @@ export const AgendaSection = ({
               ))}
             </div>
 
+            {/* Footer View All Button */}
             {showViewAllButton && (
-              <div className="agenda-section__footer">
+              <div className="flex justify-center mt-16 pt-12 border-t border-black/5">
                 <button
-                  className="agenda-section__view-all"
+                  className="rounded-full px-8 py-3.5 text-xs font-semibold bg-black text-white hover:scale-[1.03] transition-all duration-300 font-inter uppercase tracking-[0.15em] shadow-md hover:shadow-lg cursor-pointer"
                   onClick={onViewAllClick}
                   type="button"
-                  style={{
-                    backgroundColor: 'var(--color-sacred-red, #8B3A2A)',
-                    color: 'var(--color-cream, #FAF5EC)',
-                    padding: '12px 24px',
-                    borderRadius: '2px',
-                    fontFamily: 'var(--font-body)',
-                    fontWeight: 600,
-                  }}
                 >
                   Ver Todas as Giras →
                 </button>
@@ -95,11 +73,10 @@ export const AgendaSection = ({
             )}
           </>
         ) : (
-          <div className="agenda-section__empty-state">
-            <div className="agenda-section__empty-icon">
-              <CalendarEmptyIcon />
-            </div>
-            <p className="agenda-section__empty-text">{emptyStateText}</p>
+          /* Empty State */
+          <div className="text-center py-20 px-6 bg-white border border-dashed border-black/10 rounded-lg max-w-2xl mx-auto shadow-sm">
+            <Calendar size={48} className="mx-auto mb-4 text-[var(--color-sacred-gold)] opacity-60" />
+            <p className="text-base text-[#6F6F6F] font-inter leading-relaxed">{emptyStateText}</p>
           </div>
         )}
       </div>

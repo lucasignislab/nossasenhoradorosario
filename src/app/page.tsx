@@ -16,6 +16,7 @@ const mockEvents: EventCardProps[] = [
     time: '20:00',
     status: 'confirmada',
     description: 'Atendimento e descarrego com a linha de Esquerda.',
+    imageUrl: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?q=80&w=800',
   },
   {
     title: 'Gira de Baianos',
@@ -24,6 +25,7 @@ const mockEvents: EventCardProps[] = [
     time: '20:00',
     status: 'confirmada',
     description: 'Alegria e conselhos com a linha dos Baianos.',
+    imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=800',
   },
   {
     title: 'Gira de Pretos Velhos',
@@ -32,6 +34,7 @@ const mockEvents: EventCardProps[] = [
     time: '20:00',
     status: 'confirmada',
     description: 'Acolhimento, passes e aconselhamento.',
+    imageUrl: 'https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?q=80&w=800',
   }
 ];
 

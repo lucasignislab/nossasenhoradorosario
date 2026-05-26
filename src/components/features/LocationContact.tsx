@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import '../../styles/location-contact.css';
+import React, { useState } from 'react';
+import { MapPin, Phone, Mail, Clock, Compass, Map } from 'lucide-react';
 
 export interface LocationContactProps {
   /** Endereço do terreiro */
@@ -23,10 +23,6 @@ export interface LocationContactProps {
   onFormSubmit?: (data: { name: string; email: string; message: string }) => void;
 }
 
-/**
- * Seção de Localização e Contato
- * Exibe mapa (iframe Google Maps), informações de contato e formulário simples
- */
 export const LocationContact = ({
   address,
   latitude = -23.5505,
@@ -81,19 +77,30 @@ export const LocationContact = ({
   };
 
   return (
-    <section className="location-contact" id="contact">
-      <div className="location-contact__container">
-        <h2 className="location-contact__title">Localização e Contato</h2>
+    <section className="py-32 md:py-40 bg-[#FFFFFF] relative overflow-hidden" id="contact">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
+        
+        {/* Header */}
+        <div className="text-center max-w-3xl mx-auto mb-16 md:mb-24">
+          <span className="block text-xs font-semibold tracking-[0.25em] uppercase text-[#6F6F6F] mb-4 font-inter">
+            Fale Conosco & Visite
+          </span>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-normal text-black mb-8 font-[var(--font-heading)] leading-[0.95] tracking-tight">
+            Localização e Contato
+          </h2>
+          <div className="w-16 h-[1px] bg-black/15 mx-auto" />
+        </div>
 
-        <div className="location-contact__grid">
-          {/* Coluna do Mapa */}
-          <div className="location-contact__map-column">
-            <div className="location-contact__map-iframe">
+        <div className="flex flex-col lg:flex-row gap-16 lg:gap-24 items-start">
+          
+          {/* Coluna do Mapa e Info (7/12) */}
+          <div className="w-full lg:w-7/12 flex flex-col gap-10">
+            <div className="relative overflow-hidden rounded-md border border-black/5 shadow-lg aspect-[16/10] w-full">
               <iframe
                 title="Localização do Terreiro"
                 width="100%"
-                height="400"
-                style={{ border: 0, borderRadius: '12px' }}
+                height="100%"
+                style={{ border: 0 }}
                 loading="lazy"
                 allowFullScreen={true}
                 referrerPolicy="no-referrer-when-downgrade"
@@ -101,76 +108,90 @@ export const LocationContact = ({
               />
             </div>
 
-            <div className="location-contact__info">
-              <h3 className="location-contact__info-title" style={{ fontFamily: 'var(--font-heading)' }}>Informações</h3>
-
-              <div className="location-contact__info-item">
-                <span className="location-contact__info-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+            {/* Informações Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mt-4">
+              <div className="flex gap-4">
+                <span className="flex-shrink-0 w-8 h-8 rounded-full bg-black/5 flex items-center justify-center text-[var(--color-sacred-gold)]">
+                  <MapPin size={16} />
                 </span>
                 <div>
-                  <p className="location-contact__info-label">Endereço</p>
-                  <p className="location-contact__info-value">{address}</p>
+                  <p className="text-[10px] font-semibold tracking-wider text-[#6F6F6F] uppercase mb-1 font-inter">Endereço</p>
+                  <p className="text-sm text-black leading-relaxed font-sans">{address}</p>
                 </div>
               </div>
 
-              <div className="location-contact__info-item">
-                <span className="location-contact__info-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              <div className="flex gap-4">
+                <span className="flex-shrink-0 w-8 h-8 rounded-full bg-black/5 flex items-center justify-center text-[var(--color-sacred-gold)]">
+                  <Phone size={16} />
                 </span>
                 <div>
-                  <p className="location-contact__info-label">Telefone</p>
-                  <a href={`tel:${phone}`} className="location-contact__info-link">
+                  <p className="text-[10px] font-semibold tracking-wider text-[#6F6F6F] uppercase mb-1 font-inter">Telefone</p>
+                  <a href={`tel:${phone}`} className="text-sm text-black hover:text-[var(--color-sacred-gold)] transition-colors leading-relaxed font-sans block">
                     {phone}
                   </a>
                 </div>
               </div>
 
-              <div className="location-contact__info-item">
-                <span className="location-contact__info-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+              <div className="flex gap-4">
+                <span className="flex-shrink-0 w-8 h-8 rounded-full bg-black/5 flex items-center justify-center text-[var(--color-sacred-gold)]">
+                  <Mail size={16} />
                 </span>
                 <div>
-                  <p className="location-contact__info-label">Email</p>
-                  <a href={`mailto:${email}`} className="location-contact__info-link">
+                  <p className="text-[10px] font-semibold tracking-wider text-[#6F6F6F] uppercase mb-1 font-inter">Email</p>
+                  <a href={`mailto:${email}`} className="text-sm text-black hover:text-[var(--color-sacred-gold)] transition-colors leading-relaxed font-sans block break-all">
                     {email}
                   </a>
                 </div>
               </div>
 
-              <div className="location-contact__info-item">
-                <span className="location-contact__info-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <div className="flex gap-4">
+                <span className="flex-shrink-0 w-8 h-8 rounded-full bg-black/5 flex items-center justify-center text-[var(--color-sacred-gold)]">
+                  <Clock size={16} />
                 </span>
                 <div>
-                  <p className="location-contact__info-label">Horário</p>
-                  <p className="location-contact__info-value">{hours}</p>
+                  <p className="text-[10px] font-semibold tracking-wider text-[#6F6F6F] uppercase mb-1 font-inter">Horário</p>
+                  <p className="text-sm text-black leading-relaxed font-sans">{hours}</p>
                 </div>
               </div>
+            </div>
 
-              <div className="location-contact__buttons">
-                <a href={wazeLink} target="_blank" rel="noopener noreferrer" className="location-contact__btn location-contact__btn--waze" style={{ borderRadius: '2px' }}>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2 inline-block"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>
-                  Abrir no Waze
-                </a>
-                <a href={`https://www.google.com/maps/search/${encodeURIComponent(address)}`} target="_blank" rel="noopener noreferrer" className="location-contact__btn location-contact__btn--maps" style={{ borderRadius: '2px' }}>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2 inline-block"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                  Abrir no Maps
-                </a>
-              </div>
+            {/* Botões de GPS */}
+            <div className="flex gap-4 flex-wrap mt-4">
+              <a 
+                href={wazeLink} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="inline-flex items-center justify-center rounded-full px-6 py-2.5 text-xs font-semibold bg-black text-white hover:scale-[1.03] transition-all duration-300 font-inter uppercase tracking-wider shadow-md hover:shadow-lg cursor-pointer"
+              >
+                <Compass size={14} className="mr-2" />
+                Abrir no Waze
+              </a>
+              <a 
+                href={`https://www.google.com/maps/search/${encodeURIComponent(address)}`} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="inline-flex items-center justify-center rounded-full px-6 py-2.5 text-xs font-semibold border border-black/10 text-black hover:border-black/35 hover:scale-[1.03] transition-all duration-300 font-inter uppercase tracking-wider shadow-sm cursor-pointer"
+              >
+                <Map size={14} className="mr-2" />
+                Abrir no Maps
+              </a>
             </div>
           </div>
 
-          {/* Coluna do Formulário */}
-          <div className="location-contact__form-column">
-            <form className="location-contact__form" onSubmit={handleSubmit}>
-              <h3 className="location-contact__form-title">Entre em Contato</h3>
-              <p className="location-contact__form-description">
-                Envie-nos uma mensagem e entraremos em contato em breve.
-              </p>
+          {/* Coluna do Formulário (5/12) */}
+          <div className="w-full lg:w-5/12">
+            <form className="bg-[#FAF5EC]/50 border border-black/5 p-8 md:p-10 rounded-md shadow-lg flex flex-col gap-6" onSubmit={handleSubmit}>
+              <div>
+                <h3 className="text-2xl font-normal text-black font-[var(--font-heading)] mb-2">
+                  Entre em Contato
+                </h3>
+                <p className="text-xs text-[#6F6F6F] font-inter leading-relaxed">
+                  Envie-nos uma mensagem e retornaremos em breve.
+                </p>
+              </div>
 
-              <div className="location-contact__form-group">
-                <label htmlFor="name" className="location-contact__form-label">
+              <div className="flex flex-col gap-2">
+                <label htmlFor="name" className="text-[10px] font-semibold tracking-wider text-[#6F6F6F] uppercase font-inter">
                   Nome
                 </label>
                 <input
@@ -180,13 +201,13 @@ export const LocationContact = ({
                   value={formData.name}
                   onChange={handleInputChange}
                   required
-                  className="location-contact__form-input"
+                  className="w-full border border-black/10 bg-white/50 rounded-sm px-4 py-3 text-sm font-sans focus:outline-none focus:border-[var(--color-sacred-gold)]/50 focus:bg-white transition-all duration-300"
                   placeholder="Seu nome completo"
                 />
               </div>
 
-              <div className="location-contact__form-group">
-                <label htmlFor="email" className="location-contact__form-label">
+              <div className="flex flex-col gap-2">
+                <label htmlFor="email" className="text-[10px] font-semibold tracking-wider text-[#6F6F6F] uppercase font-inter">
                   Email
                 </label>
                 <input
@@ -196,13 +217,13 @@ export const LocationContact = ({
                   value={formData.email}
                   onChange={handleInputChange}
                   required
-                  className="location-contact__form-input"
+                  className="w-full border border-black/10 bg-white/50 rounded-sm px-4 py-3 text-sm font-sans focus:outline-none focus:border-[var(--color-sacred-gold)]/50 focus:bg-white transition-all duration-300"
                   placeholder="seu.email@exemplo.com"
                 />
               </div>
 
-              <div className="location-contact__form-group">
-                <label htmlFor="message" className="location-contact__form-label">
+              <div className="flex flex-col gap-2">
+                <label htmlFor="message" className="text-[10px] font-semibold tracking-wider text-[#6F6F6F] uppercase font-inter">
                   Mensagem
                 </label>
                 <textarea
@@ -212,27 +233,29 @@ export const LocationContact = ({
                   onChange={handleInputChange}
                   required
                   rows={5}
-                  className="location-contact__form-textarea"
-                  placeholder="Sua mensagem aqui..."
+                  className="w-full border border-black/10 bg-white/50 rounded-sm px-4 py-3 text-sm font-sans focus:outline-none focus:border-[var(--color-sacred-gold)]/50 focus:bg-white transition-all duration-300 resize-none"
+                  placeholder="Escreva sua mensagem aqui..."
                 />
               </div>
 
               {submitSuccess && (
-                <div className="location-contact__success-message">
-                  ✓ Mensagem enviada com sucesso! Obrigado pelo contato.
+                <div className="text-xs font-semibold text-green-600 bg-green-500/10 border border-green-500/20 px-4 py-3 rounded-sm font-inter">
+                  ✓ Mensagem enviada com sucesso! Obrigado.
                 </div>
               )}
 
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="location-contact__form-submit"
+                className="w-full rounded-full py-3.5 text-xs font-semibold bg-black text-white hover:scale-[1.03] transition-all duration-300 font-inter uppercase tracking-[0.15em] shadow-md hover:shadow-lg disabled:opacity-50 cursor-pointer"
               >
                 {isSubmitting ? 'Enviando...' : 'Enviar Mensagem'}
               </button>
             </form>
           </div>
+
         </div>
+
       </div>
     </section>
   );
