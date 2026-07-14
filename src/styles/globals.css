@@ -5,13 +5,114 @@
 
 /* ─── Sacred Modernism Design System ─── */
 :root {
-  /* Brand Colors — Terreiro Senhora do Rosário */
-  --color-sacred-red:   #8B3A2A;   /* Terracota profundo */
-  --color-sacred-gold:  #C9A227;   /* Dourado ancestral */
+  /* ─── Brand Anchors (mantidos para retrocompatibilidade) ─── */
+  --color-sacred-red:   #8B3A2A;   /* Terracota profundo (anchor 600) */
+  --color-sacred-gold:  #C9A227;   /* Dourado ancestral (anchor 500) */
   --color-sacred-amber: #D4813A;   /* Âmbar das velas */
-  --color-cream:        #FAF5EC;   /* Creme off-white */
-  --color-dark:         #0D0B08;   /* Preto noturno */
-  --color-dark-muted:   #2A2318;   /* Marrom escuro */
+  --color-cream:        #FAF5EC;   /* Creme off-white (anchor 050 parchment) */
+  --color-dark:         #0D0B08;   /* Preto noturno (anchor 950 warm-neutral) */
+  --color-dark-muted:   #2A2318;   /* Marrom escuro (anchor 900 warm-neutral) */
+
+  /* ─── Terracotta (Família principal · 4 aprovadas) ─── */
+  --color-terracotta-050: #FFF4F1;
+  --color-terracotta-100: #FFE4DE;
+  --color-terracotta-200: #F8CABF;
+  --color-terracotta-300: #E9A89A;
+  --color-terracotta-400: #D58776;
+  --color-terracotta-500: #BE6755;
+  --color-terracotta-600: #8B3A2A; /* anchor */
+  --color-terracotta-700: #7F3627;
+  --color-terracotta-800: #5E2317;
+  --color-terracotta-900: #3D1109;
+  --color-terracotta-950: #1F0401;
+
+  /* ─── Ancestral Gold (Família de destaque · 4 aprovadas) ─── */
+  --color-ancestral-gold-050: #FDF6E6;
+  --color-ancestral-gold-100: #F5EBCF;
+  --color-ancestral-gold-200: #E7D5A4;
+  --color-ancestral-gold-300: #D3B870;
+  --color-ancestral-gold-400: #BC9A37;
+  --color-ancestral-gold-500: #C9A227; /* anchor */
+  --color-ancestral-gold-600: #816500;
+  --color-ancestral-gold-700: #634D00;
+  --color-ancestral-gold-800: #463600;
+  --color-ancestral-gold-900: #2B2000;
+  --color-ancestral-gold-950: #130C00;
+
+  /* ─── Parchment (Superfícies claras · 4 aprovadas) ─── */
+  --color-parchment-050: #FAF5EC; /* anchor */
+  --color-parchment-100: #EEEBE4;
+  --color-parchment-200: #DBD5CA;
+  --color-parchment-300: #C2B9AA;
+  --color-parchment-400: #A79D8A;
+  --color-parchment-500: #8D826D;
+  --color-parchment-600: #726754;
+  --color-parchment-700: #584E3D;
+  --color-parchment-800: #3F3729;
+  --color-parchment-900: #262116;
+  --color-parchment-950: #100D06;
+
+  /* ─── Warm Neutral (Tons escuros · 4 aprovadas) ─── */
+  --color-warm-neutral-050: #F9F6F3;
+  --color-warm-neutral-100: #EEEBE5;
+  --color-warm-neutral-200: #DBD5CB;
+  --color-warm-neutral-300: #C3B9AB;
+  --color-warm-neutral-400: #A89D8B;
+  --color-warm-neutral-500: #8E816E;
+  --color-warm-neutral-600: #736754;
+  --color-warm-neutral-700: #594E3D;
+  --color-warm-neutral-800: #3F3729;
+  --color-warm-neutral-900: #2A2318; /* anchor */
+  --color-warm-neutral-950: #0D0B08; /* anchor */
+
+  /* ─── Ember (Error / Critical · funcional provisória) ─── */
+  --color-ember-050: #FFF4F2;
+  --color-ember-100: #FFE4DF;
+  --color-ember-200: #FFC6BB;
+  --color-ember-300: #F4A394;
+  --color-ember-400: #E17F6E;
+  --color-ember-500: #CA5D4C;
+  --color-ember-600: #A33A2B; /* anchor */
+  --color-ember-700: #892B1E;
+  --color-ember-800: #65190F;
+  --color-ember-900: #430904;
+  --color-ember-950: #220100;
+
+  /* ─── Sun (Warning · funcional provisória) ─── */
+  --color-sun-050: #FFF5E8;
+  --color-sun-100: #FAE9CF;
+  --color-sun-200: #EED1A6;
+  --color-sun-300: #DDB373;
+  --color-sun-400: #C8943D;
+  --color-sun-500: #C58A16; /* anchor */
+  --color-sun-600: #8B5F00;
+  --color-sun-700: #6B4800;
+  --color-sun-800: #4C3200;
+  --color-sun-900: #2F1E00;
+  --color-sun-950: #150B00;
+
+  /* ─── River (Info · funcional provisória) ─── */
+  --color-river-050: #F0F8FB;
+  --color-river-100: #DFEEF3;
+  --color-river-200: #C2DBE3;
+  --color-river-300: #9DC2CD;
+  --color-river-400: #79A7B5;
+  --color-river-500: #578C9C;
+  --color-river-600: #2F6473; /* anchor */
+  --color-river-700: #275765;
+  --color-river-800: #163E49;
+  --color-river-900: #08262E;
+  --color-river-950: #011015;
+
+  /* ─── Role / Semantic aliases (papéis funcionais) ─── */
+  --color-fg:           var(--color-warm-neutral-900);
+  --color-fg-muted:     var(--color-warm-neutral-600);
+  --color-bg:           var(--color-parchment-050);
+  --color-surface:      #FFFFFF;
+  --color-surface-2:    var(--color-parchment-100);
+  --color-border-hair:  rgba(13, 11, 8, 0.08);          /* warm-neutral-950 @ 8% */
+  --color-border-line:  rgba(13, 11, 8, 0.12);
+  --color-border-strong: var(--color-warm-neutral-300);
 
   /* Tipografia */
   --font-heading: var(--font-heading, 'Cormorant Garamond', Georgia, serif);

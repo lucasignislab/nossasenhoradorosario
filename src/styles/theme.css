@@ -22,3 +22,21 @@
   opacity: 0;
   animation: fade-rise 0.8s ease-out 0.4s forwards;
 }
+
+/* ─── Motion Tokens · visualização na página de Design System ─── */
+@keyframes motionPulse {
+  0%   { transform: translateX(0); }
+  50%  { transform: translateX(140%); }
+  100% { transform: translateX(0); }
+}
+
+/* A barra de duração fica pausada por padrão e só toca quando o usuário
+   repousa o cursor sobre o bloco do token. `animation` em `paused` mantém
+   o estado inicial (translateX(0)) sem reexecutar o ciclo. */
+.motion-bar {
+  animation-play-state: paused !important;
+}
+
+.group\/motion:hover .motion-bar {
+  animation-play-state: running !important;
+}
