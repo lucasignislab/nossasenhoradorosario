@@ -14,11 +14,16 @@ type Story = StoryObj<typeof ContentSection>;
 
 // Cenário 1: Texto na Esquerda, Imagem na Direita (Padrão)
 export const Default: Story = {
-  name: 'Imagem à direita',
+  name: 'Manifesto da casa',
   args: {
-    title: 'Nossa Fundação',
-    text: 'O Terreiro Axé foi fundado com o propósito de levar luz e caridade a todos...',
-    image: 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?q=80&w=800',
+    subtitle: 'O Terreiro',
+    title: 'Uma comunidade de luz e respeito',
+    text: 'A Senhora do Rosário é um espaço de resistência, acolhimento e cuidado coletivo.\n\nAqui, a Umbanda é vivida em sua essência: caridade, humildade e sabedoria ancestral.',
+    quote: 'Antes de buscar um milagre, precisamos ser o milagre no mundo do outro.',
+    image: '/images/home/section-community.jpg',
+    imageCaption: 'Nossa casa, nossa comunidade',
+    linkLabel: 'Conheça nossa história',
+    linkHref: '/sobre',
     reverse: false,
   },
 };

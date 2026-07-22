@@ -62,8 +62,12 @@ export default function Home() {
       <ContentSection
         title="Uma comunidade de luz e respeito"
         subtitle="O Terreiro"
-        text="A Senhora do Rosário é um espaço de resistência e acolhimento.\n\nAqui, a Umbanda é praticada em sua essência: caridade, humildade e sabedoria ancestral. Nossas portas estão abertas para todos que buscam conforto espiritual ou autoconhecimento, ensinando que antes de buscar um milagre, precisamos ser o milagre no mundo do outro."
-        image="https://images.unsplash.com/photo-1595133606775-fe0e3f0ae866?q=80&w=800&auto=format&fit=crop"
+        text={'A Senhora do Rosário é um espaço de resistência, acolhimento e cuidado coletivo.\n\nAqui, a Umbanda é vivida em sua essência: caridade, humildade e sabedoria ancestral. Nossas portas estão abertas a quem busca conforto espiritual, pertencimento ou autoconhecimento.'}
+        quote="Antes de buscar um milagre, precisamos ser o milagre no mundo do outro."
+        image="/images/home/section-community.jpg"
+        imageCaption="Nossa casa, nossa comunidade"
+        linkLabel="Conheça nossa história"
+        linkHref="/sobre"
         reverse={false}
       />
 
