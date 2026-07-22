@@ -23,6 +23,7 @@ import {
   TrendingUp,
   UserCheck,
   UserRoundCheck,
+  UserRoundX,
   UsersRound,
   WalletCards,
 } from 'lucide-react';
@@ -254,7 +255,11 @@ export function MembersManagement() {
             <article className="portal-approval-card" key={name}>
               <div className="portal-approval-card__top"><span>{name.charAt(0)}</span><div><h3>{name}</h3><p>Recebido em {21 - index} de julho</p></div></div>
               <dl><div><dt>WhatsApp</dt><dd>(11) 9999{index}-000{index}</dd></div><div><dt>Solicitação</dt><dd>Filho da casa</dd></div></dl>
-              <div className="portal-approval-card__actions"><button className="portal-button portal-button--secondary">Ver detalhes</button><button className="portal-button portal-button--primary"><Check size={15} /> Aprovar</button></div>
+              <div className="portal-approval-card__actions">
+                <button className="portal-button portal-button--secondary">Detalhes</button>
+                <button className="portal-button portal-button--danger"><UserRoundX size={15} /> Reprovar</button>
+                <button className="portal-button portal-button--primary"><Check size={15} /> Aprovar</button>
+              </div>
             </article>
           ))}
         </div>
