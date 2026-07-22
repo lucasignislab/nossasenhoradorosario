@@ -1,74 +1,56 @@
-'use client';
+import Link from 'next/link';
+import { ArrowRight, Bell, BookOpen, CalendarCheck, CalendarDays, CreditCard, Sparkles, UsersRound } from 'lucide-react';
 
-import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import { StatCard } from '@/components/ui/stat-card/stat-card';
+const modules = [
+  { title: 'Agenda interna', description: 'Giras, reuniões e compromissos da corrente.', icon: CalendarDays, status: 'Disponível', href: '/dashboard/agenda' },
+  { title: 'Escala de cuidados', description: 'Organização das equipes e dias de cuidado da casa.', icon: UsersRound, status: 'Disponível', href: '/dashboard/faxinas' },
+  { title: 'Minha frequência', description: 'Seu histórico de presença nas atividades da casa.', icon: CalendarCheck, status: 'Disponível', href: '/dashboard/frequencia' },
+  { title: 'Mensalidades', description: 'Situação, pagamentos e comprovantes em um só lugar.', icon: CreditCard, status: 'Disponível', href: '/dashboard/financeiro' },
+  { title: 'Estudos da casa', description: 'Materiais e conteúdos de desenvolvimento mediúnico.', icon: BookOpen, status: 'Disponível', href: '/dashboard/aulas' },
+  { title: 'Avisos', description: 'Comunicados e orientações importantes para a corrente.', icon: Bell, status: 'Disponível', href: '/dashboard/avisos' },
+];
 
 export default function DashboardPage() {
-  const user = {
-    name: 'João Silva',
-    email: 'joao@exemplo.com',
-  };
-
-  const handleLogout = () => {
-    console.log('Logging out...');
-    // TODO: Integrar com Supabase Auth
-    // await supabase.auth.signOut();
-  };
-
   return (
-    <DashboardLayout user={user} onLogout={handleLogout}>
-      <div style={{ padding: '20px' }}>
-        <h1 style={{ marginBottom: '30px', color: '#2c1810' }}>
-          Bem-vindo, {user.name}!
-        </h1>
+    <div className="dashboard-home">
+      <header className="dashboard-home__welcome">
+        <div>
+          <p className="dashboard-home__eyebrow"><Sparkles size={14} /> Nossa comunidade</p>
+          <h1>Axé, seja bem-vindo à sua área.</h1>
+          <p>Este será o seu ponto de encontro com a rotina, os cuidados e os aprendizados da casa.</p>
+        </div>
+        <div className="dashboard-home__seal" aria-hidden="true">SR</div>
+      </header>
 
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: '24px',
-            marginBottom: '40px',
-          }}
-        >
-          <StatCard
-            icon="🎭"
-            title="Próxima Gira"
-            value="20/03/2026"
-            subtitle="Linha dos Caboclos • 20:00"
-          />
-          <StatCard
-            icon="💚"
-            title="Mensalidade"
-            value="Em Dia"
-            subtitle="Próximo vencimento: 10/04/2026"
-            variant="success"
-          />
-          <StatCard
-            icon="📚"
-            title="Última Aula"
-            value="Desenvolvimento Mediúnico"
-            subtitle="Postada há 3 dias"
-          />
+      <section aria-labelledby="modules-title">
+        <div className="dashboard-home__section-heading">
+          <div>
+            <p className="dashboard-home__eyebrow">Rotina da comunidade</p>
+            <h2 id="modules-title">Serviços da casa</h2>
+          </div>
+          <span>6 serviços disponíveis</span>
         </div>
 
-        <section
-          style={{
-            background: 'linear-gradient(135deg, #f9f7f3 0%, #f5f3f0 100%)',
-            padding: '30px',
-            borderRadius: '12px',
-            border: '1px solid rgba(212, 165, 116, 0.2)',
-          }}
-        >
-          <h2 style={{ marginTop: 0, color: '#2c1810' }}>Próximos Eventos</h2>
-          <p style={{ color: '#7d5a3d', lineHeight: 1.6 }}>
-            Aqui você verá os eventos mais próximos. Acesse a seção de{' '}
-            <a href="/dashboard/aulas" style={{ color: '#d4a574' }}>
-              Aulas
-            </a>{' '}
-            para conferir todo o conteúdo disponível.
-          </p>
-        </section>
-      </div>
-    </DashboardLayout>
+        <div className="dashboard-home__grid">
+          {modules.map(({ title, description, icon: Icon, status, href }) => {
+            const content = (
+              <>
+                <div className="dashboard-home__module-icon"><Icon size={22} /></div>
+                <p className="dashboard-home__module-status">{status}</p>
+                <h3>{title}</h3>
+                <p>{description}</p>
+                {href && <span className="dashboard-home__module-link">Acessar serviço <ArrowRight size={15} /></span>}
+              </>
+            );
+
+            return href ? (
+              <Link className="dashboard-home__module" href={href} key={title}>{content}</Link>
+            ) : (
+              <article className="dashboard-home__module is-muted" key={title}>{content}</article>
+            );
+          })}
+        </div>
+      </section>
+    </div>
   );
 }
