@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 
-import { fn } from 'storybook/test';
+import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { EventCard } from './event-card';
 
 const meta = {
-  title: 'Components/Features/EventCard',
+  title: 'Site institucional/Componentes/Card de evento',
   component: EventCard,
   parameters: {
     layout: 'centered',
@@ -34,6 +34,7 @@ type Story = StoryObj<typeof meta>;
  * Evento confirmado com informações básicas
  */
 export const GiraDeCaboclo: Story = {
+  name: 'Gira de Caboclo',
   args: {
     entity: 'Linha dos Caboclos',
     title: 'Gira de Caboclo',
@@ -42,6 +43,11 @@ export const GiraDeCaboclo: Story = {
     status: 'confirmada',
     description: 'Sessão de atendimento com a Linha dos Caboclos',
   },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('article'));
+    await expect(args.onClick).toHaveBeenCalledOnce();
+  },
 };
 
 /**
@@ -49,6 +55,7 @@ export const GiraDeCaboclo: Story = {
  * Evento confirmado com data diferente
  */
 export const FestaCosmeeDamiao: Story = {
+  name: 'Festa de Cosme e Damião',
   args: {
     entity: 'Linha dos Santos',
     title: 'Festa de Cosme e Damião',
@@ -93,6 +100,7 @@ export const SemDescricao: Story = {
  * Exemplo de layout com vários eventos
  */
 export const MultipleEvents: Story = {
+  name: 'Conjunto de eventos',
   args: {
     entity: 'Múltiplos',
     title: 'Múltiplos Eventos',

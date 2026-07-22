@@ -12,11 +12,11 @@
   --portal-border-strong: #d5d7db;
   --portal-text: #222328;
   --portal-text-soft: #666a73;
-  --portal-text-faint: #92959c;
+  --portal-text-faint: #666a73;
   --portal-accent: #356fc1;
   --portal-accent-hover: #2d61aa;
   --portal-accent-soft: #edf4ff;
-  --portal-danger: #c65348;
+  --portal-danger: #b8463c;
   --portal-danger-soft: #fff1ef;
   --portal-success: #257a4b;
   --portal-success-soft: #edf8f1;
@@ -575,7 +575,7 @@
 .dashboard-home__welcome h1,
 .profile-page__header h1 { font-size: 30px; }
 .portal-eyebrow,
-.dashboard-home__eyebrow { font-size: 10px; }
+.dashboard-home__eyebrow { font-size: 12px; }
 .portal-page__header > div > p:last-child,
 .dashboard-home__welcome > div:first-child > p:last-child,
 .profile-page__header > p:last-child { font-size: 13px; line-height: 1.55; }
@@ -588,52 +588,52 @@
 .portal-metric__icon svg { width: 17px; height: 17px; }
 .portal-metric > p { font-size: 12px; }
 .portal-metric > strong { margin-top: 19px; font-size: 28px; }
-.portal-metric > span { font-size: 11px; }
+.portal-metric > span { font-size: 12px; }
 
 .portal-panel { padding: 22px; }
 .portal-panel__header { min-height: 40px; margin-bottom: 18px; }
 .portal-panel__header h2 { font-size: 17px; }
 .portal-panel__header select { min-height: 34px; font-size: 11px; }
-.portal-panel__copy { font-size: 12px; }
+.portal-panel__copy { font-size: 13px; }
 .portal-event { min-height: 72px; }
 .portal-event h3 { font-size: 13px; }
-.portal-event p { font-size: 11px; }
+.portal-event p { font-size: 12px; }
 .portal-event__date strong { font-size: 16px; }
-.portal-event__date span { font-size: 8px; }
+.portal-event__date span { font-size: 10px; }
 .portal-progress > div span,
-.portal-progress > div strong { font-size: 11px; }
+.portal-progress > div strong { font-size: 12px; }
 .portal-note-card p { font-size: 13px; }
-.portal-note-card span { font-size: 10px; }
+.portal-note-card span { color: #625f56; font-size: 12px; }
 .portal-person strong { font-size: 12px; }
-.portal-person small { font-size: 10px; }
+.portal-person small { color: #a2a5ad; font-size: 12px; }
 .portal-definition-list > div { min-height: 42px; }
-.portal-definition-list dt { font-size: 11px; }
+.portal-definition-list dt { font-size: 12px; }
 .portal-definition-list dd { font-size: 13px; }
 .portal-privacy-card strong { font-size: 12px; }
-.portal-privacy-card p { font-size: 11px; }
+.portal-privacy-card p { font-size: 12px; }
 
-.portal-table th { height: 42px; padding-inline: 14px; font-size: 10px; }
+.portal-table th { height: 42px; padding-inline: 14px; color: #555a63; font-size: 12px; }
 .portal-table td { height: 58px; padding-inline: 14px; font-size: 12px; }
 .portal-table td strong { font-size: 12px; }
-.portal-status { padding: 5px 9px; font-size: 10px; }
-.portal-filter-bar label { font-size: 10px; }
-.portal-filter-bar select { min-height: 35px; font-size: 11px; }
+.portal-status { padding: 5px 9px; font-size: 12px; }
+.portal-filter-bar label { font-size: 12px; }
+.portal-filter-bar select { min-height: 35px; font-size: 12px; }
 .portal-search { min-height: 35px; }
-.portal-search input { font-size: 11px; }
+.portal-search input { font-size: 12px; }
 
 .portal-chart-legend,
 .portal-chart-legend strong,
-.portal-legend-list li { font-size: 10px; }
+.portal-legend-list li { font-size: 12px; }
 .portal-bar-chart small,
 .portal-line-bars > div > strong,
-.portal-line-bars small { font-size: 9px; }
+.portal-line-bars small { font-size: 11px; }
 .portal-donut strong { font-size: 14px; }
-.portal-donut small { font-size: 8px; }
-.finance-trend__controls select { min-height: 34px; font-size: 10px; }
-.finance-trend__view-switch button { min-height: 30px; font-size: 10px; }
+.portal-donut small { font-size: 11px; }
+.finance-trend__controls select { min-height: 34px; font-size: 12px; }
+.finance-trend__view-switch button { min-height: 30px; font-size: 12px; }
 .finance-trend__bar-group small,
-.finance-trend__months small { font-size: 10px; }
-.finance-trend__footer { min-height: 48px; font-size: 10px; }
+.finance-trend__months small { font-size: 11px; }
+.finance-trend__footer { min-height: 48px; font-size: 12px; }
 
 .portal-approval-card h3,
 .portal-timeline h3,
@@ -652,6 +652,8 @@
 .dashboard-home__module h3 { font-size: 15px; }
 .dashboard-home__module > p:not(.dashboard-home__module-status) { font-size: 11px; }
 .dashboard-home__module-link { font-size: 11px; }
+.dashboard-home__welcome .dashboard-home__eyebrow { color: var(--portal-text-soft); }
+.dashboard-home__seal { color: #755c16; }
 .member-feature-card h2 { font-size: 23px; }
 .member-feature-card p { font-size: 12px; }
 .member-feature-card > div > span:not(.portal-status):not(.member-inline-progress) { font-size: 10px; }
@@ -663,6 +665,7 @@
 .member-notice p,
 .member-task-list p,
 .member-small-list span { font-size: 11px; }
+.member-notice > div:last-child > span:last-child { color: #61594d; font-size: 12px; }
 .member-team-grid strong { font-size: 11px; }
 .member-team-grid small { font-size: 10px; }
 .member-task-list h3 { font-size: 13px; }
@@ -672,6 +675,7 @@
 .profile-page__field input { min-height: 44px; padding: 10px 12px; font-size: 13px; }
 .profile-page__field small { font-size: 10px; }
 .profile-page__form > button { min-height: 38px; padding-inline: 14px; font-size: 12px; }
+.portal-sensitive-note { color: #61594d; }
 
 @media (max-width: 900px) {
   .dashboard-layout { grid-template-columns: 1fr; }

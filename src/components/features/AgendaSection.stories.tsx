@@ -5,7 +5,7 @@ import { fn } from 'storybook/test';
 import { AgendaSection } from './AgendaSection';
 
 const meta = {
-  title: 'Components/Features/AgendaSection',
+  title: 'Site institucional/Seções/Agenda',
   component: AgendaSection,
   parameters: {
     layout: 'fullscreen',

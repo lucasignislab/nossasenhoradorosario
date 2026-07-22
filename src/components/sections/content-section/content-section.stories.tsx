@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { ContentSection } from './content-section';
 
 const meta: Meta<typeof ContentSection> = {
-  title: 'Sections/ContentSection', // Organiza no menu do Storybook
+  title: 'Site institucional/Seções/Conteúdo editorial',
   component: ContentSection,
   parameters: {
     layout: 'fullscreen',
@@ -14,6 +14,7 @@ type Story = StoryObj<typeof ContentSection>;
 
 // Cenário 1: Texto na Esquerda, Imagem na Direita (Padrão)
 export const Default: Story = {
+  name: 'Imagem à direita',
   args: {
     title: 'Nossa Fundação',
     text: 'O Terreiro Axé foi fundado com o propósito de levar luz e caridade a todos...',
@@ -24,6 +25,7 @@ export const Default: Story = {
 
 // Cenário 2: Imagem na Esquerda, Texto na Direita (Invertido)
 export const Inverted: Story = {
+  name: 'Imagem à esquerda',
   args: {
     title: 'Nossos Valores',
     text: 'Respeito, humildade e amor ao próximo são os pilares que sustentam nossa casa.',

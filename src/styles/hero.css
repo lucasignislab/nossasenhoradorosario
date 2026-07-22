@@ -1,39 +1,186 @@
 /* Hero Section — Sacred Modernism */
 .hero {
+  --hero-overlay-opacity: 0.58;
   position: relative;
+  isolation: isolate;
   width: 100%;
   min-height: 100svh;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: #171510;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.hero__media {
+  position: absolute;
+  inset: 0;
+  z-index: -3;
+  display: flex;
+  background: #171510;
+}
+
+.hero__panel {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
   overflow: hidden;
 }
 
-/* Overlay preto de 35% de visibilidade para destaque do texto */
-.hero::before {
+.hero__panel + .hero__panel {
+  border-left: 1px solid rgba(250, 245, 236, 0.14);
+}
+
+.hero__image {
+  position: absolute;
+  inset: -5%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  transform: scale(1.04);
+  animation: heroImageDrift 20s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.hero__image[data-panel='1'] {
+  background-position: 52% 46%;
+  animation-delay: -7s;
+}
+
+.hero__image[data-panel='2'] {
+  background-position: 50% 54%;
+  animation-duration: 24s;
+  animation-direction: alternate-reverse;
+}
+
+.hero__image[data-panel='3'] {
+  background-position: 50% 44%;
+  animation-delay: -12s;
+  animation-duration: 22s;
+}
+
+.hero__atmosphere {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background:
+    linear-gradient(180deg, rgba(10, 9, 7, 0.46) 0%, transparent 28%, rgba(10, 9, 7, 0.48) 100%),
+    linear-gradient(90deg, rgba(10, 9, 7, 0.3), rgba(10, 9, 7, var(--hero-overlay-opacity)), rgba(10, 9, 7, 0.38));
+  pointer-events: none;
+}
+
+.hero__atmosphere::after {
   content: '';
   position: absolute;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.35);
-  z-index: 1;
+  background: radial-gradient(circle at 50% 45%, transparent 0%, rgba(8, 7, 5, 0.28) 78%, rgba(8, 7, 5, 0.54) 100%);
 }
 
-.hero__overlay {
-  display: none; /* overlay feito via ::before */
-}
-
-/* Conteúdo */
 .hero__content {
   position: relative;
-  z-index: 2;
-  max-width: 700px;
+  z-index: 1;
+  width: min(100%, 800px);
+  padding: 64px 32px;
+  color: var(--color-cream, #faf5ec);
   text-align: center;
-  color: var(--color-cream, #FAF5EC);
-  padding: 48px 24px;
-  animation: heroFadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+  text-wrap: balance;
+  animation: heroFadeUp 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hero__eyebrow {
+  display: inline-block;
+  margin-bottom: 16px;
+  color: var(--color-sacred-gold, #c9a227);
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  animation: heroFadeUp 900ms 100ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hero__title {
+  margin: 0 0 24px;
+  color: var(--color-cream, #faf5ec);
+  font-family: var(--font-heading, 'Cormorant Garamond', serif);
+  font-size: clamp(48px, 6.4vw, 88px);
+  font-weight: 650;
+  letter-spacing: -0.025em;
+  line-height: 0.98;
+  text-shadow: 0 2px 32px rgba(0, 0, 0, 0.28);
+  animation: heroFadeUp 900ms 180ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hero__divider {
+  width: 48px;
+  height: 2px;
+  margin: 0 auto 24px;
+  background: var(--color-sacred-gold, #c9a227);
+  animation: heroFadeUp 900ms 260ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hero__subtitle {
+  max-width: 640px;
+  margin: 0 auto 40px;
+  color: rgba(250, 245, 236, 0.92);
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: clamp(16px, 1.7vw, 20px);
+  font-weight: 400;
+  line-height: 1.6;
+  text-shadow: 0 1px 18px rgba(0, 0, 0, 0.36);
+  animation: heroFadeUp 900ms 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hero__button {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 14px 32px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 3px;
+  background: var(--color-sacred-gold, #c9a227);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+  color: #171510;
+  cursor: pointer;
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: 13px;
+  font-weight: 750;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: transform 250ms ease, background-color 250ms ease, box-shadow 250ms ease;
+  animation: heroFadeUp 900ms 400ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hero__button:hover {
+  background: #e0c36d;
+  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.28);
+  transform: translateY(-2px);
+}
+
+.hero__button:focus-visible {
+  outline: 3px solid var(--color-cream, #faf5ec);
+  outline-offset: 4px;
+}
+
+.hero__button:active {
+  transform: translateY(0);
+}
+
+.hero__button-arrow {
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1;
+  transition: transform 250ms ease;
+}
+
+.hero__button:hover .hero__button-arrow {
+  transform: translateX(4px);
 }
 
 @keyframes heroFadeUp {
@@ -47,104 +194,70 @@
   }
 }
 
-/* Eyebrow acima do título */
-.hero__eyebrow {
-  display: inline-block;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--color-sacred-gold, #C9A227);
-  margin-bottom: 16px;
-  font-family: var(--font-body, 'Inter', sans-serif);
-  animation: heroFadeUp 0.9s 0.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+@keyframes heroImageDrift {
+  from { transform: scale(1.04) translate3d(0, -0.5%, 0); }
+  to { transform: scale(1.1) translate3d(0, 1.5%, 0); }
 }
 
-/* Título — Cormorant Garamond grande */
-.hero__title {
-  font-family: var(--font-heading, 'Cormorant Garamond', serif);
-  font-size: clamp(40px, 6vw, 80px);
-  font-weight: 700;
-  line-height: 1.1;
-  margin: 0 0 20px;
-  letter-spacing: -0.5px;
-  color: var(--color-cream, #FAF5EC);
-  animation: heroFadeUp 0.9s 0.18s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
+@media (max-width: 900px) {
+  .hero__panel:first-child {
+    display: none;
+  }
 
-/* Separador dourado */
-.hero__divider {
-  width: 48px;
-  height: 2px;
-  background: var(--color-sacred-gold, #C9A227);
-  margin: 0 auto 20px;
-  animation: heroFadeUp 0.9s 0.26s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-.hero__subtitle {
-  font-family: var(--font-body, 'Inter', sans-serif);
-  font-size: clamp(15px, 2vw, 18px);
-  font-weight: 400;
-  line-height: 1.65;
-  margin: 0 0 36px;
-  opacity: 0.88;
-  animation: heroFadeUp 0.9s 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-/* CTA Button */
-.hero__button {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 15px 36px;
-  background: var(--color-sacred-red, #8B3A2A);
-  color: var(--color-cream, #FAF5EC);
-  border: none;
-  border-radius: 2px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 250ms ease;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  font-family: var(--font-body, 'Inter', sans-serif);
-  animation: heroFadeUp 0.9s 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
-  text-decoration: none;
-}
-
-.hero__button:hover {
-  background: var(--color-sacred-amber, #D4813A);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(139, 58, 42, 0.35);
-}
-
-.hero__button:active {
-  transform: translateY(0);
-}
-
-.hero__button-arrow {
-  font-weight: 400;
-  transition: transform 250ms ease;
-}
-
-.hero__button:hover .hero__button-arrow {
-  transform: translateX(4px);
-}
-
-/* Responsivo */
-@media (max-width: 768px) {
-  .hero {
-    min-height: 85svh;
+  .hero__content {
+    width: min(100%, 720px);
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 640px) {
+  .hero {
+    min-height: 92svh;
+  }
+
+  .hero__panel {
+    display: none;
+  }
+
+  .hero__panel:last-child {
+    display: block;
+  }
+
+  .hero__image[data-panel='3'] {
+    background-position: 50% 42%;
+  }
+
+  .hero__atmosphere {
+    background:
+      linear-gradient(180deg, rgba(10, 9, 7, 0.48) 0%, rgba(10, 9, 7, 0.62) 55%, rgba(10, 9, 7, 0.72) 100%);
+  }
+
   .hero__content {
-    padding: 32px 20px;
+    padding: 96px 24px 56px;
+  }
+
+  .hero__title {
+    font-size: clamp(46px, 14vw, 64px);
   }
 
   .hero__button {
-    padding: 13px 28px;
-    font-size: 12px;
+    width: 100%;
+    max-width: 328px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__image,
+  .hero__content,
+  .hero__eyebrow,
+  .hero__title,
+  .hero__divider,
+  .hero__subtitle,
+  .hero__button {
+    animation: none;
+  }
+
+  .hero__button,
+  .hero__button-arrow {
+    transition: none;
   }
 }

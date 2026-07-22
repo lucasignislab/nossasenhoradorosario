@@ -5,7 +5,7 @@ import { fn } from 'storybook/test';
 import { LocationContact } from './LocationContact';
 
 const meta = {
-  title: 'Components/Features/LocationContact',
+  title: 'Site institucional/Seções/Localização e contato',
   component: LocationContact,
   parameters: {
     layout: 'fullscreen',

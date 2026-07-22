@@ -50,8 +50,12 @@ export default function Home() {
         subtitle="Um espaço de fé, amor e acolhimento espiritual sob a luz da Umbanda."
         buttonLabel="Ver Agenda de Giras"
         buttonHref="#agenda"
-        // Mantemos a imagem como fallback se o vídeo falhar
-        backgroundImage="https://images.unsplash.com/photo-1601314167099-232775b3ee61?q=80&w=1600&auto=format&fit=crop"
+        backgroundImage="/images/home/hero-fundamentos.jpg"
+        backgroundImages={[
+          '/images/home/hero-atabaques.jpg',
+          '/images/home/hero-fundamentos.jpg',
+          '/images/home/hero-acolhimento.jpg',
+        ]}
       />
 
       {/* 3. A Nossa Casa (Introdução Assimétrica) */}

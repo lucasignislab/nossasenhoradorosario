@@ -5,7 +5,7 @@ import { fn } from 'storybook/test';
 import { Hero } from './Hero';
 
 const meta = {
-  title: 'Components/Layout/Hero',
+  title: 'Site institucional/Seções/Hero',
   component: Hero,
   parameters: {
     layout: 'fullscreen',
@@ -16,6 +16,7 @@ const meta = {
       control: { type: 'range', min: 0, max: 1, step: 0.1 },
     },
     backgroundImage: { control: 'text' },
+    backgroundImages: { control: 'object' },
   },
   args: {
     onButtonClick: fn(),
@@ -30,7 +31,14 @@ type Story = StoryObj<typeof meta>;
  * Versão com frase de acolhimento
  */
 export const Default: Story = {
+  name: 'Padrão',
   args: {
+    backgroundImage: '/images/home/hero-fundamentos.jpg',
+    backgroundImages: [
+      '/images/home/hero-atabaques.jpg',
+      '/images/home/hero-fundamentos.jpg',
+      '/images/home/hero-acolhimento.jpg',
+    ],
     title: 'Portas abertas para a caridade e o Axé',
     subtitle:
       'Somos um espaço de fé, acolhimento e transformação espiritual. Venha conhecer a Umbanda com respeito e amor.',

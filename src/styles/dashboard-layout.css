@@ -60,7 +60,7 @@
 
 .dashboard-layout__logo-copy { min-width: 0; display: grid; gap: 2px; }
 .dashboard-layout__logo-copy strong { overflow: hidden; font-size: 12px; font-weight: 650; letter-spacing: -.01em; text-overflow: ellipsis; white-space: nowrap; }
-.dashboard-layout__logo-copy small { color: #7e8188; font-size: 9px; }
+.dashboard-layout__logo-copy small { color: #a2a5ad; font-size: 9px; }
 
 .dashboard-layout__close-btn,
 .dashboard-layout__menu-btn {
@@ -96,13 +96,13 @@
   font-weight: 750;
 }
 .dashboard-layout__context-copy { min-width: 0; display: grid; gap: 2px; }
-.dashboard-layout__context-copy small { color: #74777f; font-size: 8px; font-weight: 600; }
+.dashboard-layout__context-copy small { color: #a2a5ad; font-size: 8px; font-weight: 600; }
 .dashboard-layout__context-copy strong { overflow: hidden; font-size: 11px; font-weight: 620; text-overflow: ellipsis; white-space: nowrap; }
 .dashboard-layout__context > svg { color: #686b72; }
 
 .dashboard-layout__nav-label {
   margin: 0 10px 7px;
-  color: #5f6269;
+  color: #a2a5ad;
   font-size: 8px;
   font-weight: 700;
   letter-spacing: .09em;
@@ -178,7 +178,7 @@
 .dashboard-layout__user-name,
 .dashboard-layout__user-email { overflow: hidden; margin: 0; text-overflow: ellipsis; white-space: nowrap; }
 .dashboard-layout__user-name { color: #e5e6e8; font-size: 10px; font-weight: 600; }
-.dashboard-layout__user-email { margin-top: 2px; color: #73767d; font-size: 8px; }
+.dashboard-layout__user-email { margin-top: 2px; color: #a2a5ad; font-size: 8px; }
 .dashboard-layout__logout-btn {
   padding: 2px 0;
   display: flex;
@@ -217,7 +217,7 @@
   background: rgba(255,255,255,.88);
   backdrop-filter: blur(16px);
 }
-.dashboard-layout__breadcrumb { min-width: 180px; display: flex; align-items: center; gap: 7px; color: #9a9ca2; font-size: 10px; }
+.dashboard-layout__breadcrumb { min-width: 180px; display: flex; align-items: center; gap: 7px; color: #666a73; font-size: 10px; }
 .dashboard-layout__breadcrumb strong { color: #34363a; font-weight: 620; }
 .dashboard-layout__search {
   width: min(330px, 32vw);
@@ -230,7 +230,7 @@
   border: 1px solid #e0e1e4;
   border-radius: 6px;
   background: #f8f8f9;
-  color: #93969d;
+  color: #666a73;
   font: 500 9px var(--font-body);
   cursor: pointer;
 }

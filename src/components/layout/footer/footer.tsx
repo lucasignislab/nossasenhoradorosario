@@ -33,7 +33,7 @@ export const Footer = () => {
                 T. U.
               </span>
               <span className="text-xl font-bold tracking-tight text-white font-[var(--font-heading)] -mt-1.5">
-                Senhora do<span className="text-[var(--color-sacred-red)] font-semibold"> Rosário</span>
+                Senhora do<span className="text-[var(--color-sacred-gold)] font-semibold"> Rosário</span>
               </span>
             </div>
             <p className="text-sm leading-relaxed text-[var(--color-cream)]/70">

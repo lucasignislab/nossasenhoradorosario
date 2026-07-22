@@ -84,7 +84,7 @@ export function AdminOverview({ basePath = '/admin' }: { basePath?: string }) {
           </article>
         </div>
 
-        <aside className="portal-stack">
+        <div className="portal-stack">
           <article className="portal-panel portal-panel--accent">
             <PanelHeader eyebrow="Atenção hoje" title="3 aprovações pendentes" />
             <div className="portal-person-list">
@@ -112,7 +112,7 @@ export function AdminOverview({ basePath = '/admin' }: { basePath?: string }) {
             <ShieldCheck size={20} />
             <div><strong>Dados protegidos</strong><p>Frequência e finanças possuem acesso restrito e histórico de alterações.</p></div>
           </article>
-        </aside>
+        </div>
       </section>
     </div>
   );
@@ -267,7 +267,7 @@ export function MembersManagement() {
 
       <article className="portal-panel">
         <PanelHeader eyebrow="Comunidade" title="Todos os filhos" action={<div className="portal-search"><Search size={15} /><input aria-label="Buscar membro" placeholder="Buscar por nome" /></div>} />
-        <div className="portal-table-wrap"><table className="portal-table"><thead><tr><th>Nome</th><th>Função</th><th>Entrada na casa</th><th>Frequência</th><th>Situação</th><th /></tr></thead><tbody>
+        <div className="portal-table-wrap"><table className="portal-table"><thead><tr><th>Nome</th><th>Função</th><th>Entrada na casa</th><th>Frequência</th><th>Situação</th><th>Ações</th></tr></thead><tbody>
           {[
             ['Ana Martins', 'Filha da casa', 'Mar 2021', '96%', 'Ativo'], ['Caio Almeida', 'Cambone', 'Ago 2022', '88%', 'Ativo'], ['Helena Rocha', 'Filha da casa', 'Jan 2024', '82%', 'Ativo'], ['Pedro Lima', 'Filho da casa', 'Mai 2025', '64%', 'Acompanhar'],
           ].map(([name, role, joined, attendance, status]) => <tr key={name}><td><div className="portal-table-person"><span>{name.charAt(0)}</span><strong>{name}</strong></div></td><td>{role}</td><td>{joined}</td><td>{attendance}</td><td><StatusPill tone={status === 'Ativo' ? 'info' : 'warning'}>{status}</StatusPill></td><td><button className="portal-icon-button" aria-label={`Opções de ${name}`}><MoreHorizontal size={17} /></button></td></tr>)}
@@ -295,7 +295,7 @@ export function AgendaManagement() {
             {events.map(([day, month, title, time, group, status], index) => <div className="portal-timeline__item" key={`${day}-${title}`}><div className="portal-timeline__date"><strong>{day}</strong><span>{month}</span></div><i /><div><span className="portal-timeline__type">{group}</span><h3>{title}</h3><p><Clock3 size={13} /> {time}</p></div><StatusPill tone={index === 1 ? 'warning' : 'neutral'}>{status}</StatusPill><button className="portal-icon-button" aria-label={`Opções para ${title}`}><MoreHorizontal size={18} /></button></div>)}
           </div>
         </article>
-        <aside className="portal-stack"><article className="portal-panel"><PanelHeader eyebrow="Julho" title="Resumo" /><dl className="portal-definition-list"><div><dt>Atividades</dt><dd>8</dd></div><div><dt>Escalas abertas</dt><dd>2</dd></div><div><dt>Confirmações pendentes</dt><dd>7</dd></div></dl></article><article className="portal-note-card portal-note-card--light"><BellRing size={22} /><p>O lembrete do estudo de quinta-feira será enviado amanhã às 18h.</p><span>Automação programada</span></article></aside>
+        <div className="portal-stack"><article className="portal-panel"><PanelHeader eyebrow="Julho" title="Resumo" /><dl className="portal-definition-list"><div><dt>Atividades</dt><dd>8</dd></div><div><dt>Escalas abertas</dt><dd>2</dd></div><div><dt>Confirmações pendentes</dt><dd>7</dd></div></dl></article><article className="portal-note-card portal-note-card--light"><BellRing size={22} /><p>O lembrete do estudo de quinta-feira será enviado amanhã às 18h.</p><span>Automação programada</span></article></div>
       </section>
     </div>
   );
@@ -331,7 +331,7 @@ export function AdminSettings() {
       <PageHeader eyebrow="Administração · Configurações" title="Permissões e segurança" description="Defina quem pode ver, criar e alterar cada parte do sistema." />
       <section className="portal-layout portal-layout--settings">
         <article className="portal-panel"><PanelHeader eyebrow="Papéis do sistema" title="Níveis de acesso" /><div className="portal-role-list">{roles.map(([title, desc, people, badge]) => <div key={title}><div className="portal-role-list__icon"><ShieldCheck size={19} /></div><div><h3>{title}</h3><p>{desc}</p></div><span>{people}</span><StatusPill tone={badge === 'Administração' ? 'gold' : 'neutral'}>{badge}</StatusPill><button className="portal-icon-button" aria-label={`Editar ${title}`}><Settings2 size={17} /></button></div>)}</div></article>
-        <aside className="portal-stack"><article className="portal-panel portal-panel--accent"><PanelHeader eyebrow="Proteção" title="Boas práticas ativas" /><ul className="portal-check-list"><li><CheckCircle2 size={17} /> Regras por perfil</li><li><CheckCircle2 size={17} /> Dados sensíveis restritos</li><li><CheckCircle2 size={17} /> Sessões protegidas</li><li><Clock3 size={17} /> Auditoria detalhada na próxima etapa</li></ul></article><article className="portal-panel"><PanelHeader eyebrow="Sessão" title="Políticas de acesso" /><p className="portal-panel__copy">Contas suspensas perdem acesso imediatamente. Alterações de papel exigirão confirmação administrativa.</p></article></aside>
+        <div className="portal-stack"><article className="portal-panel portal-panel--accent"><PanelHeader eyebrow="Proteção" title="Boas práticas ativas" /><ul className="portal-check-list"><li><CheckCircle2 size={17} /> Regras por perfil</li><li><CheckCircle2 size={17} /> Dados sensíveis restritos</li><li><CheckCircle2 size={17} /> Sessões protegidas</li><li><Clock3 size={17} /> Auditoria detalhada na próxima etapa</li></ul></article><article className="portal-panel"><PanelHeader eyebrow="Sessão" title="Políticas de acesso" /><p className="portal-panel__copy">Contas suspensas perdem acesso imediatamente. Alterações de papel exigirão confirmação administrativa.</p></article></div>
       </section>
     </div>
   );

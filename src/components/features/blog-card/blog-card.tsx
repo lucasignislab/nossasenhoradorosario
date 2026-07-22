@@ -19,7 +19,7 @@ export const BlogCard = ({ title, excerpt, category, date, image }: BlogCardProp
         />
       </div>
       <div className="space-y-2">
-        <span className="text-xs font-bold uppercase tracking-widest text-orange-600">
+        <span className="text-xs font-bold uppercase tracking-widest text-orange-800">
           {category}
         </span>
         <h3 className="text-xl font-bold text-slate-900 group-hover:text-orange-600 transition-colors leading-tight">
@@ -28,7 +28,7 @@ export const BlogCard = ({ title, excerpt, category, date, image }: BlogCardProp
         <p className="text-slate-600 text-sm line-clamp-2">
           {excerpt}
         </p>
-        <p className="text-slate-400 text-xs font-medium pt-2">
+        <p className="text-slate-600 text-xs font-medium pt-2">
           {date}
         </p>
       </div>

@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { Footer } from './footer';
 
 const meta: Meta<typeof Footer> = {
-  title: 'Layout/Footer',
+  title: 'Site institucional/Estrutura/Rodapé',
   component: Footer,
   parameters: {
     layout: 'fullscreen',
@@ -12,4 +12,4 @@ const meta: Meta<typeof Footer> = {
 export default meta;
 type Story = StoryObj<typeof Footer>;
 
-export const Default: Story = {};
+export const Default: Story = { name: 'Padrão' };

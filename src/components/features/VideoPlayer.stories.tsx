@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/nextjs-vite';
 import { VideoPlayer } from './VideoPlayer';
 
 const meta = {
-  title: 'Components/Features/VideoPlayer',
+  title: 'Site institucional/Componentes/Player de vídeo',
   component: VideoPlayer,
   parameters: {
     layout: 'fullscreen',
