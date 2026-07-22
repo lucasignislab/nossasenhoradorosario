@@ -3,12 +3,13 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FormEvent, useState } from 'react';
-import { ArrowLeft, Eye, EyeOff, LoaderCircle } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Eye, EyeOff, LoaderCircle, ShieldCheck, UsersRound } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import '../../styles/login-form.css';
 
 type AuthFormProps = {
   configured: boolean;
+  previewEnabled: boolean;
   returnTo: string;
 };
 
@@ -21,7 +22,7 @@ const errorMessages: Record<string, string> = {
   'Password should be at least 6 characters': 'A senha precisa ter pelo menos 8 caracteres.',
 };
 
-export function AuthForm({ configured, returnTo }: AuthFormProps) {
+export function AuthForm({ configured, previewEnabled, returnTo }: AuthFormProps) {
   const router = useRouter();
   const [mode, setMode] = useState<Mode>('login');
   const [loading, setLoading] = useState(false);
@@ -122,6 +123,28 @@ export function AuthForm({ configured, returnTo }: AuthFormProps) {
           <div className="login-form__notice" role="status">
             A estrutura está pronta. Para ativar os acessos, configure as credenciais do Supabase no arquivo <code>.env.local</code>.
           </div>
+        )}
+
+        {previewEnabled && (
+          <section className="login-form__preview" aria-labelledby="preview-title">
+            <div className="login-form__preview-heading">
+              <p className="login-form__eyebrow">Demonstração local</p>
+              <h2 id="preview-title">Explore sem fazer cadastro</h2>
+              <p>Entre com dados demonstrativos para acompanhar o visual que está sendo construído.</p>
+            </div>
+            <div className="login-form__preview-actions">
+              <Link href="/portal-preview/dashboard" className="login-form__preview-link">
+                <UsersRound size={18} aria-hidden="true" />
+                <span><strong>Área dos filhos</strong><small>Agenda, estudos e mensalidades</small></span>
+                <ArrowRight size={17} aria-hidden="true" />
+              </Link>
+              <Link href="/portal-preview/admin" className="login-form__preview-link">
+                <ShieldCheck size={18} aria-hidden="true" />
+                <span><strong>Administração</strong><small>Gestão, financeiro e frequência</small></span>
+                <ArrowRight size={17} aria-hidden="true" />
+              </Link>
+            </div>
+          </section>
         )}
 
         <div className="login-form__tabs" aria-label="Escolha uma opção">

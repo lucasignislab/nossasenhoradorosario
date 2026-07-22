@@ -17,6 +17,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   return (
     <AuthForm
       configured={isSupabaseConfigured}
+      previewEnabled={process.env.NODE_ENV === 'development'}
       returnTo={retorno?.startsWith('/') && !retorno.startsWith('//') ? retorno : '/dashboard'}
     />
   );
