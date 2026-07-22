@@ -119,7 +119,7 @@ export function AuthForm({ configured, previewEnabled, returnTo }: AuthFormProps
           </p>
         </div>
 
-        {!configured && (
+        {!configured && !previewEnabled && (
           <div className="login-form__notice" role="status">
             A estrutura está pronta. Para ativar os acessos, configure as credenciais do Supabase no arquivo <code>.env.local</code>.
           </div>

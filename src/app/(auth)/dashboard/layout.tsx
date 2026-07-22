@@ -4,6 +4,7 @@ import { isSupabaseConfigured } from '@/lib/supabase/config';
 import { createClient } from '@/lib/supabase/server';
 import '@/styles/dashboard-home.css';
 import '@/styles/portal.css';
+import '@/styles/portal-corporate.css';
 
 type DashboardLayoutRouteProps = { children: React.ReactNode };
 

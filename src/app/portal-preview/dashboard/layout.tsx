@@ -1,10 +1,12 @@
 import { notFound } from 'next/navigation';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { isPortalPreviewEnabled } from '@/lib/portal-preview';
 import '@/styles/dashboard-home.css';
 import '@/styles/portal.css';
+import '@/styles/portal-corporate.css';
 
 export default function MemberPreviewLayout({ children }: { children: React.ReactNode }) {
-  if (process.env.NODE_ENV !== 'development') notFound();
+  if (!isPortalPreviewEnabled) notFound();
 
   return (
     <DashboardLayout

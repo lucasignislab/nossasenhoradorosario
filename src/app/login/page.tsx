@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { AuthForm } from '@/components/features/AuthForm';
+import { isPortalPreviewEnabled } from '@/lib/portal-preview';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
 
 export const metadata: Metadata = {
@@ -17,7 +18,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   return (
     <AuthForm
       configured={isSupabaseConfigured}
-      previewEnabled={process.env.NODE_ENV === 'development'}
+      previewEnabled={isPortalPreviewEnabled}
       returnTo={retorno?.startsWith('/') && !retorno.startsWith('//') ? retorno : '/dashboard'}
     />
   );

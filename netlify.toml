@@ -1,0 +1,4 @@
+[build.environment]
+  NEXT_PUBLIC_PORTAL_PREVIEW = "true"
+
+# Desative esta chave quando o portal passar a operar com dados reais.

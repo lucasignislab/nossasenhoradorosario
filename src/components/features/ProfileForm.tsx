@@ -26,17 +26,10 @@ export function ProfileForm({ fullName, phone, email, role, joinedAt }: ProfileF
         <p>Mantenha seus dados de contato atualizados para receber os avisos da casa.</p>
       </header>
 
-      <div className="profile-page__layout">
-        <aside className="profile-page__summary">
-          <div className="profile-page__avatar" aria-hidden="true">{fullName.charAt(0).toUpperCase()}</div>
-          <h2>{fullName}</h2>
-          <p>{roleNames[role]}</p>
-          {joinedAt && <span>Na casa desde {new Intl.DateTimeFormat('pt-BR').format(new Date(`${joinedAt}T12:00:00`))}</span>}
-        </aside>
-
+      <div className="profile-page__layout profile-page__layout--classic">
         <form action={formAction} className="profile-page__form">
           <div className="profile-page__field">
-            <label htmlFor="fullName">Nome completo</label>
+            <label htmlFor="fullName">Nome</label>
             <input id="fullName" name="fullName" defaultValue={fullName} minLength={3} maxLength={120} required />
           </div>
           <div className="profile-page__field">
@@ -44,9 +37,14 @@ export function ProfileForm({ fullName, phone, email, role, joinedAt }: ProfileF
             <input id="phone" name="phone" type="tel" defaultValue={phone} placeholder="(11) 99999-9999" />
           </div>
           <div className="profile-page__field">
-            <label htmlFor="email">E-mail de acesso</label>
+            <label htmlFor="email">E-mail</label>
             <input id="email" type="email" value={email} disabled />
             <small>O e-mail de acesso será alterado com confirmação em uma próxima etapa.</small>
+          </div>
+          <div className="profile-page__field">
+            <label htmlFor="access">Acesso</label>
+            <input id="access" value={roleNames[role]} disabled />
+            {joinedAt && <small>Na casa desde {new Intl.DateTimeFormat('pt-BR').format(new Date(`${joinedAt}T12:00:00`))}</small>}
           </div>
 
           {state.message && (

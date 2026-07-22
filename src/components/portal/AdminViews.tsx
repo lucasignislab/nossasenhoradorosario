@@ -27,18 +27,14 @@ import {
   WalletCards,
 } from 'lucide-react';
 import { MetricCard, PageHeader, PanelHeader, ProgressBar, StatusPill } from './PortalUI';
-
-const monthlyBars = [
-  { month: 'Fev', value: 62 }, { month: 'Mar', value: 71 }, { month: 'Abr', value: 68 },
-  { month: 'Mai', value: 82 }, { month: 'Jun', value: 76 }, { month: 'Jul', value: 88 },
-];
+import { FinanceTrendChart } from './FinanceTrendChart';
 
 const attendanceBars = [
   { month: 'Fev', value: 72 }, { month: 'Mar', value: 78 }, { month: 'Abr', value: 75 },
   { month: 'Mai', value: 84 }, { month: 'Jun', value: 81 }, { month: 'Jul', value: 87 },
 ];
 
-export function AdminOverview() {
+export function AdminOverview({ basePath = '/admin' }: { basePath?: string }) {
   return (
     <div className="portal-page">
       <PageHeader
@@ -58,7 +54,7 @@ export function AdminOverview() {
       <section className="portal-layout portal-layout--overview">
         <div className="portal-stack">
           <article className="portal-panel">
-            <PanelHeader eyebrow="Próximos 7 dias" title="Agenda da casa" action={<Link href="/admin/agenda" className="portal-text-link">Ver agenda <ArrowRight size={14} /></Link>} />
+            <PanelHeader eyebrow="Próximos 7 dias" title="Agenda da casa" action={<Link href={`${basePath}/agenda`} className="portal-text-link">Ver agenda <ArrowRight size={14} /></Link>} />
             <div className="portal-event-list">
               {[
                 ['24', 'QUI', 'Estudo mediúnico', '20:00', 'Desenvolvimento'],
@@ -98,7 +94,7 @@ export function AdminOverview() {
                 </div>
               ))}
             </div>
-            <Link href="/admin/membros" className="portal-button portal-button--dark">Revisar cadastros</Link>
+            <Link href={`${basePath}/membros`} className="portal-button portal-button--dark">Revisar cadastros</Link>
           </article>
 
           <article className="portal-panel">
@@ -108,7 +104,7 @@ export function AdminOverview() {
               <div><dt>Recebido</dt><dd>R$ 3.840</dd></div>
               <div><dt>Pendente</dt><dd>R$ 610</dd></div>
             </dl>
-            <Link href="/admin/financeiro" className="portal-text-link">Abrir financeiro <ArrowRight size={14} /></Link>
+            <Link href={`${basePath}/financeiro`} className="portal-text-link">Abrir financeiro <ArrowRight size={14} /></Link>
           </article>
 
           <article className="portal-privacy-card">
@@ -139,13 +135,7 @@ export function FinanceDashboard() {
       </section>
 
       <section className="portal-layout portal-layout--charts">
-        <article className="portal-panel">
-          <PanelHeader eyebrow="Últimos 6 meses" title="Entradas mensais" action={<select aria-label="Período do gráfico"><option>2026</option></select>} />
-          <div className="portal-bar-chart" aria-label="Gráfico demonstrativo de entradas mensais">
-            {monthlyBars.map(({ month, value }) => <div key={month}><span style={{ height: `${value}%` }} /><small>{month}</small></div>)}
-          </div>
-          <div className="portal-chart-legend"><span><i className="is-brand" /> Entradas</span><strong>R$ 21.730 no período</strong></div>
-        </article>
+        <FinanceTrendChart />
 
         <article className="portal-panel">
           <PanelHeader eyebrow="Julho" title="Despesas por categoria" />
@@ -173,7 +163,7 @@ export function FinanceDashboard() {
                 ['18 jul', 'Conta de energia', 'Contas', 'Pix', '- R$ 342,18', 'Conciliado', 'neutral'],
                 ['17 jul', 'Mensalidade · R. Santos', 'Contribuição', 'Dinheiro', '+ R$ 90,00', 'Pendente', 'warning'],
               ].map(([date, desc, category, method, value, status, tone]) => (
-                <tr key={`${date}-${desc}`}><td>{date}</td><td><strong>{desc}</strong></td><td>{category}</td><td>{method}</td><td className={value.startsWith('+') ? 'is-positive' : ''}>{value}</td><td><StatusPill tone={tone as 'info' | 'neutral' | 'warning'}>{status}</StatusPill></td></tr>
+                <tr key={`${date}-${desc}`}><td>{date}</td><td><strong>{desc}</strong></td><td>{category}</td><td>{method}</td><td className={value.startsWith('+') ? 'is-positive' : 'is-negative'}>{value}</td><td><StatusPill tone={tone as 'info' | 'neutral' | 'warning'}>{status}</StatusPill></td></tr>
               ))}
             </tbody>
           </table>

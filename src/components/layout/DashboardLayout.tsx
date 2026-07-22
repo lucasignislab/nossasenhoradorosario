@@ -8,11 +8,15 @@ import {
   BookOpen,
   CalendarDays,
   ChartNoAxesCombined,
+  ChevronDown,
   CircleDollarSign,
   ClipboardCheck,
+  Command,
   DoorOpen,
+  HelpCircle,
   Home,
   Menu,
+  Search,
   Settings,
   Sparkles,
   UserRound,
@@ -76,6 +80,9 @@ export function DashboardLayout({
   const prefix = navigationPrefix ?? (mode === 'admin' ? '/admin' : '/dashboard');
   const previewRoot = previewMode ? '/portal-preview' : '';
   const menuItems = mode === 'admin' ? adminMenu : memberMenu;
+  const currentItem = [...menuItems]
+    .reverse()
+    .find((item) => item.path === '' ? pathname === prefix : pathname.startsWith(`${prefix}${item.path}`));
 
   const handleLogout = async () => {
     setLoggingOut(true);
@@ -94,8 +101,11 @@ export function DashboardLayout({
       <aside className={`dashboard-layout__sidebar ${sidebarOpen ? 'dashboard-layout__sidebar--open' : ''}`}>
         <div className="dashboard-layout__sidebar-header">
           <Link href="/" className="dashboard-layout__logo" aria-label="Ir para o site">
-            <span>Terreiro</span>
-            Senhora do Rosário
+            <span className="dashboard-layout__logo-mark">SR</span>
+            <span className="dashboard-layout__logo-copy">
+              <strong>Senhora do Rosário</strong>
+              <small>Gestão da comunidade</small>
+            </span>
           </Link>
           <button className="dashboard-layout__close-btn" onClick={() => setSidebarOpen(false)} aria-label="Fechar menu">
             <X size={22} />
@@ -103,9 +113,15 @@ export function DashboardLayout({
         </div>
 
         <div className="dashboard-layout__context">
-          <span>{mode === 'admin' ? 'Gestão da casa' : 'Comunidade interna'}</span>
-          <strong>{mode === 'admin' ? 'Administração' : 'Área dos filhos'}</strong>
+          <span className="dashboard-layout__context-icon">{mode === 'admin' ? 'GA' : 'AF'}</span>
+          <span className="dashboard-layout__context-copy">
+            <small>Ambiente atual</small>
+            <strong>{mode === 'admin' ? 'Administração' : 'Área dos filhos'}</strong>
+          </span>
+          <ChevronDown size={14} aria-hidden="true" />
         </div>
+
+        <p className="dashboard-layout__nav-label">Workspace</p>
 
         <nav className="dashboard-layout__nav" aria-label={mode === 'admin' ? 'Navegação administrativa' : 'Navegação da área dos filhos'}>
           {menuItems.map((item) => {
@@ -157,11 +173,24 @@ export function DashboardLayout({
           <button className="dashboard-layout__menu-btn" onClick={() => setSidebarOpen(true)} aria-label="Abrir menu">
             <Menu size={23} />
           </button>
-          <div>
-            <p className="dashboard-layout__header-eyebrow">{mode === 'admin' ? 'Gestão e cuidado' : 'Comunidade interna'}</p>
-            <h2 className="dashboard-layout__page-title">{mode === 'admin' ? 'Administração' : 'Área dos filhos'}</h2>
+          <div className="dashboard-layout__breadcrumb">
+            <span>{mode === 'admin' ? 'Administração' : 'Área dos filhos'}</span>
+            <span>/</span>
+            <strong>{currentItem?.label ?? 'Visão geral'}</strong>
           </div>
-          {mode === 'admin' && <span className="dashboard-layout__privacy">Acesso reservado</span>}
+          <button className="dashboard-layout__search" type="button">
+            <Search size={15} aria-hidden="true" />
+            <span>Buscar no sistema...</span>
+            <kbd><Command size={11} /> K</kbd>
+          </button>
+          <div className="dashboard-layout__header-actions">
+            {previewMode && <span className="dashboard-layout__environment"><i /> Ambiente de teste</span>}
+            <button type="button" aria-label="Central de ajuda"><HelpCircle size={17} /></button>
+            <button type="button" aria-label="Notificações"><Bell size={17} /><i /></button>
+            <button className="dashboard-layout__header-user" type="button" aria-label="Abrir menu da conta">
+              {user.name.charAt(0).toUpperCase()}
+            </button>
+          </div>
         </header>
         <div className="dashboard-layout__content">{children}</div>
       </main>

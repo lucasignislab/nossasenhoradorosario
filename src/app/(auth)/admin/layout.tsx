@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { createClient } from '@/lib/supabase/server';
 import '@/styles/portal.css';
+import '@/styles/portal-corporate.css';
 
 type Profile = {
   full_name: string;
