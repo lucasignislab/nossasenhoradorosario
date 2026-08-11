@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-11T09:50:00-03:00",
+  "title": "Design System: T. U. Senhora do Rosário",
+  "extensions": {
+    "colorMeta": {
+      "terracotta": { "role": "primary", "displayName": "Terracotta Profundo", "canonical": "#8B3A2A", "tonalRamp": ["#1F0401", "#3D1109", "#5E2317", "#7F3627", "#8B3A2A", "#BE6755", "#D58776", "#E9A89A", "#F8CABF", "#FFE4DE", "#FFF4F1"] },
+      "ancestral-gold": { "role": "secondary", "displayName": "Dourado Ancestral", "canonical": "#C9A227", "tonalRamp": ["#130C00", "#2B2000", "#463600", "#634D00", "#816500", "#C9A227", "#BC9A37", "#D3B870", "#E7D5A4", "#F5EBCF", "#FDF6E6"] },
+      "candle-amber": { "role": "secondary", "displayName": "Âmbar das Velas", "canonical": "#D4813A", "tonalRamp": ["#D4813A"] },
+      "parchment": { "role": "neutral", "displayName": "Creme Parchment", "canonical": "#FAF5EC", "tonalRamp": ["#100D06", "#262116", "#3F3729", "#584E3D", "#726754", "#8D826D", "#A79D8A", "#C2B9AA", "#DBD5CA", "#EEEBE4", "#FAF5EC"] },
+      "warm-neutral-950": { "role": "neutral", "displayName": "Preto Noturno", "canonical": "#0D0B08", "tonalRamp": ["#0D0B08", "#2A2318", "#3F3729", "#594E3D", "#736754", "#8E816E", "#A89D8B", "#C3B9AB", "#DBD5CB", "#EEEBE5", "#F9F6F3"] },
+      "warm-neutral-900": { "role": "neutral", "displayName": "Marrom Quente Escuro", "canonical": "#2A2318", "tonalRamp": ["#0D0B08", "#2A2318", "#3F3729", "#594E3D", "#736754", "#8E816E", "#A89D8B", "#C3B9AB", "#DBD5CB", "#EEEBE5", "#F9F6F3"] },
+      "warm-neutral-600": { "role": "neutral", "displayName": "Marrom Quente Médio", "canonical": "#736754", "tonalRamp": ["#0D0B08", "#2A2318", "#3F3729", "#594E3D", "#736754", "#8E816E", "#A89D8B", "#C3B9AB", "#DBD5CB", "#EEEBE5", "#F9F6F3"] },
+      "ember": { "role": "functional-error", "displayName": "Ember", "canonical": "#A33A2B", "tonalRamp": ["#220100", "#430904", "#65190F", "#892B1E", "#A33A2B", "#CA5D4C", "#E17F6E", "#F4A394", "#FFC6BB", "#FFE4DF", "#FFF4F2"] },
+      "sun": { "role": "functional-warning", "displayName": "Sun", "canonical": "#C58A16", "tonalRamp": ["#150B00", "#2F1E00", "#4C3200", "#6B4800", "#8B5F00", "#C58A16", "#C8943D", "#DDB373", "#EED1A6", "#FAE9CF", "#FFF5E8"] },
+      "river": { "role": "functional-info", "displayName": "River", "canonical": "#2F6473", "tonalRamp": ["#011015", "#08262E", "#163E49", "#275765", "#2F6473", "#578C9C", "#79A7B5", "#9DC2CD", "#C2DBE3", "#DFEEF3", "#F0F8FB"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Títulos de hero e chamadas principais; sempre Cormorant Garamond." },
+      "headline": { "displayName": "Headline", "purpose": "Títulos de seção e cards editoriais." },
+      "body": { "displayName": "Body", "purpose": "Texto de leitura em Inter; 65–75ch em blocos editoriais." },
+      "label": { "displayName": "Label", "purpose": "Eyebrow labels, categorias e metadados em uppercase." }
+    },
+    "shadows": [],
+    "motion": [
+      { "name": "fade-rise", "value": "opacity 0→1 + translateY, via IntersectionObserver", "purpose": "Scroll reveal de texto e imagem nas seções públicas." },
+      { "name": "gold-ignite", "value": "border-color → #C9A227, transition 300–700ms", "purpose": "Borda dourada acende no hover de cards escuros e ícones sociais." },
+      { "name": "candlelight", "value": "radial-gradient dourado segue o cursor via onMouseMove", "purpose": "Spotlight de vela nas seções escuras (assinatura do sistema)." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Ação principal do portal — terracota sobre texto creme, cantos quase retos.",
+      "html": "<button class=\"ds-btn-primary\">Quero Conhecer a Casa</button>",
+      "css": ".ds-btn-primary { background: #8B3A2A; color: #FAF5EC; padding: 16px 48px; border: none; border-radius: 2px; font-family: Inter, system-ui, sans-serif; font-weight: 500; letter-spacing: 0.04em; cursor: pointer; transition: background 0.3s ease; } .ds-btn-primary:hover { background: #5E2317; } .ds-btn-primary:focus-visible { outline: 2px solid #C9A227; outline-offset: 2px; }"
+    },
+    {
+      "name": "Secondary Gold Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Ação secundária — contorno dourado que acende no hover.",
+      "html": "<button class=\"ds-btn-secondary\">Ver Agenda de Giras</button>",
+      "css": ".ds-btn-secondary { background: transparent; color: #C9A227; padding: 16px 48px; border: 1px solid rgba(201,162,39,0.5); border-radius: 2px; font-family: Inter, system-ui, sans-serif; font-weight: 500; letter-spacing: 0.04em; cursor: pointer; transition: border-color 0.3s ease, background 0.3s ease; } .ds-btn-secondary:hover { border-color: #C9A227; background: rgba(201,162,39,0.08); } .ds-btn-secondary:focus-visible { outline: 2px solid #C9A227; outline-offset: 2px; }"
+    },
+    {
+      "name": "Filter Pill",
+      "kind": "chip",
+      "refersTo": "button-pill-filter",
+      "description": "Pílula circular de filtro de categorias de eventos.",
+      "html": "<button class=\"ds-chip\">Festividades</button>",
+      "css": ".ds-chip { background: transparent; color: #2A2318; padding: 8px 24px; border: 1px solid rgba(13,11,8,0.12); border-radius: 9999px; font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; font-weight: 500; cursor: pointer; transition: all 0.3s ease; } .ds-chip:hover { border-color: #8B3A2A; color: #8B3A2A; } .ds-chip:focus-visible { outline: 2px solid #C9A227; outline-offset: 2px; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input-text",
+      "description": "Campo de formulário — borda-fio, foco dourado, raio 2px.",
+      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"Seu nome\" />",
+      "css": ".ds-input { background: #FFFFFF; color: #2A2318; padding: 8px 16px; border: 1px solid rgba(13,11,8,0.12); border-radius: 2px; font-family: Inter, system-ui, sans-serif; font-size: 1rem; transition: border-color 0.3s ease; } .ds-input:focus { border-color: #C9A227; outline: none; } .ds-input::placeholder { color: #736754; }"
+    },
+    {
+      "name": "Dark Glass Card",
+      "kind": "card",
+      "refersTo": "card-dark-glass",
+      "description": "Card de vidro jateado das seções escuras — borda dourada acende no hover.",
+      "html": "<div class=\"ds-card-glass\"><h3 class=\"ds-card-glass-title\">Caridade</h3><p class=\"ds-card-glass-body\">Fundamento vivo da casa, praticado em cada gira e ação social.</p></div>",
+      "css": ".ds-card-glass { background: rgba(13,11,8,0.4); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.05); border-radius: 2px; padding: 32px; transition: border-color 0.7s ease; } .ds-card-glass:hover { border-color: rgba(201,162,39,0.6); } .ds-card-glass-title { color: #FAF5EC; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.5rem; font-weight: 500; margin: 0 0 12px; } .ds-card-glass-body { color: rgba(250,245,236,0.75); font-family: Inter, system-ui, sans-serif; font-size: 0.95rem; line-height: 1.6; margin: 0; }"
+    },
+    {
+      "name": "Event Card",
+      "kind": "card",
+      "refersTo": "card-event",
+      "description": "Card de gira/evento com flyer de fundo e gradiente vertical de leitura.",
+      "html": "<div class=\"ds-card-event\"><div class=\"ds-card-event-overlay\"><span class=\"ds-card-event-label\">Gira Pública</span><h3 class=\"ds-card-event-title\">Gira de Caboclos</h3><p class=\"ds-card-event-meta\">Sábado · 19h30</p></div></div>",
+      "css": ".ds-card-event { position: relative; border-radius: 6px; overflow: hidden; min-height: 320px; background: linear-gradient(160deg, #2A2318, #0D0B08); border: 1px solid rgba(13,11,8,0.08); cursor: pointer; } .ds-card-event-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end; padding: 32px; background: linear-gradient(to top, rgba(0,0,0,0.95), rgba(0,0,0,0.5) 55%, rgba(0,0,0,0.25)); } .ds-card-event-label { color: #C9A227; font-family: Inter, system-ui, sans-serif; font-size: 0.75rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; } .ds-card-event-title { color: #FAF5EC; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.75rem; font-weight: 500; margin: 0 0 4px; } .ds-card-event-meta { color: rgba(250,245,236,0.7); font-family: Inter, system-ui, sans-serif; font-size: 0.875rem; margin: 0; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "O Santuário Editorial",
+    "overview": "O Sacred Modernism trata o portal como uma publicação impressa de altar: tipografia serifada de revista, espaço generoso, gravidade silenciosa. O visitante deve sentir acolhimento, mistério e dignidade — a interface se retira e deixa a casa, suas giras e seus fundamentos falarem. O sistema nunca deve parecer um site de igreja genérico nem um template SaaS.",
+    "keyCharacteristics": [
+      "Serifas Cormorant Garamond grandes e leves comandam cada tela; Inter serve a leitura e a ação.",
+      "Fundos quentes: creme parchment de dia, preto noturno de vela nas seções escuras.",
+      "Ouro ancestral como acento ritual e raro; terracota como única voz de ação.",
+      "Superfícies planas com profundidade por vidro jateado e luz, não por sombras.",
+      "Raios mínimos (2px) e bordas-fio de 5–8% de opacidade: elegância silenciosa."
+    ],
+    "rules": [
+      { "name": "The Rare Gold Rule", "body": "O dourado é usado com parcimônia ritual — acentos, estados, luz. Nunca como preenchimento dominante de grandes superfícies.", "section": "colors" },
+      { "name": "The Two Voices Rule", "body": "Apenas duas famílias tipográficas existem: Cormorant fala pela casa, Inter serve o visitante. Uma terceira fonte é regressão, não variação.", "section": "typography" },
+      { "name": "The Flat-By-Default Rule", "body": "Superfícies são planas em repouso. Luz e vidro — não drop shadows — criam hierarquia.", "section": "elevation" },
+      { "name": "The Reserved Circle Rule", "body": "O círculo completo é uma forma especial: só pílulas, tags e avatares o usam.", "section": "shapes" }
+    ],
+    "dos": [
+      "Do usar o grid de 8px em todo espaçamento (8/16/24/32/48/64/96px).",
+      "Do manter Cormorant Garamond para display e Inter para corpo — somente essas duas famílias.",
+      "Do reservar o dourado a acentos, estados e luz (The Rare Gold Rule).",
+      "Do usar bordas-fio de 5–12% de opacidade para divisórias.",
+      "Do usar flyers e fotos reais da casa como imagem de fundo com gradiente de leitura."
+    ],
+    "donts": [
+      "Don't criar gradientes roxo-azul, cards aninhados em cards ou qualquer padrão de template SaaS.",
+      "Don't usar o dourado como preenchimento de grandes superfícies.",
+      "Don't adicionar uma terceira família tipográfica.",
+      "Don't aplicar drop shadows proeminentes; superfícies são planas em repouso.",
+      "Don't arredondar cards além de 6px; círculos são reservados a pílulas e avatares.",
+      "Don't inventar imagens, depoimentos ou dados — apenas conteúdo real fornecido pelo proprietário."
+    ]
+  }
+}
