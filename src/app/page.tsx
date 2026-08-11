@@ -78,10 +78,7 @@ export default function Home() {
 
       {/* 6. Como chegar e contacto */}
       <LocationContact
-        address="Rua das Flores, 123 - Centro, São Paulo - SP"
-        phone="(11) 98765-4321"
-        email="contato@terreirosenhadorosario.com.br"
-        hours="Segunda a Sexta: 18h - 22h | Sábado e Domingo: 14h - 22h"
+        address="Rua Antônio Adami, 36 - Barão Geraldo, Campinas - SP"
       />
 
       {/* 7. Rodapé com links e redes sociais */}

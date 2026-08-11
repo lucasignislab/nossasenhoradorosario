@@ -27,6 +27,7 @@ Portal institucional do T. U. Senhora do Rosário (Terreiro de Umbanda Senhora d
 - Uso interno recorrente pelos membros: login, dashboard, aulas e financeiro (Supabase como backend).
 - Conteúdo visual real da casa: flyers das giras, fotos históricas da galeria "Momentos da Nossa Casa".
 - Deploy via Netlify; desenvolvimento com Next.js (App Router), Storybook e Vitest.
+- Endereço oficial da casa: Rua Antônio Adami, 36 - Barão Geraldo, Campinas - SP. Telefone de contato: ainda não definido (não exibir até confirmação).
 
 ## Capabilities and Constraints
 

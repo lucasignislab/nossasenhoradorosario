@@ -25,11 +25,11 @@ export interface LocationContactProps {
 
 export const LocationContact = ({
   address,
-  latitude = -23.5505,
-  longitude = -46.6333,
-  phone = '(11) 9999-9999',
-  email = 'contato@terreiro.com.br',
-  hours = 'Seg-Sex: 18h-22h | Sab-Dom: 14h-22h',
+  latitude,
+  longitude,
+  phone,
+  email,
+  hours,
   mapsUrl,
   wazeUrl,
   onFormSubmit,
@@ -45,9 +45,13 @@ export const LocationContact = ({
 
   const googleMapsUrl =
     mapsUrl ||
-    `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3658.5789!2d${longitude}!3d${latitude}!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sTerreira!5e0!3m2!1spt-BR!2sbr!4v`;
+    `https://www.google.com/maps?q=${encodeURIComponent(address)}&output=embed`;
 
-  const wazeLink = wazeUrl || `https://waze.com/ul?ll=${latitude},${longitude}&navigate=yes`;
+  const wazeLink =
+    wazeUrl ||
+    (latitude != null && longitude != null
+      ? `https://waze.com/ul?ll=${latitude},${longitude}&navigate=yes`
+      : `https://waze.com/ul?q=${encodeURIComponent(address)}&navigate=yes`);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -120,39 +124,45 @@ export const LocationContact = ({
                 </div>
               </div>
 
-              <div className="flex gap-4">
-                <span className="flex-shrink-0 w-8 h-8 rounded-full bg-black/5 flex items-center justify-center text-[var(--color-sacred-gold)]">
-                  <Phone size={16} />
-                </span>
-                <div>
-                  <p className="text-[10px] font-semibold tracking-wider text-[#6F6F6F] uppercase mb-1 font-inter">Telefone</p>
-                  <a href={`tel:${phone}`} className="text-sm text-black hover:text-[var(--color-sacred-gold)] transition-colors leading-relaxed font-sans block">
-                    {phone}
-                  </a>
+              {phone && (
+                <div className="flex gap-4">
+                  <span className="flex-shrink-0 w-8 h-8 rounded-full bg-black/5 flex items-center justify-center text-[var(--color-sacred-gold)]">
+                    <Phone size={16} />
+                  </span>
+                  <div>
+                    <p className="text-[10px] font-semibold tracking-wider text-[#6F6F6F] uppercase mb-1 font-inter">Telefone</p>
+                    <a href={`tel:${phone}`} className="text-sm text-black hover:text-[var(--color-sacred-gold)] transition-colors leading-relaxed font-sans block">
+                      {phone}
+                    </a>
+                  </div>
                 </div>
-              </div>
+              )}
 
-              <div className="flex gap-4">
-                <span className="flex-shrink-0 w-8 h-8 rounded-full bg-black/5 flex items-center justify-center text-[var(--color-sacred-gold)]">
-                  <Mail size={16} />
-                </span>
-                <div>
-                  <p className="text-[10px] font-semibold tracking-wider text-[#6F6F6F] uppercase mb-1 font-inter">Email</p>
-                  <a href={`mailto:${email}`} className="text-sm text-black hover:text-[var(--color-sacred-gold)] transition-colors leading-relaxed font-sans block break-all">
-                    {email}
-                  </a>
+              {email && (
+                <div className="flex gap-4">
+                  <span className="flex-shrink-0 w-8 h-8 rounded-full bg-black/5 flex items-center justify-center text-[var(--color-sacred-gold)]">
+                    <Mail size={16} />
+                  </span>
+                  <div>
+                    <p className="text-[10px] font-semibold tracking-wider text-[#6F6F6F] uppercase mb-1 font-inter">Email</p>
+                    <a href={`mailto:${email}`} className="text-sm text-black hover:text-[var(--color-sacred-gold)] transition-colors leading-relaxed font-sans block break-all">
+                      {email}
+                    </a>
+                  </div>
                 </div>
-              </div>
+              )}
 
-              <div className="flex gap-4">
-                <span className="flex-shrink-0 w-8 h-8 rounded-full bg-black/5 flex items-center justify-center text-[var(--color-sacred-gold)]">
-                  <Clock size={16} />
-                </span>
-                <div>
-                  <p className="text-[10px] font-semibold tracking-wider text-[#6F6F6F] uppercase mb-1 font-inter">Horário</p>
-                  <p className="text-sm text-black leading-relaxed font-sans">{hours}</p>
+              {hours && (
+                <div className="flex gap-4">
+                  <span className="flex-shrink-0 w-8 h-8 rounded-full bg-black/5 flex items-center justify-center text-[var(--color-sacred-gold)]">
+                    <Clock size={16} />
+                  </span>
+                  <div>
+                    <p className="text-[10px] font-semibold tracking-wider text-[#6F6F6F] uppercase mb-1 font-inter">Horário</p>
+                    <p className="text-sm text-black leading-relaxed font-sans">{hours}</p>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             {/* Botões de GPS */}
