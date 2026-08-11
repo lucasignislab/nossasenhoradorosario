@@ -6,14 +6,6 @@ const InstagramIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
 );
 
-const FacebookIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-);
-
-const YoutubeIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/><path d="m10 15 5-3-5-3z"/></svg>
-);
-
 const HeartIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-[var(--color-sacred-red)]"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
 );
@@ -68,14 +60,8 @@ export const Footer = () => {
           <div>
             <h4 className="text-xs font-semibold tracking-[0.25em] uppercase text-[var(--color-sacred-gold)] mb-6">Redes Sociais</h4>
             <div className="flex space-x-3">
-              <a href="#" aria-label="Instagram" className="p-2.5 rounded-full border border-white/10 hover:border-[var(--color-sacred-gold)] hover:bg-[var(--color-sacred-gold)]/10 text-[var(--color-cream)] transition-all duration-300">
+              <a href="https://instagram.com/t.u.senhoradorosario" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="p-2.5 rounded-full border border-white/10 hover:border-[var(--color-sacred-gold)] hover:bg-[var(--color-sacred-gold)]/10 text-[var(--color-cream)] transition-all duration-300">
                 <InstagramIcon />
-              </a>
-              <a href="#" aria-label="Facebook" className="p-2.5 rounded-full border border-white/10 hover:border-[var(--color-sacred-gold)] hover:bg-[var(--color-sacred-gold)]/10 text-[var(--color-cream)] transition-all duration-300">
-                <FacebookIcon />
-              </a>
-              <a href="#" aria-label="Youtube" className="p-2.5 rounded-full border border-white/10 hover:border-[var(--color-sacred-gold)] hover:bg-[var(--color-sacred-gold)]/10 text-[var(--color-cream)] transition-all duration-300">
-                <YoutubeIcon />
               </a>
             </div>
           </div>

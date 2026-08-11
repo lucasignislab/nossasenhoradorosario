@@ -79,6 +79,7 @@ export default function Home() {
       {/* 6. Como chegar e contacto */}
       <LocationContact
         address="Rua Antônio Adami, 36 - Barão Geraldo, Campinas - SP"
+        hours="Entrega das fichas: 19h00 · Início dos trabalhos: 19h30"
       />
 
       {/* 7. Rodapé com links e redes sociais */}
