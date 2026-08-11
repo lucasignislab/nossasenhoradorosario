@@ -29,7 +29,7 @@ export const Footer = () => {
           {/* Coluna 1: Sobre / Logo */}
           <div className="col-span-1 md:col-span-1 flex flex-col gap-4">
             <div className="flex flex-col text-left">
-              <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-white/50 font-inter">
+              <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-white/70 font-inter">
                 T. U.
               </span>
               <span className="text-xl font-bold tracking-tight text-white font-[var(--font-heading)] -mt-1.5">

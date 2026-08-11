@@ -37,27 +37,28 @@
 .hero__image {
   position: absolute;
   inset: -5%;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
+  width: 110%;
+  height: 110%;
+  object-fit: cover;
+  object-position: center;
   transform: scale(1.04);
   animation: heroImageDrift 20s ease-in-out infinite alternate;
   will-change: transform;
 }
 
 .hero__image[data-panel='1'] {
-  background-position: 52% 46%;
+  object-position: 52% 46%;
   animation-delay: -7s;
 }
 
 .hero__image[data-panel='2'] {
-  background-position: 50% 54%;
+  object-position: 50% 54%;
   animation-duration: 24s;
   animation-direction: alternate-reverse;
 }
 
 .hero__image[data-panel='3'] {
-  background-position: 50% 44%;
+  object-position: 50% 44%;
   animation-delay: -12s;
   animation-duration: 22s;
 }
@@ -106,7 +107,7 @@
   color: var(--color-cream, #faf5ec);
   font-family: var(--font-heading, 'Cormorant Garamond', serif);
   font-size: clamp(48px, 6.4vw, 88px);
-  font-weight: 650;
+  font-weight: 600;
   letter-spacing: -0.025em;
   line-height: 0.98;
   text-shadow: 0 2px 32px rgba(0, 0, 0, 0.28);

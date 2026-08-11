@@ -32,7 +32,7 @@ export const Header = () => {
             <div className="flex flex-col text-left">
               <span
                 className="text-[10px] font-bold tracking-[0.2em] uppercase"
-                style={{ fontFamily: 'var(--font-body)', color: 'var(--color-dark-muted)', opacity: 0.8 }}
+                style={{ fontFamily: 'var(--font-body)', color: 'var(--color-dark-muted)' }}
               >
                 T. U.
               </span>

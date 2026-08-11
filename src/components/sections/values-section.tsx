@@ -34,7 +34,7 @@ const ValueCard = ({ title, description, Icon }: ValueCardProps) => (
       {title}
     </h3>
     
-    <p className="text-[var(--color-cream)] opacity-65 font-sans leading-relaxed text-sm md:text-base group-hover:opacity-85 transition-opacity">
+    <p className="text-[var(--color-cream)] opacity-80 font-sans leading-relaxed text-sm md:text-base group-hover:opacity-100 transition-opacity">
       {description}
     </p>
   </div>

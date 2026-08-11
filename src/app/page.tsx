@@ -50,7 +50,6 @@ export default function Home() {
         subtitle="Um espaço de fé, amor e acolhimento espiritual sob a luz da Umbanda."
         buttonLabel="Ver Agenda de Giras"
         buttonHref="#agenda"
-        backgroundImage="/images/home/hero-fundamentos.jpg"
         backgroundImages={[
           '/images/home/hero-atabaques.jpg',
           '/images/home/hero-fundamentos.jpg',

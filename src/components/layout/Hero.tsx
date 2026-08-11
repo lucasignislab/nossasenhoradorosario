@@ -51,10 +51,14 @@ export const Hero = ({
         <div className="hero__media" aria-hidden="true">
           {backgroundImages.slice(0, 3).map((image, index) => (
             <div className="hero__panel" key={image}>
-              <div
+              <img
                 className="hero__image"
-                style={{ backgroundImage: `url('${image}')` }}
+                src={image}
+                alt=""
                 data-panel={index + 1}
+                loading={index === 0 ? 'eager' : 'lazy'}
+                fetchPriority={index === 0 ? 'high' : 'low'}
+                decoding="async"
               />
             </div>
           ))}
