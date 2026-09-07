@@ -5,7 +5,6 @@ import {
   BellRing,
   BookOpen,
   CalendarCheck,
-  Check,
   CheckCircle2,
   CircleDollarSign,
   Clock3,
@@ -23,19 +22,35 @@ import {
   TrendingUp,
   UserCheck,
   UserRoundCheck,
-  UserRoundX,
   UsersRound,
   WalletCards,
 } from 'lucide-react';
 import { MetricCard, PageHeader, PanelHeader, ProgressBar, StatusPill } from './PortalUI';
 import { FinanceTrendChart } from './FinanceTrendChart';
+import { ApprovalActions } from './MemberActions';
+import { MembersTable } from './MembersTable';
+import {
+  formatJoinedAt,
+  profileDisplayName,
+  profileInitial,
+  roleLabel,
+} from '@/lib/members';
+import type { Profile } from '@/types';
 
 const attendanceBars = [
   { month: 'Fev', value: 72 }, { month: 'Mar', value: 78 }, { month: 'Abr', value: 75 },
   { month: 'Mai', value: 84 }, { month: 'Jun', value: 81 }, { month: 'Jul', value: 87 },
 ];
 
-export function AdminOverview({ basePath = '/admin' }: { basePath?: string }) {
+type AdminOverviewProps = {
+  basePath?: string;
+  activeMembers?: number;
+  pendingMembers?: number;
+};
+
+export function AdminOverview({ basePath = '/admin', activeMembers, pendingMembers }: AdminOverviewProps) {
+  const activeMembersLabel = activeMembers ?? 42;
+  const pendingMembersLabel = pendingMembers ?? 3;
   return (
     <div className="portal-page">
       <PageHeader
@@ -46,7 +61,7 @@ export function AdminOverview({ basePath = '/admin' }: { basePath?: string }) {
       />
 
       <section className="portal-metrics" aria-label="Indicadores principais">
-        <MetricCard icon={UsersRound} label="Filhos ativos" value="42" detail="3 cadastros aguardando" tone="brand" />
+        <MetricCard icon={UsersRound} label="Filhos ativos" value={String(activeMembersLabel)} detail={`${pendingMembersLabel} cadastro${pendingMembersLabel === 1 ? '' : 's'} aguardando`} tone="brand" />
         <MetricCard icon={CalendarCheck} label="Próxima atividade" value="24 jul" detail="Estudo mediúnico · 20h" tone="gold" />
         <MetricCard icon={WalletCards} label="Recebido no mês" value="R$ 3.840" detail="86% do previsto" tone="info" />
         <MetricCard icon={UserRoundCheck} label="Frequência média" value="87%" detail="+6% em relação a junho" tone="neutral" />
@@ -86,7 +101,7 @@ export function AdminOverview({ basePath = '/admin' }: { basePath?: string }) {
 
         <div className="portal-stack">
           <article className="portal-panel portal-panel--accent">
-            <PanelHeader eyebrow="Atenção hoje" title="3 aprovações pendentes" />
+            <PanelHeader eyebrow="Atenção hoje" title={`${pendingMembersLabel} aprovaç${pendingMembersLabel === 1 ? 'ão pendente' : 'ões pendentes'}`} />
             <div className="portal-person-list">
               {['Marina de Souza', 'Rafael Santos', 'Clara Oliveira'].map((name, index) => (
                 <div className="portal-person" key={name}>
@@ -238,40 +253,78 @@ export function AttendanceDashboard() {
   );
 }
 
-export function MembersManagement() {
+type MemberCounts = { active: number; pending: number; suspended: number };
+
+type MembersManagementProps = {
+  pending?: Profile[];
+  members?: Profile[];
+  counts?: MemberCounts;
+};
+
+// Dados demonstrativos usados apenas pela prévia visual (portal-preview / Storybook).
+const previewMembers: Profile[] = [
+  { id: 'preview-1', full_name: 'Ana Martins', phone: '(11) 99991-0001', role: 'member', status: 'active', joined_at: '2021-03-10', created_at: '2021-03-10T00:00:00Z', updated_at: '2021-03-10T00:00:00Z' },
+  { id: 'preview-2', full_name: 'Caio Almeida', phone: '(11) 99992-0002', role: 'member', status: 'active', joined_at: '2022-08-15', created_at: '2022-08-15T00:00:00Z', updated_at: '2022-08-15T00:00:00Z' },
+  { id: 'preview-3', full_name: 'Helena Rocha', phone: '(11) 99993-0003', role: 'member', status: 'active', joined_at: '2024-01-20', created_at: '2024-01-20T00:00:00Z', updated_at: '2024-01-20T00:00:00Z' },
+  { id: 'preview-4', full_name: 'Pedro Lima', phone: '(11) 99994-0004', role: 'member', status: 'suspended', joined_at: '2025-05-05', created_at: '2025-05-05T00:00:00Z', updated_at: '2025-05-05T00:00:00Z' },
+];
+
+const previewPending: Profile[] = [
+  { id: 'preview-p1', full_name: 'Marina de Souza', phone: '(11) 99990-0000', role: 'member', status: 'pending', joined_at: null, created_at: '2026-07-21T00:00:00Z', updated_at: '2026-07-21T00:00:00Z' },
+  { id: 'preview-p2', full_name: 'Rafael Santos', phone: '(11) 99991-0001', role: 'member', status: 'pending', joined_at: null, created_at: '2026-07-20T00:00:00Z', updated_at: '2026-07-20T00:00:00Z' },
+  { id: 'preview-p3', full_name: 'Clara Oliveira', phone: '(11) 99992-0002', role: 'member', status: 'pending', joined_at: null, created_at: '2026-07-19T00:00:00Z', updated_at: '2026-07-19T00:00:00Z' },
+];
+
+export function MembersManagement({ pending, members, counts }: MembersManagementProps) {
+  const pendingList = pending ?? previewPending;
+  const memberList = members ?? [...previewMembers, ...previewPending];
+  const resolvedCounts: MemberCounts = counts ?? {
+    active: memberList.filter((member) => member.status === 'active').length,
+    pending: pendingList.length,
+    suspended: memberList.filter((member) => member.status === 'suspended').length,
+  };
+  const adminNames = memberList
+    .filter((member) => member.role === 'admin' || member.role === 'developer')
+    .map((member) => profileDisplayName(member));
+
   return (
     <div className="portal-page">
       <PageHeader eyebrow="Administração · Pessoas" title="Filhos da casa" description="Cadastros, vínculos, funções e acessos organizados com cuidado." action={<button className="portal-button portal-button--primary"><Plus size={16} /> Convidar pessoa</button>} />
       <section className="portal-metrics portal-metrics--compact">
-        <MetricCard icon={UsersRound} label="Ativos" value="42" detail="Corrente atual" tone="brand" />
-        <MetricCard icon={Clock3} label="Aguardando" value="3" detail="Revisar cadastros" tone="warning" />
-        <MetricCard icon={UserRoundCheck} label="Administração" value="2" detail="Iyá Pri e Iyá Bru" tone="gold" />
+        <MetricCard icon={UsersRound} label="Ativos" value={String(resolvedCounts.active)} detail="Corrente atual" tone="brand" />
+        <MetricCard icon={Clock3} label="Aguardando" value={String(resolvedCounts.pending)} detail="Revisar cadastros" tone="warning" />
+        <MetricCard icon={UserRoundCheck} label="Administração" value={String(adminNames.length)} detail={adminNames.join(' e ') || '—'} tone="gold" />
       </section>
 
       <article className="portal-panel portal-panel--pending">
         <PanelHeader eyebrow="Precisam de atenção" title="Cadastros aguardando aprovação" />
-        <div className="portal-approval-grid">
-          {['Marina de Souza', 'Rafael Santos', 'Clara Oliveira'].map((name, index) => (
-            <article className="portal-approval-card" key={name}>
-              <div className="portal-approval-card__top"><span>{name.charAt(0)}</span><div><h3>{name}</h3><p>Recebido em {21 - index} de julho</p></div></div>
-              <dl><div><dt>WhatsApp</dt><dd>(11) 9999{index}-000{index}</dd></div><div><dt>Solicitação</dt><dd>Filho da casa</dd></div></dl>
-              <div className="portal-approval-card__actions">
-                <button className="portal-button portal-button--secondary">Detalhes</button>
-                <button className="portal-button portal-button--danger"><UserRoundX size={15} /> Reprovar</button>
-                <button className="portal-button portal-button--primary"><Check size={15} /> Aprovar</button>
-              </div>
-            </article>
-          ))}
-        </div>
+        {pendingList.length === 0 ? (
+          <p className="portal-panel__copy">Nenhum cadastro aguardando aprovação.</p>
+        ) : (
+          <div className="portal-approval-grid">
+            {pendingList.map((member) => (
+              <article className="portal-approval-card" key={member.id}>
+                <div className="portal-approval-card__top">
+                  <span>{profileInitial(member)}</span>
+                  <div>
+                    <h3>{profileDisplayName(member)}</h3>
+                    <p>Recebido em {formatJoinedAt(member.created_at)}</p>
+                  </div>
+                </div>
+                <dl>
+                  <div><dt>WhatsApp</dt><dd>{member.phone?.trim() || '—'}</dd></div>
+                  <div><dt>Solicitação</dt><dd>{roleLabel(member.role)}</dd></div>
+                </dl>
+                <ApprovalActions profileId={member.id} />
+              </article>
+            ))}
+          </div>
+        )}
       </article>
 
       <article className="portal-panel">
-        <PanelHeader eyebrow="Comunidade" title="Todos os filhos" action={<div className="portal-search"><Search size={15} /><input aria-label="Buscar membro" placeholder="Buscar por nome" /></div>} />
-        <div className="portal-table-wrap"><table className="portal-table"><thead><tr><th>Nome</th><th>Função</th><th>Entrada na casa</th><th>Frequência</th><th>Situação</th><th>Ações</th></tr></thead><tbody>
-          {[
-            ['Ana Martins', 'Filha da casa', 'Mar 2021', '96%', 'Ativo'], ['Caio Almeida', 'Cambone', 'Ago 2022', '88%', 'Ativo'], ['Helena Rocha', 'Filha da casa', 'Jan 2024', '82%', 'Ativo'], ['Pedro Lima', 'Filho da casa', 'Mai 2025', '64%', 'Acompanhar'],
-          ].map(([name, role, joined, attendance, status]) => <tr key={name}><td><div className="portal-table-person"><span>{name.charAt(0)}</span><strong>{name}</strong></div></td><td>{role}</td><td>{joined}</td><td>{attendance}</td><td><StatusPill tone={status === 'Ativo' ? 'info' : 'warning'}>{status}</StatusPill></td><td><button className="portal-icon-button" aria-label={`Opções de ${name}`}><MoreHorizontal size={17} /></button></td></tr>)}
-        </tbody></table></div>
+        <PanelHeader eyebrow="Comunidade" title="Todos os filhos" />
+        <MembersTable members={memberList} />
       </article>
     </div>
   );

@@ -88,6 +88,11 @@
 .portal-button--danger { border: 1px solid #e2b1aa; background: var(--portal-danger-soft); color: #a43f33; }
 .portal-button--danger:hover { border-color: var(--portal-danger); background: #fde8e5; color: #8f3025; }
 .portal-button--dark { width: 100%; border: 1px solid #393b40; background: #202125; color: #f0f1f2; }
+.portal-button:disabled { opacity: .55; cursor: not-allowed; }
+.portal-button--small { min-height: 30px; padding-inline: 10px; font-size: 12px; }
+.portal-approval-card__actions-wrap { display: grid; gap: 6px; }
+.portal-row-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+.portal-action-error { margin: 0; color: var(--portal-danger); font-size: 12px; }
 .portal-text-link { display: inline-flex; align-items: center; gap: 5px; color: var(--portal-accent); font-size: 9px; font-weight: 600; text-decoration: none; }
 .portal-filter {
   min-height: 30px;
@@ -324,7 +329,7 @@
 
 .portal-approval-grid { gap: 9px; }
 .portal-approval-card { padding: 13px; border: 1px solid var(--portal-border); border-radius: 7px; background: white; }
-.portal-approval-card__actions { grid-template-columns: repeat(3,minmax(0,1fr)); }
+.portal-approval-card__actions { grid-template-columns: repeat(2,minmax(0,1fr)); }
 .portal-approval-card__top > span { border-radius: 6px; background: #f0f1f2; color: #55585f; font-family: var(--font-body); }
 .portal-approval-card h3 { font: 600 10px var(--font-body); }
 .portal-approval-card p, .portal-approval-card small { font-size: 8px; }

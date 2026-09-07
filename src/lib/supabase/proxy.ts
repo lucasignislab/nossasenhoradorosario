@@ -22,7 +22,8 @@ export async function updateSession(request: NextRequest) {
   });
 
   const { data, error } = await supabase.auth.getClaims();
-  const isPrivateRoute = request.nextUrl.pathname.startsWith('/dashboard');
+  const pathname = request.nextUrl.pathname;
+  const isPrivateRoute = pathname.startsWith('/dashboard') || pathname.startsWith('/admin');
 
   if (isPrivateRoute && (error || !data?.claims)) {
     const loginUrl = request.nextUrl.clone();
