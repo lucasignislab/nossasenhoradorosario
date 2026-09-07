@@ -189,3 +189,11 @@ Margens, paddings e gaps são estritamente múltiplos de 8px:
 *   **RLS:** administração tem acesso total; cada filho visualiza apenas os próprios registros.
 *   **Admin (`/admin/frequencia`):** chamada por atividade (`AttendanceSheet`) — escolhe o evento, marca Presente/Faltou/Justificada por filho e salva em lote (upsert). Painel com frequência geral, presenças no mês, justificadas, barras de presença das últimas 6 atividades com chamada e tabela de % individual com leitura de acompanhamento.
 *   **Filho (`/dashboard/frequencia`):** métricas pessoais (presença %, presenças, justificadas, faltas) e histórico com status por atividade. Somente leitura.
+
+### 5.5. Avisos e conteúdos de estudo (tabelas `notices`, `contents`, `content_progress`)
+
+*   **`notices`**: comunicados da casa com categoria (geral, espiritual, operacional, evento) e destaque (`pinned`). Avisos fixados aparecem primeiro em todos os lugares. Migration: `supabase/migrations/202609070005_notices_contents.sql`.
+*   **`contents`**: biblioteca de estudos — links externos (YouTube, Drive etc.) com tipo (vídeo/artigo/documento), módulo (percurso), duração e rascunho/publicado.
+*   **`content_progress`**: conclusão pessoal por conteúdo (`unique(content_id, profile_id)`); cada filho marca/desfaz apenas o próprio progresso.
+*   **RLS:** nova função `is_active_member()` (membro autenticado ativo) protege a leitura de avisos e de conteúdos publicados; escrita e rascunhos são exclusivos da administração.
+*   **Fluxos:** `/admin/avisos` (CRUD de comunicados, novo item no menu de administração), `/admin/conteudos` (CRUD com publicar/despublicar), `/dashboard/avisos` (lista com data relativa em pt-BR), `/dashboard/aulas` (percursos por módulo com barra de progresso e "Marcar como concluído").

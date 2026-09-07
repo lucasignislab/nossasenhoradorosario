@@ -14,6 +14,8 @@ import {
   ListChecks,
   MessageSquareText,
   MoreHorizontal,
+  Pin,
+  Play,
   Plus,
   Search,
   Settings2,
@@ -37,6 +39,9 @@ import {
 } from '@/lib/members';
 import { eventCategoryLabel, eventDateParts, formatEventTime, todayISODate } from '@/lib/events';
 import { EventRowActions, NewEventButton } from './EventForm';
+import { ContentRowActions, NewContentButton } from './ContentForm';
+import { NewNoticeButton, NoticeRowActions } from './NoticeForm';
+import { contentKindLabel, formatDuration, formatRelativeDate, noticeCategoryLabel } from '@/lib/notices';
 import {
   FinanceEntryRowActions,
   FinanceExportButton,
@@ -52,7 +57,7 @@ import {
   formatFinanceDate,
   summarizeMonth,
 } from '@/lib/finance';
-import type { Attendance, FinanceEntry, PortalEvent, Profile } from '@/types';
+import type { Attendance, FinanceEntry, Notice, PortalEvent, Profile, StudyContent } from '@/types';
 import { AttendanceSheet } from './AttendanceSheet';
 
 // Dados demonstrativos usados apenas pela prévia visual (portal-preview / Storybook).
@@ -528,20 +533,54 @@ export function AgendaManagement({ events }: { events?: PortalEvent[] }) {
   );
 }
 
-export function ContentManagement() {
+// Dados demonstrativos usados apenas pela prévia visual (portal-preview / Storybook).
+const previewContents: StudyContent[] = [
+  { id: 'preview-c1', title: 'Fundamentos da mediunidade', description: null, kind: 'video', url: 'https://example.com', module: 'Estudos mediúnicos', duration_minutes: 42, published: true, sort_order: 0, created_by: null, created_at: '2026-07-01T00:00:00Z', updated_at: '2026-07-01T00:00:00Z' },
+  { id: 'preview-c2', title: 'Orientações para a corrente', description: null, kind: 'documento', url: 'https://example.com', module: 'Documentos da casa', duration_minutes: null, published: true, sort_order: 0, created_by: null, created_at: '2026-07-01T00:00:00Z', updated_at: '2026-07-01T00:00:00Z' },
+  { id: 'preview-c3', title: 'Ervas de proteção', description: null, kind: 'documento', url: 'https://example.com', module: 'Ervas e fundamentos', duration_minutes: null, published: false, sort_order: 1, created_by: null, created_at: '2026-07-01T00:00:00Z', updated_at: '2026-07-01T00:00:00Z' },
+];
+
+const contentKindIcons = { video: Play, artigo: BookOpen, documento: FileText } as const;
+
+export function ContentManagement({ contents }: { contents?: StudyContent[] }) {
+  const contentList = contents ?? previewContents;
+  const publishedCount = contentList.filter((content) => content.published).length;
+  const modules = new Set(contentList.map((content) => content.module ?? 'Biblioteca geral'));
+  const draftCount = contentList.length - publishedCount;
+  const sorted = [...contentList].sort((a, b) =>
+    (a.module ?? 'Biblioteca geral').localeCompare(b.module ?? 'Biblioteca geral', 'pt-BR') || a.sort_order - b.sort_order || a.title.localeCompare(b.title, 'pt-BR'),
+  );
+
   return (
     <div className="portal-page">
-      <PageHeader eyebrow="Administração · Conteúdos" title="Estudos e comunicados" description="Materiais da casa organizados para chegar às pessoas certas, no momento certo." action={<button className="portal-button portal-button--primary"><Plus size={16} /> Novo conteúdo</button>} />
+      <PageHeader eyebrow="Administração · Conteúdos" title="Estudos e comunicados" description="Materiais da casa organizados para chegar às pessoas certas, no momento certo." action={<NewContentButton />} />
       <section className="portal-content-categories">
-        {[['Estudos mediúnicos', '12 materiais', BookOpen], ['Documentos da casa', '8 arquivos', FileText], ['Comunicados', '5 publicados', BellRing]].map(([title, count, Icon]) => { const ContentIcon = Icon as typeof BookOpen; return <article key={String(title)}><ContentIcon size={21} /><div><h2>{String(title)}</h2><p>{String(count)}</p></div><ArrowRight size={17} /></article>; })}
-      </section>
-      <article className="portal-panel"><PanelHeader eyebrow="Publicados recentemente" title="Biblioteca da casa" action={<div className="portal-search"><Search size={15} /><input aria-label="Buscar conteúdo" placeholder="Buscar conteúdo" /></div>} /><div className="portal-library-list">
         {[
-          ['Fundamentos da mediunidade', 'Estudo mediúnico', 'Vídeo · 42 min', 'Todos os filhos'],
-          ['Orientações para a corrente', 'Documento da casa', 'PDF · 8 páginas', 'Todos os filhos'],
-          ['Escala de agosto', 'Comunicado', 'Publicado hoje', 'Equipe de cuidados'],
-          ['Ervas de proteção', 'Material de apoio', 'PDF · 12 páginas', 'Desenvolvimento II'],
-        ].map(([title, type, meta, audience]) => <div className="portal-library-item" key={title}><div className="portal-library-item__icon"><FileText size={19} /></div><div><span>{type}</span><h3>{title}</h3><p>{meta}</p></div><StatusPill>{audience}</StatusPill><button className="portal-icon-button" aria-label={`Opções para ${title}`}><MoreHorizontal size={18} /></button></div>)}
+          ['Publicados', `${publishedCount} ${publishedCount === 1 ? 'material' : 'materiais'}`, BookOpen],
+          ['Rascunhos', `${draftCount} ${draftCount === 1 ? 'item' : 'itens'}`, FileText],
+          ['Percursos', `${modules.size} ${modules.size === 1 ? 'módulo' : 'módulos'}`, BellRing],
+        ].map(([title, count, Icon]) => { const ContentIcon = Icon as typeof BookOpen; return <article key={String(title)}><ContentIcon size={21} /><div><h2>{String(title)}</h2><p>{String(count)}</p></div><ArrowRight size={17} /></article>; })}
+      </section>
+      <article className="portal-panel"><PanelHeader eyebrow="Biblioteca" title="Materiais da casa" /><div className="portal-library-list">
+        {sorted.length === 0 ? (
+          <p className="portal-panel__copy">Nenhum conteúdo cadastrado. Adicione o primeiro material de estudo.</p>
+        ) : (
+          sorted.map((content) => {
+            const KindIcon = contentKindIcons[content.kind] ?? FileText;
+            return (
+              <div className="portal-library-item" key={content.id}>
+                <div className="portal-library-item__icon"><KindIcon size={19} /></div>
+                <div>
+                  <span>{content.module ?? 'Biblioteca geral'}</span>
+                  <h3>{content.title}</h3>
+                  <p>{contentKindLabel(content.kind)}{content.duration_minutes ? ` · ${formatDuration(content.duration_minutes)}` : ''}</p>
+                </div>
+                <StatusPill tone={content.published ? 'info' : 'neutral'}>{content.published ? 'Publicado' : 'Rascunho'}</StatusPill>
+                <ContentRowActions content={content} />
+              </div>
+            );
+          })
+        )}
       </div></article>
     </div>
   );
@@ -560,6 +599,52 @@ export function AdminSettings() {
         <article className="portal-panel"><PanelHeader eyebrow="Papéis do sistema" title="Níveis de acesso" /><div className="portal-role-list">{roles.map(([title, desc, people, badge]) => <div key={title}><div className="portal-role-list__icon"><ShieldCheck size={19} /></div><div><h3>{title}</h3><p>{desc}</p></div><span>{people}</span><StatusPill tone={badge === 'Administração' ? 'gold' : 'neutral'}>{badge}</StatusPill><button className="portal-icon-button" aria-label={`Editar ${title}`}><Settings2 size={17} /></button></div>)}</div></article>
         <div className="portal-stack"><article className="portal-panel portal-panel--accent"><PanelHeader eyebrow="Proteção" title="Boas práticas ativas" /><ul className="portal-check-list"><li><CheckCircle2 size={17} /> Regras por perfil</li><li><CheckCircle2 size={17} /> Dados sensíveis restritos</li><li><CheckCircle2 size={17} /> Sessões protegidas</li><li><Clock3 size={17} /> Auditoria detalhada na próxima etapa</li></ul></article><article className="portal-panel"><PanelHeader eyebrow="Sessão" title="Políticas de acesso" /><p className="portal-panel__copy">Contas suspensas perdem acesso imediatamente. Alterações de papel exigirão confirmação administrativa.</p></article></div>
       </section>
+    </div>
+  );
+}
+
+// Dados demonstrativos usados apenas pela prévia visual (portal-preview / Storybook).
+const previewNotices: Notice[] = [
+  { id: 'preview-n1', title: 'Mudança no horário da gira interna', body: 'A atividade do dia 2 de agosto começará às 19h. Pedimos que a corrente chegue com 30 minutos de antecedência.', category: 'operacional', pinned: true, published_at: '2026-07-22T12:00:00Z', created_by: null, created_at: '2026-07-22T12:00:00Z', updated_at: '2026-07-22T12:00:00Z' },
+  { id: 'preview-n2', title: 'Nova escala de cuidados disponível', body: 'As equipes de agosto já estão organizadas. Consulte sua próxima data e confirme a participação.', category: 'geral', pinned: false, published_at: '2026-07-21T12:00:00Z', created_by: null, created_at: '2026-07-21T12:00:00Z', updated_at: '2026-07-21T12:00:00Z' },
+];
+
+export function NoticesManagement({ notices }: { notices?: Notice[] }) {
+  const noticeList = notices ?? previewNotices;
+  const sorted = [...noticeList].sort((a, b) =>
+    Number(b.pinned) - Number(a.pinned) || (a.published_at < b.published_at ? 1 : -1),
+  );
+  const pinnedCount = noticeList.filter((notice) => notice.pinned).length;
+
+  return (
+    <div className="portal-page">
+      <PageHeader eyebrow="Administração · Avisos" title="Comunicados da casa" description="Publique orientações e novidades para toda a corrente." action={<NewNoticeButton />} />
+      <section className="portal-metrics portal-metrics--compact">
+        <MetricCard icon={BellRing} label="Avisos publicados" value={String(noticeList.length)} detail="Visíveis na área dos filhos" tone="brand" />
+        <MetricCard icon={Pin} label="Fixados" value={String(pinnedCount)} detail="Aparecem em destaque" tone="gold" />
+      </section>
+
+      <article className="portal-panel">
+        <PanelHeader eyebrow="Caixa de entrada da corrente" title="Todos os avisos" />
+        {sorted.length === 0 ? (
+          <p className="portal-panel__copy">Nenhum aviso publicado ainda.</p>
+        ) : (
+          <div className="portal-stack">
+            {sorted.map((notice) => (
+              <article className={`member-notice${notice.pinned ? ' is-featured' : ''}`} key={notice.id}>
+                <div><BellRing size={18} /></div>
+                <div>
+                  <StatusPill tone={notice.pinned ? 'gold' : 'neutral'}>{notice.pinned ? 'Fixado' : noticeCategoryLabel(notice.category)}</StatusPill>
+                  <h2>{notice.title}</h2>
+                  <p>{notice.body}</p>
+                  <span>{formatRelativeDate(notice.published_at)} · {noticeCategoryLabel(notice.category)}</span>
+                </div>
+                <NoticeRowActions notice={notice} />
+              </article>
+            ))}
+          </div>
+        )}
+      </article>
     </div>
   );
 }

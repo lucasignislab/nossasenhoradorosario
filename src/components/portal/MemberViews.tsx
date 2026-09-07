@@ -17,9 +17,11 @@ import {
 } from 'lucide-react';
 import { MetricCard, PageHeader, PanelHeader, ProgressBar, StatusPill } from './PortalUI';
 import { EventConfirmationButton } from './EventConfirmationButton';
+import { ContentProgressToggle } from './ContentProgressToggle';
 import { eventDateParts, formatEventDateLong, formatEventTime } from '@/lib/events';
 import { currentMonthRange, formatBRL, formatFinanceDate } from '@/lib/finance';
-import type { FinanceEntry, PortalEvent } from '@/types';
+import { contentKindLabel, formatDuration, formatRelativeDate, noticeCategoryLabel } from '@/lib/notices';
+import type { FinanceEntry, Notice, PortalEvent, StudyContent } from '@/types';
 
 // Dados demonstrativos usados apenas pela prévia visual (portal-preview / Storybook).
 const previewMemberEvents: PortalEvent[] = [
@@ -131,15 +133,80 @@ export function MemberAttendance({ history }: { history?: MemberAttendanceItem[]
   );
 }
 
-export function MemberStudies() {
+const studyKindIcons = { video: Play, artigo: BookOpen, documento: FileText } as const;
+
+// Dados demonstrativos usados apenas pela prévia visual (portal-preview / Storybook).
+const previewStudyContents: StudyContent[] = [
+  { id: 'preview-s1', title: 'Fundamentos da mediunidade', description: null, kind: 'video', url: 'https://example.com', module: 'Desenvolvimento mediúnico', duration_minutes: 42, published: true, sort_order: 0, created_by: null, created_at: '2026-07-01T00:00:00Z', updated_at: '2026-07-01T00:00:00Z' },
+  { id: 'preview-s2', title: 'Ervas de proteção', description: null, kind: 'documento', url: 'https://example.com', module: 'Ervas e fundamentos', duration_minutes: null, published: true, sort_order: 0, created_by: null, created_at: '2026-07-01T00:00:00Z', updated_at: '2026-07-01T00:00:00Z' },
+  { id: 'preview-s3', title: 'Cantigas da casa', description: null, kind: 'video', url: 'https://example.com', module: 'Cantigas', duration_minutes: 18, published: true, sort_order: 0, created_by: null, created_at: '2026-07-01T00:00:00Z', updated_at: '2026-07-01T00:00:00Z' },
+];
+
+export function MemberStudies({ contents, completedIds }: { contents?: StudyContent[]; completedIds?: string[] }) {
+  const contentList = contents ?? previewStudyContents;
+  const completed = new Set(completedIds ?? []);
+
+  const modules = new Map<string, StudyContent[]>();
+  for (const content of contentList) {
+    const name = content.module ?? 'Biblioteca geral';
+    modules.set(name, [...(modules.get(name) ?? []), content]);
+  }
+  const moduleList = [...modules.entries()].map(([name, items]) => ({
+    name,
+    items: [...items].sort((a, b) => a.sort_order - b.sort_order || a.title.localeCompare(b.title, 'pt-BR')),
+  }));
+
+  const totalCompleted = contentList.filter((content) => completed.has(content.id)).length;
+  const nextContent = contentList.find((content) => !completed.has(content.id)) ?? null;
+
   return (
     <div className="portal-page">
       <PageHeader eyebrow="Área dos filhos · Estudos" title="Conhecimento que acompanha a prática" description="Estudos, materiais e orientações preparados pela casa para o seu desenvolvimento." />
-      <section className="member-feature-card member-feature-card--study"><div><StatusPill tone="gold">Continue estudando</StatusPill><h2>Fundamentos da mediunidade</h2><p>Você concluiu 3 de 5 conteúdos deste percurso.</p><span className="member-inline-progress"><i><i style={{width:'60%'}} /></i><strong>60%</strong></span></div><button className="portal-button portal-button--primary"><Play size={15} /> Continuar</button></section>
-      <div className="dashboard-home__section-heading"><div><p className="portal-eyebrow">Biblioteca da casa</p><h2>Percursos de estudo</h2></div><span>12 materiais disponíveis</span></div>
-      <section className="member-course-grid">{[
-        ['Desenvolvimento mediúnico','5 conteúdos','3 concluídos',BookOpen,60],['Ervas e fundamentos','4 conteúdos','1 concluído',Sparkles,25],['Cantigas da casa','8 conteúdos','Novo',Play,0],['Orientações da corrente','6 documentos','4 lidos',FileText,67],
-      ].map(([title,count,detail,Icon,progress]) => { const CourseIcon=Icon as typeof BookOpen; return <article key={String(title)}><div className="member-course-card__icon"><CourseIcon size={21} /></div><StatusPill>{String(count)}</StatusPill><h3>{String(title)}</h3><p>{String(detail)}</p><span className="member-inline-progress"><i><i style={{width:`${progress}%`}} /></i><strong>{String(progress)}%</strong></span><button>Ver percurso <ArrowRight size={14} /></button></article>; })}</section>
+      {nextContent ? (
+        <section className="member-feature-card member-feature-card--study">
+          <div>
+            <StatusPill tone="gold">Continue estudando</StatusPill>
+            <h2>{nextContent.title}</h2>
+            <p>Você concluiu {totalCompleted} de {contentList.length} conteúdos da biblioteca.</p>
+            <span className="member-inline-progress"><i><i style={{ width: `${contentList.length > 0 ? Math.round((totalCompleted / contentList.length) * 100) : 0}%` }} /></i><strong>{contentList.length > 0 ? Math.round((totalCompleted / contentList.length) * 100) : 0}%</strong></span>
+          </div>
+          <a className="portal-button portal-button--primary" href={nextContent.url} target="_blank" rel="noopener noreferrer"><Play size={15} /> Continuar</a>
+        </section>
+      ) : null}
+      <div className="dashboard-home__section-heading"><div><p className="portal-eyebrow">Biblioteca da casa</p><h2>Percursos de estudo</h2></div><span>{contentList.length} {contentList.length === 1 ? 'material disponível' : 'materiais disponíveis'}</span></div>
+      {moduleList.length === 0 ? (
+        <p className="portal-panel__copy">Nenhum conteúdo publicado no momento. Novos materiais aparecem aqui.</p>
+      ) : (
+        <section className="member-course-grid">
+          {moduleList.map(({ name, items }) => {
+            const done = items.filter((item) => completed.has(item.id)).length;
+            const percent = items.length > 0 ? Math.round((done / items.length) * 100) : 0;
+            return (
+              <article key={name}>
+                <div className="member-course-card__icon"><BookOpen size={21} /></div>
+                <StatusPill>{items.length} {items.length === 1 ? 'conteúdo' : 'conteúdos'}</StatusPill>
+                <h3>{name}</h3>
+                <p>{done} de {items.length} concluídos</p>
+                <span className="member-inline-progress"><i><i style={{ width: `${percent}%` }} /></i><strong>{percent}%</strong></span>
+                <ul className="member-course-items">
+                  {items.map((item) => {
+                    const KindIcon = studyKindIcons[item.kind] ?? FileText;
+                    return (
+                      <li key={item.id}>
+                        <a href={item.url} target="_blank" rel="noopener noreferrer" className="member-course-item__link">
+                          <KindIcon size={15} />
+                          <span><strong>{item.title}</strong><small>{contentKindLabel(item.kind)}{item.duration_minutes ? ` · ${formatDuration(item.duration_minutes)}` : ''}</small></span>
+                        </a>
+                        <ContentProgressToggle contentId={item.id} completed={completed.has(item.id)} />
+                      </li>
+                    );
+                  })}
+                </ul>
+              </article>
+            );
+          })}
+        </section>
+      )}
     </div>
   );
 }
@@ -190,15 +257,27 @@ export function MemberFinance({ entries }: { entries?: FinanceEntry[] }) {
   );
 }
 
-export function MemberNotices() {
+// Dados demonstrativos usados apenas pela prévia visual (portal-preview / Storybook).
+const previewMemberNotices: Notice[] = [
+  { id: 'preview-mn1', title: 'Mudança no horário da gira interna', body: 'A atividade do dia 2 de agosto começará às 19h. Pedimos que a corrente chegue com 30 minutos de antecedência.', category: 'operacional', pinned: true, published_at: new Date().toISOString(), created_by: null, created_at: '2026-07-22T12:00:00Z', updated_at: '2026-07-22T12:00:00Z' },
+  { id: 'preview-mn2', title: 'Nova escala de cuidados disponível', body: 'As equipes de agosto já estão organizadas. Consulte sua próxima data e confirme a participação.', category: 'geral', pinned: false, published_at: new Date(Date.now() - 86_400_000).toISOString(), created_by: null, created_at: '2026-07-21T12:00:00Z', updated_at: '2026-07-21T12:00:00Z' },
+  { id: 'preview-mn3', title: 'Material novo na biblioteca', body: 'O estudo Fundamentos da Mediunidade recebeu um novo vídeo e material complementar.', category: 'espiritual', pinned: false, published_at: new Date(Date.now() - 4 * 86_400_000).toISOString(), created_by: null, created_at: '2026-07-18T12:00:00Z', updated_at: '2026-07-18T12:00:00Z' },
+];
+
+export function MemberNotices({ notices }: { notices?: Notice[] }) {
+  const noticeList = notices ?? previewMemberNotices;
+  const sorted = [...noticeList].sort((a, b) =>
+    Number(b.pinned) - Number(a.pinned) || (a.published_at < b.published_at ? 1 : -1),
+  );
+  const pinnedCount = noticeList.filter((notice) => notice.pinned).length;
+  const monthStart = new Date();
+  monthStart.setDate(1);
+  const thisMonth = noticeList.filter((notice) => new Date(notice.published_at) >= monthStart).length;
+
   return (
     <div className="portal-page">
       <PageHeader eyebrow="Área dos filhos · Avisos" title="Comunicados da casa" description="Orientações importantes, mudanças de agenda e notícias para a corrente." />
-      <section className="member-notice-layout"><div className="portal-stack">{[
-        ['Importante','Mudança no horário da gira interna','A atividade do dia 2 de agosto começará às 19h. Pedimos que a corrente chegue com 30 minutos de antecedência.','Hoje · Iyá Pri','gold'],
-        ['Organização','Nova escala de cuidados disponível','As equipes de agosto já estão organizadas. Consulte sua próxima data e confirme a participação.','Ontem · Administração','info'],
-        ['Estudos','Material novo na biblioteca','O estudo Fundamentos da Mediunidade recebeu um novo vídeo e material complementar.','18 jul · Iyá Bru','neutral'],
-      ].map(([type,title,body,meta,tone],index) => <article className={`member-notice ${index===0?'is-featured':''}`} key={title}><div><Bell size={18} /></div><div><StatusPill tone={tone as 'gold'|'info'|'neutral'}>{type}</StatusPill><h2>{title}</h2><p>{body}</p><span>{meta}</span></div></article>)}</div><div className="portal-stack"><article className="portal-panel"><PanelHeader eyebrow="Caixa de entrada" title="Resumo" /><dl className="portal-definition-list"><div><dt>Não lidos</dt><dd>2</dd></div><div><dt>Este mês</dt><dd>7</dd></div><div><dt>Importantes</dt><dd>1</dd></div></dl></article><article className="portal-note-card portal-note-card--light"><Bell size={22} /><p>Ative as notificações para não perder mudanças importantes.</p><span>Preferências</span></article></div></section>
+      <section className="member-notice-layout"><div className="portal-stack">{sorted.length === 0 ? <p className="portal-panel__copy">Nenhum aviso publicado no momento.</p> : sorted.map((notice) => <article className={`member-notice${notice.pinned ? ' is-featured' : ''}`} key={notice.id}><div><Bell size={18} /></div><div><StatusPill tone={notice.pinned ? 'gold' : 'neutral'}>{notice.pinned ? 'Importante' : noticeCategoryLabel(notice.category)}</StatusPill><h2>{notice.title}</h2><p>{notice.body}</p><span>{formatRelativeDate(notice.published_at)} · {noticeCategoryLabel(notice.category)}</span></div></article>)}</div><div className="portal-stack"><article className="portal-panel"><PanelHeader eyebrow="Caixa de entrada" title="Resumo" /><dl className="portal-definition-list"><div><dt>Avisos ativos</dt><dd>{noticeList.length}</dd></div><div><dt>Este mês</dt><dd>{thisMonth}</dd></div><div><dt>Fixados</dt><dd>{pinnedCount}</dd></div></dl></article><article className="portal-note-card portal-note-card--light"><Bell size={22} /><p>Ative as notificações para não perder mudanças importantes.</p><span>Preferências</span></article></div></section>
     </div>
   );
 }

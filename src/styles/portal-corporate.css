@@ -94,6 +94,14 @@
 .portal-row-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
 .portal-action-error { margin: 0; color: var(--portal-danger); font-size: 12px; }
 .portal-action-success { margin: 0; color: #2f7a4f; font-size: 12px; }
+.portal-field--checkbox { display: flex; flex-direction: row; align-items: center; gap: 8px; align-self: end; }
+.portal-field--checkbox input { min-height: auto; width: 16px; height: 16px; accent-color: var(--portal-accent); }
+.member-course-items { list-style: none; margin: 10px 0 0; padding: 10px 0 0; border-top: 1px solid var(--portal-border); display: grid; gap: 10px; }
+.member-course-items li { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.member-course-item__link { display: inline-flex; align-items: center; gap: 8px; color: var(--portal-text); text-decoration: none; }
+.member-course-item__link:hover strong { color: var(--portal-accent); }
+.member-course-item__link span { display: grid; }
+.member-course-item__link small { color: var(--portal-text-soft); font-size: 11px; }
 .portal-attendance-sheet { display: grid; gap: 14px; }
 .portal-mark-group { display: inline-flex; gap: 4px; }
 .portal-mark { min-height: 28px; padding: 0 10px; border: 1px solid var(--portal-border); border-radius: 999px; background: white; color: var(--portal-text-soft); font-size: 11px; font-weight: 600; cursor: pointer; }

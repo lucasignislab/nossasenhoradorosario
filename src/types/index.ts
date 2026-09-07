@@ -73,3 +73,39 @@ export type Attendance = {
   created_at: string;
   updated_at: string;
 };
+
+export type Notice = {
+  id: string;
+  title: string;
+  body: string;
+  category: string;
+  pinned: boolean;
+  published_at: string;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ContentKind = 'video' | 'artigo' | 'documento';
+
+export type StudyContent = {
+  id: string;
+  title: string;
+  description: string | null;
+  kind: ContentKind;
+  url: string;
+  module: string | null;
+  duration_minutes: number | null;
+  published: boolean;
+  sort_order: number;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ContentProgress = {
+  id: string;
+  content_id: string;
+  profile_id: string;
+  completed_at: string;
+};
