@@ -17,10 +17,13 @@ export function SelfAttendanceControls({
   eventId,
   current,
   windowOpen,
+  showWhenClosed = false,
 }: {
   eventId: string;
   current: SelfAttendanceRecord | null;
   windowOpen: boolean;
+  /** Quando true, mostra os botões desabilitados fora da janela (para o membro já ver onde registrará). */
+  showWhenClosed?: boolean;
 }) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -39,9 +42,24 @@ export function SelfAttendanceControls({
     });
   };
 
-  // Fora da janela (antes do dia ou mais de 24h após o início): só consulta.
+  // Fora da janela (antes do dia ou após as 23h59 do dia): só consulta,
+  // ou botões desabilitados quando showWhenClosed está ativo.
   if (!windowOpen) {
-    return current ? <StatusPill tone={current.present ? 'info' : current.justified ? 'warning' : 'danger'}>{attendanceStatusLabel(current)}</StatusPill> : null;
+    if (current) return <StatusPill tone={current.present ? 'info' : current.justified ? 'warning' : 'danger'}>{attendanceStatusLabel(current)}</StatusPill>;
+    if (!showWhenClosed) return null;
+    return (
+      <span className="portal-self-attendance">
+        <span className="portal-row-actions portal-row-actions--inline">
+          <button type="button" className="portal-button portal-button--primary portal-button--small" disabled>
+            <CheckCircle2 size={14} /> Registrar presença
+          </button>
+          <button type="button" className="portal-button portal-button--secondary portal-button--small" disabled>
+            <PenLine size={14} /> Justificar falta
+          </button>
+        </span>
+        <span className="portal-action-note">Disponível no dia da atividade, até 23h59.</span>
+      </span>
+    );
   }
 
   if (justifying) {
@@ -85,7 +103,7 @@ export function SelfAttendanceControls({
           <PenLine size={14} /> {current && !current.present ? 'Editar justificativa' : 'Justificar falta'}
         </button>
       </span>
-      {current ? <span className="portal-action-note">Você pode corrigir até 24h após o início.</span> : null}
+      {current ? <span className="portal-action-note">Você pode corrigir até às 23h59 de hoje.</span> : null}
       {error ? <span className="portal-action-error" role="alert">{error}</span> : null}
     </span>
   );

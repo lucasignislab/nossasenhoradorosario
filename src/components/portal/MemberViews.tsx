@@ -198,7 +198,13 @@ const previewMemberAttendance: MemberAttendanceItem[] = [
   { event: { id: 'pma3', title: 'Cuidado da casa', entity: 'Equipe Dourada', description: null, details: null, category: 'acao-social', event_date: '2026-07-05', event_time: '09:00:00', location: 'T. U. Senhora do Rosário', image_url: null, status: 'confirmada', created_by: null, created_at: '2026-07-01T00:00:00Z', updated_at: '2026-07-01T00:00:00Z' }, present: false, justified: true },
 ];
 
-export function MemberAttendance({ history }: { history?: MemberAttendanceItem[] }) {
+export type MemberUpcomingAttendance = {
+  event: PortalEvent;
+  current: SelfAttendanceRecord | null;
+  windowOpen: boolean;
+};
+
+export function MemberAttendance({ history, upcoming }: { history?: MemberAttendanceItem[]; upcoming?: MemberUpcomingAttendance[] }) {
   const items = history ?? previewMemberAttendance;
   const total = items.length;
   const present = items.filter((item) => item.present).length;
@@ -216,6 +222,27 @@ export function MemberAttendance({ history }: { history?: MemberAttendanceItem[]
         <MetricCard icon={Clock3} label="Justificadas" value={String(justified)} detail="Registros acolhidos pela casa" tone="neutral" />
         <MetricCard icon={CalendarDays} label="Faltas" value={String(absences)} detail="Ausências no período" tone="warning" />
       </section>
+      {upcoming && upcoming.length > 0 ? (
+        <article className="portal-panel"><PanelHeader eyebrow="Auto-registro" title="Próximas atividades" />
+          <div className="member-agenda-list">
+            {upcoming.map(({ event, current, windowOpen }) => {
+              const parts = eventDateParts(event.event_date);
+              return (
+                <div key={event.id}>
+                  <span><strong>{parts.day}</strong><small>{parts.month}</small></span>
+                  <div>
+                    <StatusPill tone={windowOpen ? 'gold' : 'neutral'}>{windowOpen ? 'Registro aberto hoje' : (event.entity ?? 'Atividade')}</StatusPill>
+                    <h3>{event.title}</h3>
+                    <p><Clock3 size={13} /> {formatEventTime(event.event_time)} · {event.location}</p>
+                    <SelfAttendanceControls eventId={event.id} current={current} windowOpen={windowOpen} showWhenClosed />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <p className="portal-panel__copy">Os botões ficam disponíveis somente no dia da atividade, até 23h59 — o seu registro já vale como frequência oficial.</p>
+        </article>
+      ) : null}
       <article className="portal-panel"><PanelHeader eyebrow="Histórico pessoal" title="Atividades recentes" /><div className="portal-table-wrap"><table className="portal-table"><thead><tr><th>Data</th><th>Atividade</th><th>Tipo</th><th>Situação</th></tr></thead><tbody>{sorted.length === 0 ? <tr><td colSpan={4}>Nenhum registro de presença ainda.</td></tr> : sorted.map(({ event, present: isPresent, justified: isJustified }) => <tr key={event.id}><td>{formatFinanceDate(event.event_date)}</td><td><strong>{event.title}</strong></td><td>{event.entity ?? 'Atividade'}</td><td><StatusPill tone={isPresent ? 'info' : isJustified ? 'warning' : 'danger'}>{isPresent ? 'Presente' : isJustified ? 'Justificada' : 'Faltou'}</StatusPill></td></tr>)}</tbody></table></div></article>
     </div>
   );

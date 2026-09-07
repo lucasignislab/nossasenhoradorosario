@@ -51,7 +51,7 @@ export async function registerOwnAttendance(eventId: string, mark: SelfAttendanc
 
     if (!event) return { ok: false, error: 'Atividade não encontrada.' };
     if (!attendanceWindowOpen(event)) {
-      return { ok: false, error: 'O registro de frequência abre no dia da atividade e fecha 24h depois do início. Fale com a administração para corrigir.' };
+      return { ok: false, error: 'O registro de frequência fica disponível somente no dia da atividade, até 23h59. Fale com a administração para corrigir.' };
     }
 
     const { error } = await supabase
