@@ -95,13 +95,38 @@ export function MemberChores() {
   );
 }
 
-export function MemberAttendance() {
+export type MemberAttendanceItem = {
+  event: PortalEvent;
+  present: boolean;
+  justified: boolean;
+};
+
+// Dados demonstrativos usados apenas pela prévia visual (portal-preview / Storybook).
+const previewMemberAttendance: MemberAttendanceItem[] = [
+  { event: { id: 'pma1', title: 'Estudo mediúnico', entity: 'Desenvolvimento', description: null, details: null, category: 'curso', event_date: '2026-07-17', event_time: '20:00:00', location: 'T. U. Senhora do Rosário', image_url: null, status: 'confirmada', created_by: null, created_at: '2026-07-01T00:00:00Z', updated_at: '2026-07-01T00:00:00Z' }, present: true, justified: false },
+  { event: { id: 'pma2', title: 'Gira interna', entity: 'Corrente completa', description: null, details: null, category: 'gira', event_date: '2026-07-12', event_time: '19:00:00', location: 'T. U. Senhora do Rosário', image_url: null, status: 'confirmada', created_by: null, created_at: '2026-07-01T00:00:00Z', updated_at: '2026-07-01T00:00:00Z' }, present: true, justified: false },
+  { event: { id: 'pma3', title: 'Cuidado da casa', entity: 'Equipe Dourada', description: null, details: null, category: 'acao-social', event_date: '2026-07-05', event_time: '09:00:00', location: 'T. U. Senhora do Rosário', image_url: null, status: 'confirmada', created_by: null, created_at: '2026-07-01T00:00:00Z', updated_at: '2026-07-01T00:00:00Z' }, present: false, justified: true },
+];
+
+export function MemberAttendance({ history }: { history?: MemberAttendanceItem[] }) {
+  const items = history ?? previewMemberAttendance;
+  const total = items.length;
+  const present = items.filter((item) => item.present).length;
+  const justified = items.filter((item) => !item.present && item.justified).length;
+  const absences = total - present;
+  const percent = total > 0 ? Math.round((present / total) * 100) : 0;
+  const sorted = [...items].sort((a, b) => (a.event.event_date < b.event.event_date ? 1 : -1));
+
   return (
     <div className="portal-page">
       <PageHeader eyebrow="Área dos filhos · Frequência" title="Minha presença na casa" description="Um registro pessoal para acompanhar sua participação, sem comparações com outras pessoas." />
-      <section className="portal-metrics portal-metrics--compact"><MetricCard icon={UserCheck} label="Frequência geral" value="87%" detail="Período de fevereiro a julho" tone="brand" /><MetricCard icon={CalendarCheck} label="Presenças" value="26" detail="Em 30 atividades" tone="info" /><MetricCard icon={Clock3} label="Justificadas" value="3" detail="Registros acolhidos pela casa" tone="neutral" /></section>
-      <section className="portal-layout portal-layout--charts"><article className="portal-panel"><PanelHeader eyebrow="Seu caminho" title="Participação por atividade" /><div className="portal-progress-list"><ProgressBar value={92} label="Giras de desenvolvimento" /><ProgressBar value={86} label="Estudos e aulas" /><ProgressBar value={88} label="Giras internas" /><ProgressBar value={75} label="Cuidados da casa" /></div></article><article className="portal-panel"><PanelHeader eyebrow="Últimos meses" title="Evolução" /><div className="member-attendance-highlight"><strong>+8%</strong><p>Sua presença cresceu desde abril.</p><span>Continue respeitando seu tempo e sua caminhada.</span></div></article></section>
-      <article className="portal-panel"><PanelHeader eyebrow="Histórico pessoal" title="Atividades recentes" /><div className="portal-table-wrap"><table className="portal-table"><thead><tr><th>Data</th><th>Atividade</th><th>Tipo</th><th>Situação</th></tr></thead><tbody>{[['17 jul','Estudo mediúnico','Desenvolvimento','Presente'],['12 jul','Gira interna','Gira','Presente'],['05 jul','Cuidado da casa','Escala','Justificada'],['03 jul','Estudo mediúnico','Desenvolvimento','Presente']].map(([date,title,type,status]) => <tr key={`${date}-${title}`}><td>{date}</td><td><strong>{title}</strong></td><td>{type}</td><td><StatusPill tone={status === 'Presente' ? 'info' : 'warning'}>{status}</StatusPill></td></tr>)}</tbody></table></div></article>
+      <section className="portal-metrics portal-metrics--compact">
+        <MetricCard icon={UserCheck} label="Frequência geral" value={`${percent}%`} detail={`${present} de ${total} atividades`} tone="brand" />
+        <MetricCard icon={CalendarCheck} label="Presenças" value={String(present)} detail={`Em ${total} atividades registradas`} tone="info" />
+        <MetricCard icon={Clock3} label="Justificadas" value={String(justified)} detail="Registros acolhidos pela casa" tone="neutral" />
+        <MetricCard icon={CalendarDays} label="Faltas" value={String(absences)} detail="Ausências no período" tone="warning" />
+      </section>
+      <article className="portal-panel"><PanelHeader eyebrow="Histórico pessoal" title="Atividades recentes" /><div className="portal-table-wrap"><table className="portal-table"><thead><tr><th>Data</th><th>Atividade</th><th>Tipo</th><th>Situação</th></tr></thead><tbody>{sorted.length === 0 ? <tr><td colSpan={4}>Nenhum registro de presença ainda.</td></tr> : sorted.map(({ event, present: isPresent, justified: isJustified }) => <tr key={event.id}><td>{formatFinanceDate(event.event_date)}</td><td><strong>{event.title}</strong></td><td>{event.entity ?? 'Atividade'}</td><td><StatusPill tone={isPresent ? 'info' : isJustified ? 'warning' : 'danger'}>{isPresent ? 'Presente' : isJustified ? 'Justificada' : 'Faltou'}</StatusPill></td></tr>)}</tbody></table></div></article>
     </div>
   );
 }

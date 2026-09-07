@@ -52,11 +52,32 @@ import {
   formatFinanceDate,
   summarizeMonth,
 } from '@/lib/finance';
-import type { FinanceEntry, PortalEvent, Profile } from '@/types';
+import type { Attendance, FinanceEntry, PortalEvent, Profile } from '@/types';
+import { AttendanceSheet } from './AttendanceSheet';
 
-const attendanceBars = [
-  { month: 'Fev', value: 72 }, { month: 'Mar', value: 78 }, { month: 'Abr', value: 75 },
-  { month: 'Mai', value: 84 }, { month: 'Jun', value: 81 }, { month: 'Jul', value: 87 },
+// Dados demonstrativos usados apenas pela prévia visual (portal-preview / Storybook).
+const previewAttendanceMembers: Profile[] = [
+  { id: 'preview-a1', full_name: 'Marina de Souza', phone: null, role: 'member', status: 'active', joined_at: null, created_at: '2026-01-01T00:00:00Z', updated_at: '2026-01-01T00:00:00Z' },
+  { id: 'preview-a2', full_name: 'Rafael Santos', phone: null, role: 'member', status: 'active', joined_at: null, created_at: '2026-01-01T00:00:00Z', updated_at: '2026-01-01T00:00:00Z' },
+  { id: 'preview-a3', full_name: 'Clara Oliveira', phone: null, role: 'member', status: 'active', joined_at: null, created_at: '2026-01-01T00:00:00Z', updated_at: '2026-01-01T00:00:00Z' },
+  { id: 'preview-a4', full_name: 'João Pereira', phone: null, role: 'member', status: 'active', joined_at: null, created_at: '2026-01-01T00:00:00Z', updated_at: '2026-01-01T00:00:00Z' },
+];
+
+const previewAttendanceEvents: PortalEvent[] = [
+  { id: 'preview-ae1', title: 'Gira de Caboclos', entity: 'Caboclos', description: null, details: null, category: 'gira', event_date: '2026-07-10', event_time: '19:30:00', location: 'T. U. Senhora do Rosário', image_url: null, status: 'confirmada', created_by: null, created_at: '2026-07-01T00:00:00Z', updated_at: '2026-07-01T00:00:00Z' },
+  { id: 'preview-ae2', title: 'Estudo mediúnico', entity: 'Desenvolvimento', description: null, details: null, category: 'curso', event_date: '2026-07-17', event_time: '20:00:00', location: 'T. U. Senhora do Rosário', image_url: null, status: 'confirmada', created_by: null, created_at: '2026-07-01T00:00:00Z', updated_at: '2026-07-01T00:00:00Z' },
+  { id: 'preview-ae3', title: 'Gira de Pretos Velhos', entity: 'Pretos Velhos', description: null, details: null, category: 'gira', event_date: '2026-07-24', event_time: '19:30:00', location: 'T. U. Senhora do Rosário', image_url: null, status: 'confirmada', created_by: null, created_at: '2026-07-01T00:00:00Z', updated_at: '2026-07-01T00:00:00Z' },
+];
+
+const previewAttendanceRows: Attendance[] = [
+  { id: 'pa1', event_id: 'preview-ae1', profile_id: 'preview-a1', present: true, justified: false, notes: null, marked_by: null, created_at: '2026-07-10T00:00:00Z', updated_at: '2026-07-10T00:00:00Z' },
+  { id: 'pa2', event_id: 'preview-ae1', profile_id: 'preview-a2', present: true, justified: false, notes: null, marked_by: null, created_at: '2026-07-10T00:00:00Z', updated_at: '2026-07-10T00:00:00Z' },
+  { id: 'pa3', event_id: 'preview-ae1', profile_id: 'preview-a3', present: true, justified: false, notes: null, marked_by: null, created_at: '2026-07-10T00:00:00Z', updated_at: '2026-07-10T00:00:00Z' },
+  { id: 'pa4', event_id: 'preview-ae1', profile_id: 'preview-a4', present: false, justified: true, notes: null, marked_by: null, created_at: '2026-07-10T00:00:00Z', updated_at: '2026-07-10T00:00:00Z' },
+  { id: 'pa5', event_id: 'preview-ae2', profile_id: 'preview-a1', present: true, justified: false, notes: null, marked_by: null, created_at: '2026-07-17T00:00:00Z', updated_at: '2026-07-17T00:00:00Z' },
+  { id: 'pa6', event_id: 'preview-ae2', profile_id: 'preview-a2', present: false, justified: false, notes: null, marked_by: null, created_at: '2026-07-17T00:00:00Z', updated_at: '2026-07-17T00:00:00Z' },
+  { id: 'pa7', event_id: 'preview-ae2', profile_id: 'preview-a3', present: true, justified: false, notes: null, marked_by: null, created_at: '2026-07-17T00:00:00Z', updated_at: '2026-07-17T00:00:00Z' },
+  { id: 'pa8', event_id: 'preview-ae2', profile_id: 'preview-a4', present: false, justified: false, notes: null, marked_by: null, created_at: '2026-07-17T00:00:00Z', updated_at: '2026-07-17T00:00:00Z' },
 ];
 
 type AdminOverviewProps = {
@@ -244,61 +265,131 @@ export function FinanceDashboard({ entries, members = [] }: FinanceDashboardProp
   );
 }
 
-export function AttendanceDashboard() {
+type AttendanceDashboardProps = {
+  events?: PortalEvent[];
+  members?: Profile[];
+  attendance?: Attendance[];
+};
+
+function attendanceTone(percent: number): { label: string; tone: 'info' | 'neutral' | 'warning' | 'danger' } {
+  if (percent >= 85) return { label: 'Presença constante', tone: 'info' };
+  if (percent >= 65) return { label: 'Dentro do esperado', tone: 'neutral' };
+  if (percent >= 45) return { label: 'Conversar com cuidado', tone: 'warning' };
+  return { label: 'Atenção necessária', tone: 'danger' };
+}
+
+export function AttendanceDashboard({ events, members, attendance }: AttendanceDashboardProps) {
+  const eventList = events ?? previewAttendanceEvents;
+  const memberList = members ?? previewAttendanceMembers;
+  const attendanceList = attendance ?? previewAttendanceRows;
+  const hasRealData = events !== undefined;
+
+  const eventsById = new Map(eventList.map((event) => [event.id, event]));
+
+  // Últimas 6 atividades com chamada registrada (mais antiga primeiro).
+  const eventsWithMarks = [...new Set(attendanceList.map((row) => row.event_id))]
+    .map((eventId) => eventsById.get(eventId))
+    .filter((event): event is PortalEvent => Boolean(event))
+    .sort((a, b) => (a.event_date < b.event_date ? -1 : 1));
+  const bars = eventsWithMarks.slice(-6).map((event) => {
+    const rows = attendanceList.filter((row) => row.event_id === event.id);
+    const present = rows.filter((row) => row.present).length;
+    const percent = rows.length > 0 ? Math.round((present / rows.length) * 100) : 0;
+    return { id: event.id, title: event.title, date: event.event_date, percent, present, total: rows.length };
+  });
+
+  const totalMarks = attendanceList.length;
+  const totalPresent = attendanceList.filter((row) => row.present).length;
+  const totalJustified = attendanceList.filter((row) => !row.present && row.justified).length;
+  const overallPercent = totalMarks > 0 ? Math.round((totalPresent / totalMarks) * 100) : 0;
+
+  const { start: monthStart, end: monthEnd } = currentMonthRange();
+  const monthEventIds = new Set(
+    eventList.filter((event) => event.event_date >= monthStart && event.event_date <= monthEnd).map((event) => event.id),
+  );
+  const monthPresences = attendanceList.filter((row) => row.present && monthEventIds.has(row.event_id)).length;
+  const monthEventsWithMarks = eventsWithMarks.filter((event) => event.event_date >= monthStart && event.event_date <= monthEnd).length;
+
+  const memberRows = memberList.map((member) => {
+    const rows = attendanceList.filter((row) => row.profile_id === member.id);
+    const present = rows.filter((row) => row.present).length;
+    const percent = rows.length > 0 ? Math.round((present / rows.length) * 100) : 0;
+    return { member, present, total: rows.length, percent, ...attendanceTone(percent) };
+  }).sort((a, b) => b.percent - a.percent || b.total - a.total);
+
+  const sheetExisting: Record<string, Record<string, { present: boolean; justified: boolean }>> = {};
+  for (const row of attendanceList) {
+    sheetExisting[row.event_id] ??= {};
+    sheetExisting[row.event_id][row.profile_id] = { present: row.present, justified: row.justified };
+  }
+  const sheetEvents = [...eventList].sort((a, b) => (a.event_date < b.event_date ? 1 : -1));
+
   return (
     <div className="portal-page">
       <PageHeader
         eyebrow="Administração · Frequência"
         title="Presença é vínculo"
         description="Acompanhe a participação com contexto, acolhimento e respeito ao caminho de cada filho."
-        action={<button className="portal-button portal-button--primary"><ListChecks size={16} /> Registrar presença</button>}
       />
 
-      <div className="portal-filter-bar">
-        <label>Período<select><option>Julho de 2026</option><option>Junho de 2026</option></select></label>
-        <label>Atividade<select><option>Todas as atividades</option><option>Desenvolvimento mediúnico</option><option>Estudos</option><option>Cuidados da casa</option></select></label>
-        <label>Grupo<select><option>Toda a corrente</option><option>Desenvolvimento I</option><option>Desenvolvimento II</option></select></label>
-      </div>
-
       <section className="portal-metrics">
-        <MetricCard icon={UserCheck} label="Frequência geral" value="87%" detail="36 de 42 filhos ativos" tone="brand" />
-        <MetricCard icon={CalendarCheck} label="Presenças no mês" value="184" detail="Em 6 atividades realizadas" tone="info" />
-        <MetricCard icon={MessageSquareText} label="Ausências justificadas" value="12" detail="Todos os registros revisados" tone="neutral" />
-        <MetricCard icon={TrendingUp} label="Evolução" value="+6%" detail="Comparado ao mês anterior" tone="gold" />
+        <MetricCard icon={UserCheck} label="Frequência geral" value={`${overallPercent}%`} detail={`${totalPresent} presenças em ${totalMarks} registros`} tone="brand" />
+        <MetricCard icon={CalendarCheck} label="Presenças no mês" value={String(monthPresences)} detail={`Em ${monthEventsWithMarks} ${monthEventsWithMarks === 1 ? 'atividade realizada' : 'atividades realizadas'}`} tone="info" />
+        <MetricCard icon={MessageSquareText} label="Ausências justificadas" value={String(totalJustified)} detail="Registros acolhidos pela casa" tone="neutral" />
+        <MetricCard icon={TrendingUp} label="Atividades com chamada" value={String(eventsWithMarks.length)} detail="Histórico completo" tone="gold" />
       </section>
+
+      <article className="portal-panel">
+        <PanelHeader eyebrow="Chamada" title="Registrar presença" />
+        <AttendanceSheet events={sheetEvents} members={memberList} existing={sheetExisting} />
+      </article>
 
       <section className="portal-layout portal-layout--charts">
         <article className="portal-panel">
-          <PanelHeader eyebrow="Fevereiro a julho" title="Evolução da presença" />
-          <div className="portal-line-bars" aria-label="Evolução demonstrativa da frequência">
-            {attendanceBars.map(({ month, value }) => <div key={month}><strong>{value}%</strong><span><i style={{ height: `${value}%` }} /></span><small>{month}</small></div>)}
-          </div>
+          <PanelHeader eyebrow="Últimas atividades" title="Presença por atividade" />
+          {bars.length === 0 ? (
+            <p className="portal-panel__copy">Nenhuma chamada registrada ainda.</p>
+          ) : (
+            <div className="portal-line-bars" aria-label="Presença por atividade">
+              {bars.map((bar) => (
+                <div key={bar.id} title={`${bar.title} · ${bar.present}/${bar.total} presentes`}>
+                  <strong>{bar.percent}%</strong>
+                  <span><i style={{ height: `${bar.percent}%` }} /></span>
+                  <small>{eventDateParts(bar.date).day}/{eventDateParts(bar.date).month}</small>
+                </div>
+              ))}
+            </div>
+          )}
         </article>
         <article className="portal-panel">
-          <PanelHeader eyebrow="Por atividade" title="Participação da corrente" />
-          <div className="portal-progress-list">
-            <ProgressBar value={91} label="Giras de desenvolvimento" />
-            <ProgressBar value={84} label="Estudos e aulas" />
-            <ProgressBar value={88} label="Giras internas" />
-            <ProgressBar value={76} label="Cuidados da casa" />
+          <PanelHeader eyebrow="Acompanhamento" title="Como ler estes números" />
+          <div className="portal-note-card">
+            <Sparkles size={22} />
+            <p>A frequência mostra vínculo, não cobrança. Use os números para acolher quem está se afastando.</p>
+            <span>{hasRealData ? 'Dados reais da casa' : 'Dados demonstrativos'}</span>
           </div>
         </article>
       </section>
 
       <article className="portal-panel">
-        <PanelHeader eyebrow="Acompanhamento individual" title="Frequência dos filhos" action={<div className="portal-search"><Search size={15} /><input aria-label="Buscar filho" placeholder="Buscar por nome" /></div>} />
+        <PanelHeader eyebrow="Acompanhamento individual" title="Frequência dos filhos" />
         <div className="portal-table-wrap">
           <table className="portal-table portal-table--attendance">
-            <thead><tr><th>Filho da casa</th><th>Desenvolvimento</th><th>Estudos</th><th>Cuidados</th><th>Geral</th><th>Acompanhamento</th></tr></thead>
+            <thead><tr><th>Filho da casa</th><th>Presenças</th><th>Atividades</th><th>Geral</th><th>Acompanhamento</th></tr></thead>
             <tbody>
-              {[
-                ['Marina de Souza', '6/6', '4/4', '2/2', '100%', 'Presença constante', 'info'],
-                ['Rafael Santos', '5/6', '3/4', '2/2', '83%', 'Dentro do esperado', 'neutral'],
-                ['Clara Oliveira', '4/6', '4/4', '1/2', '75%', '1 ausência justificada', 'warning'],
-                ['João Pereira', '3/6', '2/4', '2/2', '58%', 'Conversar com cuidado', 'danger'],
-              ].map(([name, dev, study, care, total, note, tone]) => (
-                <tr key={name}><td><div className="portal-table-person"><span>{name.charAt(0)}</span><strong>{name}</strong></div></td><td>{dev}</td><td>{study}</td><td>{care}</td><td><strong>{total}</strong></td><td><StatusPill tone={tone as 'info' | 'neutral' | 'warning' | 'danger'}>{note}</StatusPill></td></tr>
-              ))}
+              {memberRows.length === 0 ? (
+                <tr><td colSpan={5}>Nenhum filho ativo cadastrado.</td></tr>
+              ) : (
+                memberRows.map(({ member, present, total, percent, label, tone }) => (
+                  <tr key={member.id}>
+                    <td><div className="portal-table-person"><span>{profileInitial(member)}</span><strong>{profileDisplayName(member)}</strong></div></td>
+                    <td>{present}</td>
+                    <td>{total}</td>
+                    <td><strong>{percent}%</strong></td>
+                    <td><StatusPill tone={tone}>{label}</StatusPill></td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

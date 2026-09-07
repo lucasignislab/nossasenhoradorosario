@@ -182,3 +182,10 @@ Margens, paddings e gaps são estritamente múltiplos de 8px:
 *   **RLS:** administração tem acesso total; cada filho visualiza apenas os próprios lançamentos (`profile_id`), preenchido quando a entrada é uma mensalidade vinculada.
 *   **Admin (`/admin/financeiro`):** métricas do mês (entradas, saídas, mensalidades, saldo), gráfico de fluxo dos últimos 6 meses (`FinanceTrendChart` recebe dados reais), despesas por categoria e tabela de movimentações com criar/editar/excluir (`FinanceEntryForm`) e exportação CSV gerada no navegador.
 *   **Filho (`/dashboard/financeiro`):** situação do mês corrente (Em dia / Aguardando contribuição), resumo do ano e histórico das próprias contribuições. Somente leitura.
+
+### 5.4. Frequência (tabela `attendance`)
+
+*   Presença por atividade: uma linha por pessoa por evento (`unique(event_id, profile_id)`), com `present`, `justified` (falta justificada — só vale com `present = false`) e `marked_by`. Migration: `supabase/migrations/202609070004_attendance.sql`.
+*   **RLS:** administração tem acesso total; cada filho visualiza apenas os próprios registros.
+*   **Admin (`/admin/frequencia`):** chamada por atividade (`AttendanceSheet`) — escolhe o evento, marca Presente/Faltou/Justificada por filho e salva em lote (upsert). Painel com frequência geral, presenças no mês, justificadas, barras de presença das últimas 6 atividades com chamada e tabela de % individual com leitura de acompanhamento.
+*   **Filho (`/dashboard/frequencia`):** métricas pessoais (presença %, presenças, justificadas, faltas) e histórico com status por atividade. Somente leitura.

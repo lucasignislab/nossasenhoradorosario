@@ -93,6 +93,14 @@
 .portal-approval-card__actions-wrap { display: grid; gap: 6px; }
 .portal-row-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
 .portal-action-error { margin: 0; color: var(--portal-danger); font-size: 12px; }
+.portal-action-success { margin: 0; color: #2f7a4f; font-size: 12px; }
+.portal-attendance-sheet { display: grid; gap: 14px; }
+.portal-mark-group { display: inline-flex; gap: 4px; }
+.portal-mark { min-height: 28px; padding: 0 10px; border: 1px solid var(--portal-border); border-radius: 999px; background: white; color: var(--portal-text-soft); font-size: 11px; font-weight: 600; cursor: pointer; }
+.portal-mark:disabled { opacity: .55; cursor: not-allowed; }
+.portal-mark--present.is-active { border-color: #2f7a4f; background: #ecf6ef; color: #27633f; }
+.portal-mark--absent.is-active { border-color: var(--portal-danger); background: var(--portal-danger-soft); color: #a43f33; }
+.portal-mark--justified.is-active { border-color: #b98a1d; background: #fdf6e3; color: #8f6b12; }
 .portal-row-actions--inline { flex-direction: row; align-items: center; gap: 6px; }
 .portal-timeline__item.is-canceled h3, .portal-timeline__item.is-canceled p { opacity: .55; text-decoration: line-through; }
 

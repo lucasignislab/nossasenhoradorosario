@@ -61,3 +61,15 @@ export type MonthlyFinancePoint = {
   income: number;
   expense: number;
 };
+
+export type Attendance = {
+  id: string;
+  event_id: string;
+  profile_id: string;
+  present: boolean;
+  justified: boolean;
+  notes: string | null;
+  marked_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
