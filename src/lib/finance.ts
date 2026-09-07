@@ -59,7 +59,9 @@ export function formatFinanceDate(isoDate: string): string {
 export function currentMonthRange(): { start: string; end: string } {
   const now = new Date();
   const month = String(now.getMonth() + 1).padStart(2, '0');
-  return { start: `${now.getFullYear()}-${month}-01`, end: `${now.getFullYear()}-${month}-31` };
+  // Dia 0 do mês seguinte = último dia real do mês corrente (28–31).
+  const lastDay = String(new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()).padStart(2, '0');
+  return { start: `${now.getFullYear()}-${month}-01`, end: `${now.getFullYear()}-${month}-${lastDay}` };
 }
 
 const MONTH_SHORT_PT = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
