@@ -639,14 +639,15 @@ export function ContentManagement({ contents }: { contents?: StudyContent[] }) {
 }
 
 type AdminSettingsProps = {
-  counts?: { admins: number; developers: number; members: number; pending: number };
+  counts?: { admins: number; developers: number; members: number; editors: number; pending: number };
 };
 
 export function AdminSettings({ counts }: AdminSettingsProps) {
-  const resolved = counts ?? { admins: 2, developers: 1, members: 42, pending: 3 };
+  const resolved = counts ?? { admins: 2, developers: 1, members: 42, editors: 1, pending: 3 };
   const plural = (n: number) => (n === 1 ? '1 pessoa' : `${n} pessoas`);
   const roles = [
     ['Iyás administradoras', 'Gestão completa da casa', plural(resolved.admins), 'Administração'],
+    ['Comunicação', 'Agenda, avisos e conteúdos; sem dados sensíveis', plural(resolved.editors), 'Editor'],
     ['Filhos da casa', 'Acesso somente aos próprios dados', plural(resolved.members), 'Membro'],
     ['Acesso técnico', 'Configuração sem dados sensíveis por padrão', plural(resolved.developers), 'Técnico'],
   ];

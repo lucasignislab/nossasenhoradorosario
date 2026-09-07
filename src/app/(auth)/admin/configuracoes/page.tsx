@@ -13,12 +13,13 @@ export default async function AdminSettingsPage() {
   await redirectEditorsAway();
   const supabase = await createClient();
 
-  const [admins, developers, members, pending] = await Promise.all([
+  const [admins, developers, members, editors, pending] = await Promise.all([
     countByStatusAndRole(supabase, 'active', 'admin'),
     countByStatusAndRole(supabase, 'active', 'developer'),
     countByStatusAndRole(supabase, 'active', 'member'),
+    countByStatusAndRole(supabase, 'active', 'editor'),
     countByStatusAndRole(supabase, 'pending'),
   ]);
 
-  return <AdminSettings counts={{ admins, developers, members, pending }} />;
+  return <AdminSettings counts={{ admins, developers, members, editors, pending }} />;
 }
