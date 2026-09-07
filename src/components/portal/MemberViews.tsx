@@ -237,13 +237,13 @@ export function MemberAttendance({ history, upcoming }: { history?: MemberAttend
                     <StatusPill tone={windowOpen ? 'gold' : 'neutral'}>{windowOpen ? 'Registro aberto hoje' : (event.entity ?? 'Atividade')}</StatusPill>
                     <h3>{event.title}</h3>
                     <p><Clock3 size={13} /> {formatEventTime(event.event_time)} · {event.location}</p>
-                    <SelfAttendanceControls eventId={event.id} current={current} windowOpen={windowOpen} showWhenClosed />
+                    <SelfAttendanceControls eventId={event.id} current={current} windowOpen={windowOpen} alwaysEnabled />
                   </div>
                 </div>
               );
             })}
           </div>
-          <p className="portal-panel__copy">Os botões ficam disponíveis somente no dia da atividade, até 23h59 — o seu registro já vale como frequência oficial.</p>
+          <p className="portal-panel__copy">Você pode registrar ou corrigir sua frequência com antecedência — útil para giras com inscrição prévia, como as de Pedreira. O registro já vale como frequência oficial.</p>
         </article>
       ) : null}
       <article className="portal-panel"><PanelHeader eyebrow="Histórico pessoal" title="Atividades recentes" /><div className="portal-table-wrap"><table className="portal-table"><thead><tr><th>Data</th><th>Atividade</th><th>Tipo</th><th>Situação</th></tr></thead><tbody>{sorted.length === 0 ? <tr><td colSpan={4}>Nenhum registro de presença ainda.</td></tr> : sorted.map(({ event, present: isPresent, justified: isJustified }) => <tr key={event.id}><td>{formatFinanceDate(event.event_date)}</td><td><strong>{event.title}</strong></td><td>{event.entity ?? 'Atividade'}</td><td><StatusPill tone={isPresent ? 'info' : isJustified ? 'warning' : 'danger'}>{isPresent ? 'Presente' : isJustified ? 'Justificada' : 'Faltou'}</StatusPill></td></tr>)}</tbody></table></div></article>

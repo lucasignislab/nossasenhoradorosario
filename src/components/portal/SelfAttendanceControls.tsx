@@ -18,22 +18,26 @@ export function SelfAttendanceControls({
   current,
   windowOpen,
   showWhenClosed = false,
+  alwaysEnabled = false,
 }: {
   eventId: string;
   current: SelfAttendanceRecord | null;
   windowOpen: boolean;
   /** Quando true, mostra os botões desabilitados fora da janela (para o membro já ver onde registrará). */
   showWhenClosed?: boolean;
+  /** Quando true, os botões ficam sempre ativos — registro antecipado (ex.: giras com inscrição prévia). */
+  alwaysEnabled?: boolean;
 }) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [justifying, setJustifying] = useState(false);
   const [note, setNote] = useState(current?.notes ?? '');
+  const canRegister = windowOpen || alwaysEnabled;
 
   const submit = (mark: 'present' | 'justified') => {
     setError(null);
     startTransition(async () => {
-      const result = await registerOwnAttendance(eventId, mark, mark === 'justified' ? note : undefined);
+      const result = await registerOwnAttendance(eventId, mark, mark === 'justified' ? note : undefined, alwaysEnabled);
       if (!result.ok) {
         setError(result.error);
       } else {
@@ -44,7 +48,7 @@ export function SelfAttendanceControls({
 
   // Fora da janela (antes do dia ou após as 23h59 do dia): só consulta,
   // ou botões desabilitados quando showWhenClosed está ativo.
-  if (!windowOpen) {
+  if (!canRegister) {
     if (current) return <StatusPill tone={current.present ? 'info' : current.justified ? 'warning' : 'danger'}>{attendanceStatusLabel(current)}</StatusPill>;
     if (!showWhenClosed) return null;
     return (
@@ -103,7 +107,7 @@ export function SelfAttendanceControls({
           <PenLine size={14} /> {current && !current.present ? 'Editar justificativa' : 'Justificar falta'}
         </button>
       </span>
-      {current ? <span className="portal-action-note">Você pode corrigir até às 23h59 de hoje.</span> : null}
+      {current ? <span className="portal-action-note">{alwaysEnabled ? 'Você pode corrigir quando precisar.' : 'Você pode corrigir até às 23h59 de hoje.'}</span> : null}
       {error ? <span className="portal-action-error" role="alert">{error}</span> : null}
     </span>
   );

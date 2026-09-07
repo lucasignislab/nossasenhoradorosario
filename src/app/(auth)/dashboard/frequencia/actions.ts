@@ -35,7 +35,9 @@ function revalidateAttendance() {
 
 // O próprio membro registra (ou corrige, dentro da janela) a sua frequência.
 // O registro já vale como frequência oficial — a administração pode corrigir depois.
-export async function registerOwnAttendance(eventId: string, mark: SelfAttendanceMark, notes?: string): Promise<ActionResult> {
+// `advance` permite registro antecipado (usado na aba Minha frequência, para giras
+// que pedem confirmação prévia, como as de Pedreira com vagas limitadas).
+export async function registerOwnAttendance(eventId: string, mark: SelfAttendanceMark, notes?: string, advance = false): Promise<ActionResult> {
   if (!eventId) return { ok: false, error: 'Atividade não informada.' };
   if (!['present', 'justified'].includes(mark)) return { ok: false, error: 'Registro inválido.' };
 
@@ -50,8 +52,11 @@ export async function registerOwnAttendance(eventId: string, mark: SelfAttendanc
       .single();
 
     if (!event) return { ok: false, error: 'Atividade não encontrada.' };
-    if (!attendanceWindowOpen(event)) {
+    if (!advance && !attendanceWindowOpen(event)) {
       return { ok: false, error: 'O registro de frequência fica disponível somente no dia da atividade, até 23h59. Fale com a administração para corrigir.' };
+    }
+    if (advance && event.event_date < new Date().toLocaleDateString('en-CA')) {
+      return { ok: false, error: 'Esta atividade já passou. Fale com a administração para corrigir o registro.' };
     }
 
     const { error } = await supabase
