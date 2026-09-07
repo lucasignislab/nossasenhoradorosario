@@ -359,7 +359,7 @@ export function MemberFinance({ entries }: { entries?: FinanceEntry[] }) {
     (entry) => entry.type === 'entrada' && entry.category === 'mensalidade' && entry.status === 'pago' && entry.entry_date.startsWith(String(currentYear)),
   );
   const yearTotalCents = yearEntries.reduce((total, entry) => total + entry.amount_cents, 0);
-  const history = [...entryList].sort((a, b) => (a.entry_date < b.entry_date ? 1 : -1));
+  const history = [...entryList].sort((a, b) => (a.entry_date > b.entry_date ? 1 : -1));
 
   const heroStatus = monthPayment
     ? { title: 'Em dia', detail: `Contribuição registrada em ${formatFinanceDate(monthPayment.entry_date)}` }
