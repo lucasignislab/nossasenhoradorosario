@@ -12,3 +12,31 @@ export type Profile = {
   created_at: string;
   updated_at: string;
 };
+
+export type EventCategory = 'gira' | 'festividade' | 'acao-social' | 'curso';
+
+export type EventStatus = 'confirmada' | 'cancelada';
+
+export type PortalEvent = {
+  id: string;
+  title: string;
+  entity: string | null;
+  description: string | null;
+  details: string | null;
+  category: EventCategory;
+  event_date: string;
+  event_time: string | null;
+  location: string;
+  image_url: string | null;
+  status: EventStatus;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type EventConfirmation = {
+  id: string;
+  event_id: string;
+  profile_id: string;
+  created_at: string;
+};

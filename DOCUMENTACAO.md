@@ -159,3 +159,19 @@ Margens, paddings e gaps são estritamente múltiplos de 8px:
 *   **Médio (`rounded-md` / 6px):** Aplicado nos cards normais de Giras e Eventos.
 *   **Circular (`rounded-full`):** Reservado para botões secundários de pílulas de categorias, tags de filtros e botões de redes sociais no rodapé.
 *   **Borda Fina Padrão:** As bordas limitadoras utilizam `border-black/5` (em fundo claro) ou `border-white/5` (em fundo escuro), assegurando que as linhas divisórias sejam elegantes e discretas.
+
+---
+
+## 5. Portal conectado ao Supabase
+
+### 5.1. Gestão de membros (`/admin/membros`)
+
+*   Administração aprova, reprova (suspende), suspende e reativa cadastros da tabela `profiles` via server actions (`src/app/(auth)/admin/membros/actions.ts`). Nenhuma ação exclui usuários do Auth.
+*   A listagem, a busca por nome e as contagens (ativos, aguardando, administração) são dados reais; a visão geral (`/admin`) mostra as contagens de filhos ativos e cadastros pendentes.
+
+### 5.2. Agenda e giras (tabelas `events` e `event_confirmations`)
+
+*   **`events`**: giras, festividades, ações sociais e cursos (`category`), com data, horário, local, entidade, descrição, flyer (`image_url`) e `status` (`confirmada`/`cancelada`). Migration: `supabase/migrations/202609070002_events.sql`.
+*   **RLS:** eventos confirmados têm leitura pública (Home e `/agenda`); criar, editar, cancelar e excluir exige administração (`is_administrator()`). Cancelamento é reversível (mudança de status); exclusão remove o evento e suas confirmações (cascade).
+*   **`event_confirmations`**: presença dos filhos, uma por pessoa por evento (`unique(event_id, profile_id)`). Cada filho confirma/cancela apenas a própria presença em `/dashboard/agenda`; a administração pode consultar todas.
+*   **Fluxos:** `/admin/agenda` (CRUD com `EventForm`), `/dashboard/agenda` (confirmação de presença), `/agenda` e Home (próximos eventos confirmados, com estado vazio em caso de falha — sem mocks).

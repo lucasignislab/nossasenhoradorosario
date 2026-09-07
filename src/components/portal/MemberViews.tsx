@@ -16,19 +16,66 @@ import {
   UsersRound,
 } from 'lucide-react';
 import { MetricCard, PageHeader, PanelHeader, ProgressBar, StatusPill } from './PortalUI';
+import { EventConfirmationButton } from './EventConfirmationButton';
+import { eventDateParts, formatEventDateLong, formatEventTime } from '@/lib/events';
+import type { PortalEvent } from '@/types';
 
-export function MemberAgenda() {
+// Dados demonstrativos usados apenas pela prévia visual (portal-preview / Storybook).
+const previewMemberEvents: PortalEvent[] = [
+  { id: 'preview-m1', title: 'Estudo mediúnico', entity: 'Desenvolvimento', description: null, details: null, category: 'curso', event_date: '2026-07-24', event_time: '20:00:00', location: 'Salão principal', image_url: null, status: 'confirmada', created_by: null, created_at: '2026-07-01T00:00:00Z', updated_at: '2026-07-01T00:00:00Z' },
+  { id: 'preview-m2', title: 'Cuidado da casa', entity: 'Equipe Dourada', description: null, details: null, category: 'acao-social', event_date: '2026-07-26', event_time: '09:00:00', location: 'T. U. Senhora do Rosário', image_url: null, status: 'confirmada', created_by: null, created_at: '2026-07-01T00:00:00Z', updated_at: '2026-07-01T00:00:00Z' },
+  { id: 'preview-m3', title: 'Gira interna', entity: 'Corrente completa', description: null, details: null, category: 'gira', event_date: '2026-08-02', event_time: '19:00:00', location: 'T. U. Senhora do Rosário', image_url: null, status: 'confirmada', created_by: null, created_at: '2026-07-01T00:00:00Z', updated_at: '2026-07-01T00:00:00Z' },
+];
+
+type MemberAgendaProps = {
+  events?: PortalEvent[];
+  confirmedEventIds?: string[];
+};
+
+export function MemberAgenda({ events, confirmedEventIds }: MemberAgendaProps) {
+  const eventList = events ?? previewMemberEvents;
+  const confirmed = new Set(confirmedEventIds ?? []);
+  const nextEvent = eventList[0] ?? null;
+
   return (
     <div className="portal-page">
       <PageHeader eyebrow="Área dos filhos · Agenda" title="Nossa caminhada no mês" description="Giras, estudos, reuniões e compromissos internos organizados em um só lugar." />
-      <section className="member-feature-card"><div><p className="portal-eyebrow">Próximo compromisso</p><h2>Estudo mediúnico</h2><p><CalendarDays size={15} /> Quinta-feira, 24 de julho · 20h</p><span>Desenvolvimento · Salão principal</span></div><button className="portal-button portal-button--primary"><CheckCircle2 size={16} /> Confirmar presença</button></section>
+      {nextEvent ? (
+        <section className="member-feature-card">
+          <div>
+            <p className="portal-eyebrow">Próximo compromisso</p>
+            <h2>{nextEvent.title}</h2>
+            <p><CalendarDays size={15} /> {formatEventDateLong(nextEvent.event_date)} · {formatEventTime(nextEvent.event_time)}</p>
+            <span>{nextEvent.entity ?? 'Corrente'} · {nextEvent.location}</span>
+          </div>
+          <EventConfirmationButton eventId={nextEvent.id} confirmed={confirmed.has(nextEvent.id)} />
+        </section>
+      ) : null}
       <section className="portal-layout portal-layout--overview">
-        <article className="portal-panel"><PanelHeader eyebrow="Julho de 2026" title="Próximas atividades" /><div className="member-agenda-list">
-          {[
-            ['24', 'Estudo mediúnico', '20:00–22:00', 'Desenvolvimento'], ['26', 'Cuidado da casa', '09:00–12:00', 'Equipe Dourada'], ['28', 'Reunião da corrente', '19:30–21:00', 'Todos os filhos'], ['02', 'Gira interna', '19:00–23:00', 'Corrente completa'],
-          ].map(([day,title,time,type], index) => <div key={`${day}-${title}`}><span><strong>{day}</strong><small>{index === 3 ? 'AGO' : 'JUL'}</small></span><div><StatusPill tone={index === 0 ? 'gold' : 'neutral'}>{type}</StatusPill><h3>{title}</h3><p><Clock3 size={13} /> {time}</p></div><button aria-label={`Ver ${title}`}><ArrowRight size={17} /></button></div>)}
-        </div></article>
-        <div className="portal-stack"><article className="portal-panel"><PanelHeader eyebrow="Sua agenda" title="Resumo do mês" /><dl className="portal-definition-list"><div><dt>Atividades</dt><dd>6</dd></div><div><dt>Confirmadas</dt><dd>4</dd></div><div><dt>Aguardando você</dt><dd>2</dd></div></dl></article><article className="portal-note-card portal-note-card--light"><HeartHandshake size={22} /><p>Se não puder comparecer, avise com antecedência para cuidarmos da organização.</p><span>Cuidado coletivo</span></article></div>
+        <article className="portal-panel"><PanelHeader eyebrow="Programação" title="Próximas atividades" />
+          {eventList.length === 0 ? (
+            <p className="portal-panel__copy">Nenhuma atividade agendada no momento. Volte em breve!</p>
+          ) : (
+            <div className="member-agenda-list">
+              {eventList.map((event) => {
+                const parts = eventDateParts(event.event_date);
+                const isConfirmed = confirmed.has(event.id);
+                return (
+                  <div key={event.id}>
+                    <span><strong>{parts.day}</strong><small>{parts.month}</small></span>
+                    <div>
+                      <StatusPill tone={isConfirmed ? 'info' : 'neutral'}>{isConfirmed ? 'Presença confirmada' : (event.entity ?? 'Corrente')}</StatusPill>
+                      <h3>{event.title}</h3>
+                      <p><Clock3 size={13} /> {formatEventTime(event.event_time)} · {event.location}</p>
+                    </div>
+                    <EventConfirmationButton eventId={event.id} confirmed={isConfirmed} />
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </article>
+        <div className="portal-stack"><article className="portal-panel"><PanelHeader eyebrow="Sua agenda" title="Resumo" /><dl className="portal-definition-list"><div><dt>Atividades</dt><dd>{eventList.length}</dd></div><div><dt>Confirmadas</dt><dd>{confirmed.size}</dd></div><div><dt>Aguardando você</dt><dd>{eventList.length - confirmed.size}</dd></div></dl></article><article className="portal-note-card portal-note-card--light"><HeartHandshake size={22} /><p>Se não puder comparecer, avise com antecedência para cuidarmos da organização.</p><span>Cuidado coletivo</span></article></div>
       </section>
     </div>
   );

@@ -6,39 +6,28 @@ import { ValuesSection } from "@/components/sections/values-section";
 import { AgendaSection } from "@/components/features/AgendaSection";
 import { LocationContact } from "@/components/features/LocationContact";
 import { Footer } from "@/components/layout/footer/footer";
-import { type EventCardProps } from "@/components/features/event-card";
+import { toEventCardProps, todayISODate } from "@/lib/events";
+import { createClient } from "@/lib/supabase/server";
+import type { PortalEvent } from "@/types";
 
-const mockEvents: EventCardProps[] = [
-  {
-    title: 'Gira de Esquerda',
-    entity: 'Exu e Pombagira',
-    date: '15/05/2026',
-    time: '20:00',
-    status: 'confirmada',
-    description: 'Atendimento e descarrego com a linha de Esquerda.',
-    imageUrl: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?q=80&w=800',
-  },
-  {
-    title: 'Gira de Baianos',
-    entity: 'Baianos',
-    date: '22/05/2026',
-    time: '20:00',
-    status: 'confirmada',
-    description: 'Alegria e conselhos com a linha dos Baianos.',
-    imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=800',
-  },
-  {
-    title: 'Gira de Pretos Velhos',
-    entity: 'Pretos Velhos e Almas',
-    date: '29/05/2026',
-    time: '20:00',
-    status: 'confirmada',
-    description: 'Acolhimento, passes e aconselhamento.',
-    imageUrl: 'https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?q=80&w=800',
+export default async function Home() {
+  let events: PortalEvent[] = [];
+
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from('events')
+      .select('*')
+      .eq('status', 'confirmada')
+      .gte('event_date', todayISODate())
+      .order('event_date', { ascending: true })
+      .order('event_time', { ascending: true })
+      .limit(3);
+    events = (data ?? []) as PortalEvent[];
+  } catch {
+    // Falha ao carregar eventos: a seção segue com o estado vazio.
   }
-];
 
-export default function Home() {
   return (
     <>
       {/* 1. O Cabeçalho fica fixo no topo */}
@@ -75,7 +64,7 @@ export default function Home() {
       <ValuesSection />
 
       {/* 5. Seção com as próximas giras */}
-      <AgendaSection events={mockEvents} />
+      <AgendaSection events={events.map(toEventCardProps)} />
 
       {/* 6. Como chegar e contacto */}
       <LocationContact

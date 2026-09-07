@@ -35,7 +35,9 @@ import {
   profileInitial,
   roleLabel,
 } from '@/lib/members';
-import type { Profile } from '@/types';
+import { eventCategoryLabel, eventDateParts, formatEventTime, todayISODate } from '@/lib/events';
+import { EventRowActions, NewEventButton } from './EventForm';
+import type { PortalEvent, Profile } from '@/types';
 
 const attendanceBars = [
   { month: 'Fev', value: 72 }, { month: 'Mar', value: 78 }, { month: 'Abr', value: 75 },
@@ -330,25 +332,53 @@ export function MembersManagement({ pending, members, counts }: MembersManagemen
   );
 }
 
-export function AgendaManagement() {
-  const events = [
-    ['24', 'Jul', 'Estudo mediúnico', '20:00–22:00', 'Desenvolvimento', 'Confirmado'],
-    ['26', 'Jul', 'Cuidado da casa', '09:00–12:00', 'Equipe Dourada', 'Escala aberta'],
-    ['28', 'Jul', 'Reunião da corrente', '19:30–21:00', 'Todos os filhos', 'Confirmado'],
-    ['02', 'Ago', 'Gira interna', '19:00–23:00', 'Corrente completa', 'Em preparação'],
-  ];
+// Dados demonstrativos usados apenas pela prévia visual (portal-preview / Storybook).
+const previewEvents: PortalEvent[] = [
+  { id: 'preview-e1', title: 'Estudo mediúnico', entity: 'Desenvolvimento', description: null, details: null, category: 'curso', event_date: '2026-07-24', event_time: '20:00:00', location: 'T. U. Senhora do Rosário', image_url: null, status: 'confirmada', created_by: null, created_at: '2026-07-01T00:00:00Z', updated_at: '2026-07-01T00:00:00Z' },
+  { id: 'preview-e2', title: 'Cuidado da casa', entity: 'Equipe Dourada', description: null, details: null, category: 'acao-social', event_date: '2026-07-26', event_time: '09:00:00', location: 'T. U. Senhora do Rosário', image_url: null, status: 'confirmada', created_by: null, created_at: '2026-07-01T00:00:00Z', updated_at: '2026-07-01T00:00:00Z' },
+  { id: 'preview-e3', title: 'Gira de Baianos', entity: 'Baianos', description: null, details: null, category: 'gira', event_date: '2026-07-28', event_time: '19:30:00', location: 'T. U. Senhora do Rosário', image_url: null, status: 'confirmada', created_by: null, created_at: '2026-07-01T00:00:00Z', updated_at: '2026-07-01T00:00:00Z' },
+  { id: 'preview-e4', title: 'Gira interna', entity: 'Corrente completa', description: null, details: null, category: 'gira', event_date: '2026-08-02', event_time: '19:00:00', location: 'T. U. Senhora do Rosário', image_url: null, status: 'cancelada', created_by: null, created_at: '2026-07-01T00:00:00Z', updated_at: '2026-07-01T00:00:00Z' },
+];
+
+export function AgendaManagement({ events }: { events?: PortalEvent[] }) {
+  const eventList = events ?? previewEvents;
+  const upcoming = eventList.filter((event) => event.event_date >= todayISODate());
+  const canceled = eventList.filter((event) => event.status === 'cancelada');
+
   return (
     <div className="portal-page">
-      <PageHeader eyebrow="Administração · Agenda" title="Agenda e giras" description="Organize atividades, responsáveis, confirmações e comunicados em um só fluxo." action={<button className="portal-button portal-button--primary"><Plus size={16} /> Criar atividade</button>} />
+      <PageHeader eyebrow="Administração · Agenda" title="Agenda e giras" description="Organize atividades, responsáveis, confirmações e comunicados em um só fluxo." action={<NewEventButton />} />
       <div className="portal-calendar-strip"><button className="is-active">Julho 2026</button><button>Agosto</button><button>Setembro</button><span /><button className="portal-filter"><Filter size={14} /> Filtros</button></div>
       <section className="portal-agenda-layout">
         <article className="portal-panel">
-          <PanelHeader eyebrow="Próximas atividades" title="Linha do tempo" />
-          <div className="portal-timeline">
-            {events.map(([day, month, title, time, group, status], index) => <div className="portal-timeline__item" key={`${day}-${title}`}><div className="portal-timeline__date"><strong>{day}</strong><span>{month}</span></div><i /><div><span className="portal-timeline__type">{group}</span><h3>{title}</h3><p><Clock3 size={13} /> {time}</p></div><StatusPill tone={index === 1 ? 'warning' : 'neutral'}>{status}</StatusPill><button className="portal-icon-button" aria-label={`Opções para ${title}`}><MoreHorizontal size={18} /></button></div>)}
-          </div>
+          <PanelHeader eyebrow="Atividades cadastradas" title="Linha do tempo" />
+          {eventList.length === 0 ? (
+            <p className="portal-panel__copy">Nenhum evento cadastrado. Crie a primeira atividade da casa.</p>
+          ) : (
+            <div className="portal-timeline">
+              {eventList.map((event) => {
+                const parts = eventDateParts(event.event_date);
+                return (
+                  <div className={`portal-timeline__item${event.status === 'cancelada' ? ' is-canceled' : ''}`} key={event.id}>
+                    <div className="portal-timeline__date"><strong>{parts.day}</strong><span>{parts.month}</span></div>
+                    <i />
+                    <div>
+                      <span className="portal-timeline__type">{eventCategoryLabel(event.category)}{event.entity ? ` · ${event.entity}` : ''}</span>
+                      <h3>{event.title}</h3>
+                      <p><Clock3 size={13} /> {formatEventTime(event.event_time)} · {event.location}</p>
+                    </div>
+                    <StatusPill tone={event.status === 'cancelada' ? 'danger' : 'neutral'}>{event.status === 'cancelada' ? 'Cancelada' : 'Confirmada'}</StatusPill>
+                    <EventRowActions event={event} />
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </article>
-        <div className="portal-stack"><article className="portal-panel"><PanelHeader eyebrow="Julho" title="Resumo" /><dl className="portal-definition-list"><div><dt>Atividades</dt><dd>8</dd></div><div><dt>Escalas abertas</dt><dd>2</dd></div><div><dt>Confirmações pendentes</dt><dd>7</dd></div></dl></article><article className="portal-note-card portal-note-card--light"><BellRing size={22} /><p>O lembrete do estudo de quinta-feira será enviado amanhã às 18h.</p><span>Automação programada</span></article></div>
+        <div className="portal-stack">
+          <article className="portal-panel"><PanelHeader eyebrow="Resumo" title="Agenda" /><dl className="portal-definition-list"><div><dt>Atividades futuras</dt><dd>{upcoming.length}</dd></div><div><dt>Confirmadas</dt><dd>{eventList.filter((event) => event.status === 'confirmada').length}</dd></div><div><dt>Canceladas</dt><dd>{canceled.length}</dd></div></dl></article>
+          <article className="portal-note-card portal-note-card--light"><BellRing size={22} /><p>Eventos confirmados aparecem automaticamente na Home e na agenda pública.</p><span>Publicação automática</span></article>
+        </div>
       </section>
     </div>
   );
