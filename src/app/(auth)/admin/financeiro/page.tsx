@@ -16,7 +16,7 @@ export default async function AdminFinancePage() {
       .from('finance_entries')
       .select('*')
       .gte('entry_date', sinceISO)
-      .order('entry_date', { ascending: false }),
+      .order('entry_date', { ascending: true }),
     supabase
       .from('profiles')
       .select('*')

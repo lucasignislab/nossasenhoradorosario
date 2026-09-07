@@ -246,7 +246,7 @@ export function FinanceDashboard({ entries, members = [] }: FinanceDashboardProp
   const namesById = new Map(members.map((member) => [member.id, profileDisplayName(member)]));
   const pendingCount = entryList.filter((entry) => entry.status === 'pendente').length;
   const recentEntries = [...entryList]
-    .sort((a, b) => (a.entry_date < b.entry_date ? 1 : -1))
+    .sort((a, b) => (a.entry_date > b.entry_date ? 1 : -1))
     .slice(0, 12);
   const expenseTotalFormatted = formatBRL(summary.expense);
   const monthName = new Date().toLocaleDateString('pt-BR', { month: 'long' });
@@ -386,7 +386,7 @@ export function AttendanceDashboard({ events, members, attendance }: AttendanceD
     sheetExisting[row.event_id] ??= {};
     sheetExisting[row.event_id][row.profile_id] = { present: row.present, justified: row.justified };
   }
-  const sheetEvents = [...eventList].sort((a, b) => (a.event_date < b.event_date ? 1 : -1));
+  const sheetEvents = [...eventList].sort((a, b) => (a.event_date > b.event_date ? 1 : -1));
 
   return (
     <div className="portal-page">
@@ -678,7 +678,7 @@ const previewNotices: Notice[] = [
 export function NoticesManagement({ notices }: { notices?: Notice[] }) {
   const noticeList = notices ?? previewNotices;
   const sorted = [...noticeList].sort((a, b) =>
-    Number(b.pinned) - Number(a.pinned) || (a.published_at < b.published_at ? 1 : -1),
+    Number(b.pinned) - Number(a.pinned) || (a.published_at > b.published_at ? 1 : -1),
   );
   const pinnedCount = noticeList.filter((notice) => notice.pinned).length;
 

@@ -214,7 +214,7 @@ export function MemberAttendance({ history, upcoming }: { history?: MemberAttend
   const justified = items.filter((item) => !item.present && item.justified).length;
   const absences = total - present;
   const percent = total > 0 ? Math.round((present / total) * 100) : 0;
-  const sorted = [...items].sort((a, b) => (a.event.event_date < b.event.event_date ? 1 : -1));
+  const sorted = [...items].sort((a, b) => (a.event.event_date > b.event.event_date ? 1 : -1));
 
   return (
     <div className="portal-page">
@@ -409,7 +409,7 @@ const previewMemberNotices: Notice[] = [
 export function MemberNotices({ notices }: { notices?: Notice[] }) {
   const noticeList = notices ?? previewMemberNotices;
   const sorted = [...noticeList].sort((a, b) =>
-    Number(b.pinned) - Number(a.pinned) || (a.published_at < b.published_at ? 1 : -1),
+    Number(b.pinned) - Number(a.pinned) || (a.published_at > b.published_at ? 1 : -1),
   );
   const pinnedCount = noticeList.filter((notice) => notice.pinned).length;
   const monthStart = new Date();

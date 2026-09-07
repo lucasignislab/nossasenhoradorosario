@@ -11,7 +11,7 @@ export default async function FinanceiroPage() {
         .from('finance_entries')
         .select('*')
         .eq('profile_id', user.id)
-        .order('entry_date', { ascending: false })
+        .order('entry_date', { ascending: true })
     : { data: [] };
 
   return <MemberFinance entries={(data ?? []) as FinanceEntry[]} />;

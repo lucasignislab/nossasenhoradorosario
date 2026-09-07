@@ -8,7 +8,7 @@ export default async function AdminNoticesPage() {
     .from('notices')
     .select('*')
     .order('pinned', { ascending: false })
-    .order('published_at', { ascending: false });
+    .order('published_at', { ascending: true });
 
   return <NoticesManagement notices={(data ?? []) as Notice[]} />;
 }

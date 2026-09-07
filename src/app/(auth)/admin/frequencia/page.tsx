@@ -11,7 +11,7 @@ export default async function AdminAttendancePage() {
     supabase
       .from('events')
       .select('*')
-      .order('event_date', { ascending: false }),
+      .order('event_date', { ascending: true }),
     supabase
       .from('profiles')
       .select('*')
