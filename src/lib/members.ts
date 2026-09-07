@@ -3,6 +3,7 @@ import type { Profile, ProfileRole, ProfileStatus } from '@/types';
 export function roleLabel(role: ProfileRole): string {
   if (role === 'admin') return 'Administração';
   if (role === 'developer') return 'Acesso técnico';
+  if (role === 'editor') return 'Comunicação';
   return 'Filho(a) da casa';
 }
 

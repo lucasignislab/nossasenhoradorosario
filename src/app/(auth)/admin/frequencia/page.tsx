@@ -1,8 +1,10 @@
 import { AttendanceDashboard } from '@/components/portal/AdminViews';
+import { redirectEditorsAway } from '@/lib/server/access';
 import { createClient } from '@/lib/supabase/server';
 import type { Attendance, PortalEvent, Profile } from '@/types';
 
 export default async function AdminAttendancePage() {
+  await redirectEditorsAway();
   const supabase = await createClient();
 
   const [eventsResult, membersResult, attendanceResult] = await Promise.all([

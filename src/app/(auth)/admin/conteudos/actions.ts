@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { createClient } from '@/lib/supabase/server';
+import { requireContentManager } from '@/lib/server/access';
 import type { ContentKind } from '@/types';
 
 type ActionResult = { ok: true } | { ok: false; error: string };
@@ -15,24 +15,6 @@ export type ContentFormInput = {
   duration_minutes: string;
   published: boolean;
 };
-
-async function requireAdministrator() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { supabase, user: null, error: 'Sessão expirada. Entre novamente.' };
-
-  const { data: caller } = await supabase
-    .from('profiles')
-    .select('role, status')
-    .eq('id', user.id)
-    .single();
-
-  if (!caller || caller.status !== 'active' || !['admin', 'developer'].includes(caller.role)) {
-    return { supabase, user: null, error: 'Você não tem permissão para gerenciar conteúdos.' };
-  }
-
-  return { supabase, user, error: null };
-}
 
 type ContentRecord = {
   title: string;
@@ -87,7 +69,7 @@ function revalidateContents() {
 }
 
 export async function createContent(input: ContentFormInput): Promise<ActionResult> {
-  const { supabase, user, error: authError } = await requireAdministrator();
+  const { supabase, user, error: authError } = await requireContentManager();
   if (authError || !user) return { ok: false, error: authError ?? 'Sessão expirada.' };
 
   const parsed = parseContentInput(input);
@@ -105,7 +87,7 @@ export async function createContent(input: ContentFormInput): Promise<ActionResu
 
 export async function updateContent(contentId: string, input: ContentFormInput): Promise<ActionResult> {
   if (!contentId) return { ok: false, error: 'Conteúdo não informado.' };
-  const { supabase, error: authError } = await requireAdministrator();
+  const { supabase, error: authError } = await requireContentManager();
   if (authError) return { ok: false, error: authError };
 
   const parsed = parseContentInput(input);
@@ -123,7 +105,7 @@ export async function updateContent(contentId: string, input: ContentFormInput):
 
 export async function toggleContentPublished(contentId: string, published: boolean): Promise<ActionResult> {
   if (!contentId) return { ok: false, error: 'Conteúdo não informado.' };
-  const { supabase, error: authError } = await requireAdministrator();
+  const { supabase, error: authError } = await requireContentManager();
   if (authError) return { ok: false, error: authError };
 
   try {
@@ -138,7 +120,7 @@ export async function toggleContentPublished(contentId: string, published: boole
 
 export async function deleteContent(contentId: string): Promise<ActionResult> {
   if (!contentId) return { ok: false, error: 'Conteúdo não informado.' };
-  const { supabase, error: authError } = await requireAdministrator();
+  const { supabase, error: authError } = await requireContentManager();
   if (authError) return { ok: false, error: authError };
 
   try {

@@ -6,6 +6,14 @@ import type { FinanceEntry, Notice, PortalEvent, Profile } from '@/types';
 
 export default async function AdminPage() {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const { data: callerProfile } = user
+    ? await supabase.from('profiles').select('role').eq('id', user.id).single()
+    : { data: null };
+  const callerRole = (callerProfile as { role: string } | null)?.role ?? 'member';
+  const canSeeSensitive = callerRole === 'admin' || callerRole === 'developer';
+
   const { start, end } = currentMonthRange();
 
   const [activeResult, pendingProfilesResult, eventsResult, noticesResult, financeResult] = await Promise.all([
@@ -50,6 +58,7 @@ export default async function AdminPage() {
       upcomingEvents={(eventsResult.data ?? []) as PortalEvent[]}
       pinnedNotices={(noticesResult.data ?? []) as Notice[]}
       financeSummary={{ income: summary.income, expense: summary.expense, balance: summary.balance }}
+      canSeeSensitive={canSeeSensitive}
     />
   );
 }

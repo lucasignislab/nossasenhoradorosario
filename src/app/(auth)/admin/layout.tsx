@@ -6,7 +6,7 @@ import '@/styles/portal-corporate.css';
 
 type Profile = {
   full_name: string;
-  role: 'member' | 'admin' | 'developer';
+  role: 'member' | 'admin' | 'developer' | 'editor';
   status: 'pending' | 'active' | 'suspended';
 };
 
@@ -17,7 +17,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   const { data } = await supabase.from('profiles').select('full_name, role, status').eq('id', user.id).single();
   const profile = data as Profile | null;
-  if (!profile || profile.status !== 'active' || !['admin', 'developer'].includes(profile.role)) redirect('/dashboard');
+  if (!profile || profile.status !== 'active' || !['admin', 'developer', 'editor'].includes(profile.role)) redirect('/dashboard');
 
   return (
     <DashboardLayout mode="admin" user={{ name: profile.full_name, email: user.email ?? '', role: profile.role }}>

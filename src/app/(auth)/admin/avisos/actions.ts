@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { createClient } from '@/lib/supabase/server';
+import { requireContentManager } from '@/lib/server/access';
 
 type ActionResult = { ok: true } | { ok: false; error: string };
 
@@ -11,24 +11,6 @@ export type NoticeFormInput = {
   category: string;
   pinned: boolean;
 };
-
-async function requireAdministrator() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { supabase, user: null, error: 'Sessão expirada. Entre novamente.' };
-
-  const { data: caller } = await supabase
-    .from('profiles')
-    .select('role, status')
-    .eq('id', user.id)
-    .single();
-
-  if (!caller || caller.status !== 'active' || !['admin', 'developer'].includes(caller.role)) {
-    return { supabase, user: null, error: 'Você não tem permissão para gerenciar avisos.' };
-  }
-
-  return { supabase, user, error: null };
-}
 
 function parseNoticeInput(input: NoticeFormInput): { record: Omit<NoticeFormInput, never> & { title: string; body: string; category: string } } | { error: string } {
   const title = input.title.trim();
@@ -46,7 +28,7 @@ function revalidateNotices() {
 }
 
 export async function createNotice(input: NoticeFormInput): Promise<ActionResult> {
-  const { supabase, user, error: authError } = await requireAdministrator();
+  const { supabase, user, error: authError } = await requireContentManager();
   if (authError || !user) return { ok: false, error: authError ?? 'Sessão expirada.' };
 
   const parsed = parseNoticeInput(input);
@@ -64,7 +46,7 @@ export async function createNotice(input: NoticeFormInput): Promise<ActionResult
 
 export async function updateNotice(noticeId: string, input: NoticeFormInput): Promise<ActionResult> {
   if (!noticeId) return { ok: false, error: 'Aviso não informado.' };
-  const { supabase, error: authError } = await requireAdministrator();
+  const { supabase, error: authError } = await requireContentManager();
   if (authError) return { ok: false, error: authError };
 
   const parsed = parseNoticeInput(input);
@@ -82,7 +64,7 @@ export async function updateNotice(noticeId: string, input: NoticeFormInput): Pr
 
 export async function toggleNoticePinned(noticeId: string, pinned: boolean): Promise<ActionResult> {
   if (!noticeId) return { ok: false, error: 'Aviso não informado.' };
-  const { supabase, error: authError } = await requireAdministrator();
+  const { supabase, error: authError } = await requireContentManager();
   if (authError) return { ok: false, error: authError };
 
   try {
@@ -97,7 +79,7 @@ export async function toggleNoticePinned(noticeId: string, pinned: boolean): Pro
 
 export async function deleteNotice(noticeId: string): Promise<ActionResult> {
   if (!noticeId) return { ok: false, error: 'Aviso não informado.' };
-  const { supabase, error: authError } = await requireAdministrator();
+  const { supabase, error: authError } = await requireContentManager();
   if (authError) return { ok: false, error: authError };
 
   try {

@@ -1,4 +1,4 @@
-export type ProfileRole = 'member' | 'admin' | 'developer';
+export type ProfileRole = 'member' | 'admin' | 'developer' | 'editor';
 
 export type ProfileStatus = 'pending' | 'active' | 'suspended';
 

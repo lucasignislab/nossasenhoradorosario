@@ -1,8 +1,10 @@
 import { ChoresManagement, type ChoreTeamMemberRow } from '@/components/portal/AdminViews';
+import { redirectEditorsAway } from '@/lib/server/access';
 import { createClient } from '@/lib/supabase/server';
 import type { ChoreSchedule, ChoreTeam, Profile } from '@/types';
 
 export default async function AdminChoresPage() {
+  await redirectEditorsAway();
   const supabase = await createClient();
 
   const [teamsResult, schedulesResult, teamMembersResult, membersResult] = await Promise.all([

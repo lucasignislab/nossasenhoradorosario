@@ -1,4 +1,5 @@
 import { AdminSettings } from '@/components/portal/AdminViews';
+import { redirectEditorsAway } from '@/lib/server/access';
 import { createClient } from '@/lib/supabase/server';
 
 async function countByStatusAndRole(supabase: Awaited<ReturnType<typeof createClient>>, status: string, role?: string) {
@@ -9,6 +10,7 @@ async function countByStatusAndRole(supabase: Awaited<ReturnType<typeof createCl
 }
 
 export default async function AdminSettingsPage() {
+  await redirectEditorsAway();
   const supabase = await createClient();
 
   const [admins, developers, members, pending] = await Promise.all([

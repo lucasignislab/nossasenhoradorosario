@@ -1,8 +1,10 @@
 import { MembersManagement } from '@/components/portal/AdminViews';
+import { redirectEditorsAway } from '@/lib/server/access';
 import { createClient } from '@/lib/supabase/server';
 import type { Profile } from '@/types';
 
 export default async function AdminMembersPage() {
+  await redirectEditorsAway();
   const supabase = await createClient();
 
   const [pendingResult, membersResult, activeResult, pendingCountResult, suspendedResult] =

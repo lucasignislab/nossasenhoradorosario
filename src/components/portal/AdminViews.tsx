@@ -100,6 +100,8 @@ type AdminOverviewProps = {
   pendingProfiles?: Profile[];
   pinnedNotices?: Notice[];
   financeSummary?: { income: number; expense: number; balance: number };
+  /** false para o papel editor (comunicação): esconde painéis sensíveis. */
+  canSeeSensitive?: boolean;
 };
 
 // Dados demonstrativos usados apenas pela prévia visual (portal-preview / Storybook).
@@ -113,7 +115,7 @@ const previewOverviewPending: Profile[] = [
   { id: 'preview-op2', full_name: 'Rafael Santos', phone: null, role: 'member', status: 'pending', joined_at: null, created_at: '2026-07-20T00:00:00Z', updated_at: '2026-07-20T00:00:00Z' },
 ];
 
-export function AdminOverview({ basePath = '/admin', activeMembers, pendingMembers, upcomingEvents, pendingProfiles, pinnedNotices, financeSummary }: AdminOverviewProps) {
+export function AdminOverview({ basePath = '/admin', activeMembers, pendingMembers, upcomingEvents, pendingProfiles, pinnedNotices, financeSummary, canSeeSensitive = true }: AdminOverviewProps) {
   const activeMembersLabel = activeMembers ?? 42;
   const pendingMembersLabel = pendingMembers ?? previewOverviewPending.length;
   const eventList = upcomingEvents ?? previewOverviewEvents;
@@ -179,33 +181,42 @@ export function AdminOverview({ basePath = '/admin', activeMembers, pendingMembe
         </div>
 
         <div className="portal-stack">
-          <article className="portal-panel portal-panel--accent">
-            <PanelHeader eyebrow="Atenção hoje" title={`${pendingMembersLabel} aprovaç${pendingMembersLabel === 1 ? 'ão pendente' : 'ões pendentes'}`} />
-            {pendingList.length === 0 ? (
-              <p className="portal-panel__copy">Nenhum cadastro aguardando aprovação.</p>
-            ) : (
-              <div className="portal-person-list">
-                {pendingList.map((profile) => (
-                  <div className="portal-person" key={profile.id}>
-                    <span>{profileInitial(profile)}</span>
-                    <div><strong>{profileDisplayName(profile)}</strong><small>Recebido em {formatJoinedAt(profile.created_at)}</small></div>
-                    <Link href={`${basePath}/membros`} aria-label={`Revisar cadastro de ${profileDisplayName(profile)}`}><ArrowRight size={16} /></Link>
-                  </div>
-                ))}
-              </div>
-            )}
-            <Link href={`${basePath}/membros`} className="portal-button portal-button--dark">Revisar cadastros</Link>
-          </article>
+          {canSeeSensitive ? (
+            <article className="portal-panel portal-panel--accent">
+              <PanelHeader eyebrow="Atenção hoje" title={`${pendingMembersLabel} aprovaç${pendingMembersLabel === 1 ? 'ão pendente' : 'ões pendentes'}`} />
+              {pendingList.length === 0 ? (
+                <p className="portal-panel__copy">Nenhum cadastro aguardando aprovação.</p>
+              ) : (
+                <div className="portal-person-list">
+                  {pendingList.map((profile) => (
+                    <div className="portal-person" key={profile.id}>
+                      <span>{profileInitial(profile)}</span>
+                      <div><strong>{profileDisplayName(profile)}</strong><small>Recebido em {formatJoinedAt(profile.created_at)}</small></div>
+                      <Link href={`${basePath}/membros`} aria-label={`Revisar cadastro de ${profileDisplayName(profile)}`}><ArrowRight size={16} /></Link>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <Link href={`${basePath}/membros`} className="portal-button portal-button--dark">Revisar cadastros</Link>
+            </article>
+          ) : null}
 
-          <article className="portal-panel">
-            <PanelHeader eyebrow="Financeiro" title={`Resumo de ${currentMonthName}`} />
-            <dl className="portal-definition-list">
-              <div><dt>Entradas</dt><dd>{formatBRL(finance.income)}</dd></div>
-              <div><dt>Saídas</dt><dd>{formatBRL(finance.expense)}</dd></div>
-              <div><dt>Saldo do mês</dt><dd>{formatBRL(finance.balance)}</dd></div>
-            </dl>
-            <Link href={`${basePath}/financeiro`} className="portal-text-link">Abrir financeiro <ArrowRight size={14} /></Link>
-          </article>
+          {canSeeSensitive ? (
+            <article className="portal-panel">
+              <PanelHeader eyebrow="Financeiro" title={`Resumo de ${currentMonthName}`} />
+              <dl className="portal-definition-list">
+                <div><dt>Entradas</dt><dd>{formatBRL(finance.income)}</dd></div>
+                <div><dt>Saídas</dt><dd>{formatBRL(finance.expense)}</dd></div>
+                <div><dt>Saldo do mês</dt><dd>{formatBRL(finance.balance)}</dd></div>
+              </dl>
+              <Link href={`${basePath}/financeiro`} className="portal-text-link">Abrir financeiro <ArrowRight size={14} /></Link>
+            </article>
+          ) : (
+            <article className="portal-panel">
+              <PanelHeader eyebrow="Seu acesso" title="Comunicação da casa" />
+              <p className="portal-panel__copy">Seu perfil administra agenda, avisos e conteúdos. Áreas de pessoas, frequência e finanças ficam com a administração.</p>
+            </article>
+          )}
 
           <article className="portal-privacy-card">
             <ShieldCheck size={20} />

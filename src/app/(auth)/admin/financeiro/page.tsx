@@ -1,8 +1,10 @@
 import { FinanceDashboard } from '@/components/portal/AdminViews';
+import { redirectEditorsAway } from '@/lib/server/access';
 import { createClient } from '@/lib/supabase/server';
 import type { FinanceEntry, Profile } from '@/types';
 
 export default async function AdminFinancePage() {
+  await redirectEditorsAway();
   const supabase = await createClient();
 
   const since = new Date();

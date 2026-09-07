@@ -35,7 +35,7 @@ export interface DashboardLayoutProps {
   user: {
     name: string;
     email: string;
-    role?: 'member' | 'admin' | 'developer';
+    role?: 'member' | 'admin' | 'developer' | 'editor';
   };
 }
 
@@ -66,7 +66,11 @@ const roleNames = {
   member: 'Filho da casa',
   admin: 'Administração',
   developer: 'Acesso técnico',
+  editor: 'Comunicação',
 };
+
+// O papel editor (comunicação) administra apenas agenda, avisos e conteúdos.
+const editorHiddenAdminPaths = ['/membros', '/frequencia', '/financeiro', '/faxinas', '/configuracoes'];
 
 export function DashboardLayout({
   children,
@@ -81,7 +85,10 @@ export function DashboardLayout({
   const router = useRouter();
   const prefix = navigationPrefix ?? (mode === 'admin' ? '/admin' : '/dashboard');
   const previewRoot = previewMode ? '/portal-preview' : '';
-  const menuItems = mode === 'admin' ? adminMenu : memberMenu;
+  const baseMenu = mode === 'admin' ? adminMenu : memberMenu;
+  const menuItems = mode === 'admin' && user.role === 'editor'
+    ? baseMenu.filter((item) => !editorHiddenAdminPaths.includes(item.path))
+    : baseMenu;
   const currentItem = [...menuItems]
     .reverse()
     .find((item) => item.path === '' ? pathname === prefix : pathname.startsWith(`${prefix}${item.path}`));

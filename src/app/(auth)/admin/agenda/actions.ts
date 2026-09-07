@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { createClient } from '@/lib/supabase/server';
+import { requireContentManager } from '@/lib/server/access';
 import type { EventCategory } from '@/types';
 
 type ActionResult = { ok: true } | { ok: false; error: string };
@@ -19,24 +19,6 @@ export type EventFormInput = {
 };
 
 const VALID_CATEGORIES: EventCategory[] = ['gira', 'festividade', 'acao-social', 'curso'];
-
-async function requireAdministrator() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { supabase, user: null, error: 'Sessão expirada. Entre novamente.' as const };
-
-  const { data: caller } = await supabase
-    .from('profiles')
-    .select('role, status')
-    .eq('id', user.id)
-    .single();
-
-  if (!caller || caller.status !== 'active' || !['admin', 'developer'].includes(caller.role)) {
-    return { supabase, user: null, error: 'Você não tem permissão para gerenciar a agenda.' as const };
-  }
-
-  return { supabase, user, error: null };
-}
 
 type EventRecord = {
   title: string;
@@ -87,7 +69,7 @@ function revalidateAgendas() {
 }
 
 export async function createEvent(input: EventFormInput): Promise<ActionResult> {
-  const { supabase, user, error: authError } = await requireAdministrator();
+  const { supabase, user, error: authError } = await requireContentManager();
   if (authError || !user) return { ok: false, error: authError ?? 'Sessão expirada.' };
 
   const parsed = parseEventInput(input);
@@ -105,7 +87,7 @@ export async function createEvent(input: EventFormInput): Promise<ActionResult> 
 
 export async function updateEvent(eventId: string, input: EventFormInput): Promise<ActionResult> {
   if (!eventId) return { ok: false, error: 'Evento não informado.' };
-  const { supabase, error: authError } = await requireAdministrator();
+  const { supabase, error: authError } = await requireContentManager();
   if (authError) return { ok: false, error: authError };
 
   const parsed = parseEventInput(input);
@@ -123,7 +105,7 @@ export async function updateEvent(eventId: string, input: EventFormInput): Promi
 
 export async function cancelEvent(eventId: string): Promise<ActionResult> {
   if (!eventId) return { ok: false, error: 'Evento não informado.' };
-  const { supabase, error: authError } = await requireAdministrator();
+  const { supabase, error: authError } = await requireContentManager();
   if (authError) return { ok: false, error: authError };
 
   try {
@@ -138,7 +120,7 @@ export async function cancelEvent(eventId: string): Promise<ActionResult> {
 
 export async function restoreEvent(eventId: string): Promise<ActionResult> {
   if (!eventId) return { ok: false, error: 'Evento não informado.' };
-  const { supabase, error: authError } = await requireAdministrator();
+  const { supabase, error: authError } = await requireContentManager();
   if (authError) return { ok: false, error: authError };
 
   try {
@@ -153,7 +135,7 @@ export async function restoreEvent(eventId: string): Promise<ActionResult> {
 
 export async function deleteEvent(eventId: string): Promise<ActionResult> {
   if (!eventId) return { ok: false, error: 'Evento não informado.' };
-  const { supabase, error: authError } = await requireAdministrator();
+  const { supabase, error: authError } = await requireContentManager();
   if (authError) return { ok: false, error: authError };
 
   try {

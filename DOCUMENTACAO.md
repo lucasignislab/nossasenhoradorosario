@@ -212,3 +212,11 @@ Margens, paddings e gaps são estritamente múltiplos de 8px:
 *   **`/admin/configuracoes`:** contagens reais de papéis (admins, desenvolvedores, membros ativos) e de cadastros pendentes.
 *   **Login:** a página de acesso não anuncia mais a prévia demonstrativa; o `portal-preview` continua disponível apenas com `NEXT_PUBLIC_PORTAL_PREVIEW=true` no ambiente (ver `.env.example`) e serve os mocks de fallback das views.
 *   Componente morto `LoginForm` removido (substituído pelo `AuthForm`).
+
+### 5.8. Papel de comunicação (`editor`)
+
+*   Novo valor `editor` no enum `app_role` (migration `supabase/migrations/202609070008_editor_role.sql`). Pensado para quem cuida das redes sociais da casa (ex.: Instagram).
+*   **Pode:** visão geral, agenda (`/admin/agenda`), avisos (`/admin/avisos`) e conteúdos (`/admin/conteudos`) — as políticas de escrita de `events`, `notices` e `contents` agora usam a nova função `public.is_content_manager()` (admin, developer ou editor ativo).
+*   **Não pode:** membros, financeiro, frequência, faxinas e configurações — essas páginas redirecionam editores para `/admin/agenda` (guarda `redirectEditorsAway()`), o menu omite esses itens e as tabelas seguem protegidas por `is_administrator()`.
+*   Na visão geral, editores não veem os painéis de cadastros pendentes nem o resumo financeiro — no lugar, um painel neutro descreve o escopo do acesso.
+*   A promoção a editor é feita via SQL pela administração (ver seção de ativação no README do Supabase).
