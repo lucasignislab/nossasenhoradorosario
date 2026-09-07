@@ -85,15 +85,7 @@ export function MemberAgenda({ events, confirmedEventIds, selfAttendance }: Memb
                       <StatusPill tone={isConfirmed ? 'info' : 'neutral'}>{isConfirmed ? 'Presença confirmada' : (event.entity ?? 'Corrente')}</StatusPill>
                       <h3>{event.title}</h3>
                       <p><Clock3 size={13} /> {formatEventTime(event.event_time)} · {event.location}</p>
-                      {self[event.id] ? (
-                        <SelfAttendanceControls
-                          eventId={event.id}
-                          current={self[event.id].record}
-                          windowOpen={self[event.id].windowOpen}
-                        />
-                      ) : null}
                     </div>
-                    <EventConfirmationButton eventId={event.id} confirmed={isConfirmed} />
                   </div>
                 );
               })}
