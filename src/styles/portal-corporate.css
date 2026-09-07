@@ -417,12 +417,13 @@
 .member-feature-card p { margin: 0 0 5px; color: #c5c7cc; font-size: 9px; }
 .member-feature-card > div > span:not(.portal-status):not(.member-inline-progress) { color: #8c8f96; font-size: 8px; }
 .member-feature-card--study { background: linear-gradient(120deg,#202125,#292a2f); }
-.member-agenda-list > div { min-height: 70px; grid-template-columns: 38px 1fr 24px; gap: 11px; border-color: #eceef0; }
+.member-agenda-list > div { min-height: 0; padding: 24px 0; grid-template-columns: 38px 1fr; gap: 16px; align-items: start; border-color: #eceef0; }
 .member-agenda-list > div > span { width: 34px; height: 42px; border: 1px solid var(--portal-border); border-radius: 5px; background: #fafafa; }
 .member-agenda-list > div > span strong { font: 650 13px/1 var(--font-body); }
 .member-agenda-list > div > span small { color: var(--portal-text-faint); font-size: 6px; }
-.member-agenda-list h3 { margin: 5px 0 3px; font: 600 9px/1 var(--font-body); }
+.member-agenda-list h3 { margin: 8px 0; font: 600 9px/1 var(--font-body); }
 .member-agenda-list p { font-size: 7px; }
+.member-agenda-list .portal-status { margin-bottom: 4px; }
 .member-team-grid { margin-bottom: 18px; gap: 7px; }
 .member-team-grid > div { padding: 10px; gap: 4px; border: 1px solid var(--portal-border); border-radius: 6px; background: #fafafa; }
 .member-team-grid > div > span { width: 28px; height: 28px; border: 0; border-radius: 6px; background: #e9eaec; color: #565960; font: 650 9px var(--font-body); }
@@ -754,7 +755,7 @@
 .portal-action-note { color: var(--portal-text-soft); font-size: 12px; }
 
 /* Auto-registro de frequência (membro) */
-.portal-self-attendance { display: grid; gap: 8px; margin-top: 10px; }
+.portal-self-attendance { display: grid; gap: 12px; margin-top: 16px; }
 .portal-self-attendance .portal-row-actions { flex-wrap: wrap; }
 .portal-unrecorded-tag { margin-left: 8px; padding: 2px 8px; border-radius: 999px; background: rgba(176, 122, 26, .12); color: var(--portal-warning, #8f7227); font-size: 10px; font-style: normal; font-weight: 650; text-transform: uppercase; letter-spacing: .04em; }
 .portal-table tr.is-unrecorded td { background: rgba(176, 122, 26, .05); }
