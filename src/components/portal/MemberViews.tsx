@@ -18,7 +18,8 @@ import {
 import { MetricCard, PageHeader, PanelHeader, ProgressBar, StatusPill } from './PortalUI';
 import { EventConfirmationButton } from './EventConfirmationButton';
 import { eventDateParts, formatEventDateLong, formatEventTime } from '@/lib/events';
-import type { PortalEvent } from '@/types';
+import { currentMonthRange, formatBRL, formatFinanceDate } from '@/lib/finance';
+import type { FinanceEntry, PortalEvent } from '@/types';
 
 // Dados demonstrativos usados apenas pela prévia visual (portal-preview / Storybook).
 const previewMemberEvents: PortalEvent[] = [
@@ -118,13 +119,48 @@ export function MemberStudies() {
   );
 }
 
-export function MemberFinance() {
+// Dados demonstrativos usados apenas pela prévia visual (portal-preview / Storybook).
+const previewMemberFinanceEntries: FinanceEntry[] = [
+  { id: 'preview-mf1', type: 'entrada', category: 'mensalidade', description: 'Mensalidade · Julho', amount_cents: 9000, entry_date: '2026-07-10', profile_id: 'preview', created_by: null, created_at: '2026-07-10T00:00:00Z', updated_at: '2026-07-10T00:00:00Z' },
+  { id: 'preview-mf2', type: 'entrada', category: 'mensalidade', description: 'Mensalidade · Junho', amount_cents: 9000, entry_date: '2026-06-08', profile_id: 'preview', created_by: null, created_at: '2026-06-08T00:00:00Z', updated_at: '2026-06-08T00:00:00Z' },
+  { id: 'preview-mf3', type: 'entrada', category: 'mensalidade', description: 'Mensalidade · Maio', amount_cents: 9000, entry_date: '2026-05-10', profile_id: 'preview', created_by: null, created_at: '2026-05-10T00:00:00Z', updated_at: '2026-05-10T00:00:00Z' },
+];
+
+function monthReference(isoDate: string): string {
+  const [year, month] = isoDate.split('-').map(Number);
+  const label = new Date(Date.UTC(year, month - 1, 1)).toLocaleDateString('pt-BR', { month: 'long', timeZone: 'UTC' });
+  return `${label.charAt(0).toUpperCase()}${label.slice(1)} ${year}`;
+}
+
+export function MemberFinance({ entries }: { entries?: FinanceEntry[] }) {
+  const entryList = entries ?? previewMemberFinanceEntries;
+  const { start, end } = currentMonthRange();
+  const currentMonthName = new Date().toLocaleDateString('pt-BR', { month: 'long' });
+  const currentYear = new Date().getFullYear();
+
+  const monthPayment = entryList.find(
+    (entry) => entry.type === 'entrada' && entry.category === 'mensalidade' && entry.entry_date >= start && entry.entry_date <= end,
+  );
+  const yearEntries = entryList.filter(
+    (entry) => entry.type === 'entrada' && entry.category === 'mensalidade' && entry.entry_date.startsWith(String(currentYear)),
+  );
+  const yearTotalCents = yearEntries.reduce((total, entry) => total + entry.amount_cents, 0);
+  const history = [...entryList].sort((a, b) => (a.entry_date < b.entry_date ? 1 : -1));
+
   return (
     <div className="portal-page">
       <PageHeader eyebrow="Área dos filhos · Mensalidades" title="Minha contribuição" description="Acompanhe sua situação, consulte o histórico e envie comprovantes com tranquilidade." />
-      <section className="member-finance-hero"><div><span>Situação de julho</span><strong>Em dia</strong><p>Contribuição confirmada em 10 de julho de 2026</p></div><CheckCircle2 size={48} /><div><small>Próximo vencimento</small><strong>10 ago</strong><span>R$ 90,00</span></div></section>
-      <section className="portal-layout portal-layout--overview"><article className="portal-panel"><PanelHeader eyebrow="Forma de contribuição" title="Pagamento via Pix" /><div className="member-pix"><div><span>Chave Pix da casa</span><strong>tesouraria@senhoradorosario.org</strong></div><button className="portal-button portal-button--secondary">Copiar chave</button></div><p className="portal-panel__copy">Depois do pagamento, envie o comprovante para facilitar a conciliação da administração.</p><button className="portal-button portal-button--primary"><ReceiptText size={15} /> Enviar comprovante</button></article><div className="portal-panel"><PanelHeader eyebrow="Ano de 2026" title="Resumo" /><dl className="portal-definition-list"><div><dt>Mensalidades pagas</dt><dd>7</dd></div><div><dt>Total contribuído</dt><dd>R$ 630</dd></div><div><dt>Pendências</dt><dd>Nenhuma</dd></div></dl></div></section>
-      <article className="portal-panel member-history-panel"><PanelHeader eyebrow="Histórico" title="Minhas mensalidades" action={<button className="portal-filter"><Download size={14} /> Baixar informe</button>} /><div className="portal-table-wrap"><table className="portal-table"><thead><tr><th>Referência</th><th>Pagamento</th><th>Valor</th><th>Situação</th><th>Comprovante</th></tr></thead><tbody>{[['Julho 2026','10 jul 2026','R$ 90,00'],['Junho 2026','08 jun 2026','R$ 90,00'],['Maio 2026','10 mai 2026','R$ 90,00'],['Abril 2026','09 abr 2026','R$ 90,00']].map(([month,date,value]) => <tr key={month}><td><strong>{month}</strong></td><td>{date}</td><td>{value}</td><td><StatusPill tone="info">Confirmado</StatusPill></td><td><button className="portal-text-link"><Download size={13} /> Recibo</button></td></tr>)}</tbody></table></div></article>
+      <section className="member-finance-hero">
+        <div>
+          <span>Situação de {currentMonthName}</span>
+          <strong>{monthPayment ? 'Em dia' : 'Aguardando contribuição'}</strong>
+          <p>{monthPayment ? `Contribuição registrada em ${formatFinanceDate(monthPayment.entry_date)}` : 'Nenhuma mensalidade registrada para este mês ainda.'}</p>
+        </div>
+        <CheckCircle2 size={48} />
+        <div><small>Próximo vencimento</small><strong>Dia 10</strong><span>do mês seguinte</span></div>
+      </section>
+      <section className="portal-layout portal-layout--overview"><article className="portal-panel"><PanelHeader eyebrow="Forma de contribuição" title="Pagamento via Pix" /><div className="member-pix"><div><span>Chave Pix da casa</span><strong>tesouraria@senhoradorosario.org</strong></div><button className="portal-button portal-button--secondary">Copiar chave</button></div><p className="portal-panel__copy">Depois do pagamento, envie o comprovante para facilitar a conciliação da administração.</p><button className="portal-button portal-button--primary"><ReceiptText size={15} /> Enviar comprovante</button></article><div className="portal-panel"><PanelHeader eyebrow={`Ano de ${currentYear}`} title="Resumo" /><dl className="portal-definition-list"><div><dt>Mensalidades pagas</dt><dd>{yearEntries.length}</dd></div><div><dt>Total contribuído</dt><dd>{formatBRL(yearTotalCents)}</dd></div><div><dt>Pendências</dt><dd>{monthPayment ? 'Nenhuma' : 'Mês atual'}</dd></div></dl></div></section>
+      <article className="portal-panel member-history-panel"><PanelHeader eyebrow="Histórico" title="Minhas mensalidades" /><div className="portal-table-wrap"><table className="portal-table"><thead><tr><th>Referência</th><th>Pagamento</th><th>Descrição</th><th>Valor</th><th>Situação</th></tr></thead><tbody>{history.length === 0 ? <tr><td colSpan={5}>Nenhuma contribuição registrada ainda.</td></tr> : history.map((entry) => <tr key={entry.id}><td><strong>{monthReference(entry.entry_date)}</strong></td><td>{formatFinanceDate(entry.entry_date)}</td><td>{entry.description}</td><td>{formatBRL(entry.amount_cents)}</td><td><StatusPill tone="info">Confirmado</StatusPill></td></tr>)}</tbody></table></div></article>
     </div>
   );
 }

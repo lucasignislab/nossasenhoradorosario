@@ -40,3 +40,24 @@ export type EventConfirmation = {
   profile_id: string;
   created_at: string;
 };
+
+export type FinanceEntryType = 'entrada' | 'saida';
+
+export type FinanceEntry = {
+  id: string;
+  type: FinanceEntryType;
+  category: string;
+  description: string;
+  amount_cents: number;
+  entry_date: string;
+  profile_id: string | null;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type MonthlyFinancePoint = {
+  month: string;
+  income: number;
+  expense: number;
+};

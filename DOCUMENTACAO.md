@@ -175,3 +175,10 @@ Margens, paddings e gaps são estritamente múltiplos de 8px:
 *   **RLS:** eventos confirmados têm leitura pública (Home e `/agenda`); criar, editar, cancelar e excluir exige administração (`is_administrator()`). Cancelamento é reversível (mudança de status); exclusão remove o evento e suas confirmações (cascade).
 *   **`event_confirmations`**: presença dos filhos, uma por pessoa por evento (`unique(event_id, profile_id)`). Cada filho confirma/cancela apenas a própria presença em `/dashboard/agenda`; a administração pode consultar todas.
 *   **Fluxos:** `/admin/agenda` (CRUD com `EventForm`), `/dashboard/agenda` (confirmação de presença), `/agenda` e Home (próximos eventos confirmados, com estado vazio em caso de falha — sem mocks).
+
+### 5.3. Financeiro (tabela `finance_entries`)
+
+*   Lançamentos de entrada (mensalidade, doação, evento, outros) e saída (aluguel, água, energia, material, evento, outros), com valores em centavos (`amount_cents`). Migration: `supabase/migrations/202609070003_finance.sql`.
+*   **RLS:** administração tem acesso total; cada filho visualiza apenas os próprios lançamentos (`profile_id`), preenchido quando a entrada é uma mensalidade vinculada.
+*   **Admin (`/admin/financeiro`):** métricas do mês (entradas, saídas, mensalidades, saldo), gráfico de fluxo dos últimos 6 meses (`FinanceTrendChart` recebe dados reais), despesas por categoria e tabela de movimentações com criar/editar/excluir (`FinanceEntryForm`) e exportação CSV gerada no navegador.
+*   **Filho (`/dashboard/financeiro`):** situação do mês corrente (Em dia / Aguardando contribuição), resumo do ano e histórico das próprias contribuições. Somente leitura.

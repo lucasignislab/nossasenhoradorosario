@@ -3,8 +3,10 @@
 import { useState } from 'react';
 import { BarChart3, LineChart } from 'lucide-react';
 import { PanelHeader } from './PortalUI';
+import type { MonthlyFinancePoint } from '@/types';
 
-const financeData = [
+// Dados demonstrativos usados apenas pela prévia visual (portal-preview / Storybook).
+const previewFinanceData = [
   { month: 'Fev', income: 3100, expense: 2380 },
   { month: 'Mar', income: 3550, expense: 2610 },
   { month: 'Abr', income: 3420, expense: 2790 },
@@ -12,13 +14,11 @@ const financeData = [
   { month: 'Jun', income: 3760, expense: 2490 },
   { month: 'Jul', income: 4000, expense: 2565 },
 ];
-
-const chartMaximum = 4500;
 const chartWidth = 600;
 const chartHeight = 190;
 const horizontalPadding = 28;
 
-function linePoints(key: 'income' | 'expense') {
+function linePoints(financeData: MonthlyFinancePoint[], chartMaximum: number, key: 'income' | 'expense') {
   return financeData
     .map((item, index) => {
       const x = horizontalPadding + index * ((chartWidth - horizontalPadding * 2) / (financeData.length - 1));
@@ -32,8 +32,11 @@ function currency(value: number) {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(value);
 }
 
-export function FinanceTrendChart() {
+export function FinanceTrendChart({ data }: { data?: MonthlyFinancePoint[] }) {
   const [chartType, setChartType] = useState<'bar' | 'line'>('bar');
+  const financeData = data && data.length > 0 ? data : previewFinanceData;
+  const highestValue = Math.max(...financeData.map((item) => Math.max(item.income, item.expense)), 0);
+  const chartMaximum = Math.max(Math.ceil((highestValue * 1.15) / 500) * 500, 500);
   const incomeTotal = financeData.reduce((total, item) => total + item.income, 0);
   const expenseTotal = financeData.reduce((total, item) => total + item.expense, 0);
 
@@ -73,8 +76,8 @@ export function FinanceTrendChart() {
         <div className="finance-trend__line" role="img" aria-label="Evolução mensal das entradas e saídas">
           <svg viewBox={`0 0 ${chartWidth} ${chartHeight}`} preserveAspectRatio="none" aria-hidden="true">
             {[35, 80, 125, 170].map((y) => <line key={y} x1="0" x2={chartWidth} y1={y} y2={y} className="finance-trend__grid-line" />)}
-            <polyline points={linePoints('income')} className="finance-trend__line-income" />
-            <polyline points={linePoints('expense')} className="finance-trend__line-expense" />
+            <polyline points={linePoints(financeData, chartMaximum, 'income')} className="finance-trend__line-income" />
+            <polyline points={linePoints(financeData, chartMaximum, 'expense')} className="finance-trend__line-expense" />
             {financeData.map((item, index) => {
               const x = horizontalPadding + index * ((chartWidth - horizontalPadding * 2) / (financeData.length - 1));
               return (

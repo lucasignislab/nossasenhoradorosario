@@ -37,7 +37,22 @@ import {
 } from '@/lib/members';
 import { eventCategoryLabel, eventDateParts, formatEventTime, todayISODate } from '@/lib/events';
 import { EventRowActions, NewEventButton } from './EventForm';
-import type { PortalEvent, Profile } from '@/types';
+import {
+  FinanceEntryRowActions,
+  FinanceExportButton,
+  NewFinanceEntryButton,
+} from './FinanceEntryForm';
+import {
+  buildMonthlySeries,
+  currentMonthRange,
+  expenseByCategory,
+  financeCategoryLabel,
+  formatBRL,
+  formatEntryAmount,
+  formatFinanceDate,
+  summarizeMonth,
+} from '@/lib/finance';
+import type { FinanceEntry, PortalEvent, Profile } from '@/types';
 
 const attendanceBars = [
   { month: 'Fev', value: 72 }, { month: 'Mar', value: 78 }, { month: 'Abr', value: 75 },
@@ -135,54 +150,92 @@ export function AdminOverview({ basePath = '/admin', activeMembers, pendingMembe
   );
 }
 
-export function FinanceDashboard() {
+// Dados demonstrativos usados apenas pela prévia visual (portal-preview / Storybook).
+const previewFinanceEntries: FinanceEntry[] = [
+  { id: 'preview-f1', type: 'entrada', category: 'mensalidade', description: 'Mensalidade · Marina Souza', amount_cents: 9000, entry_date: '2026-07-21', profile_id: null, created_by: null, created_at: '2026-07-21T00:00:00Z', updated_at: '2026-07-21T00:00:00Z' },
+  { id: 'preview-f2', type: 'saida', category: 'material', description: 'Materiais de limpeza', amount_cents: 18640, entry_date: '2026-07-20', profile_id: null, created_by: null, created_at: '2026-07-20T00:00:00Z', updated_at: '2026-07-20T00:00:00Z' },
+  { id: 'preview-f3', type: 'saida', category: 'energia', description: 'Conta de energia', amount_cents: 34218, entry_date: '2026-07-18', profile_id: null, created_by: null, created_at: '2026-07-18T00:00:00Z', updated_at: '2026-07-18T00:00:00Z' },
+  { id: 'preview-f4', type: 'entrada', category: 'mensalidade', description: 'Mensalidade · Rafael Santos', amount_cents: 9000, entry_date: '2026-07-17', profile_id: null, created_by: null, created_at: '2026-07-17T00:00:00Z', updated_at: '2026-07-17T00:00:00Z' },
+];
+
+type FinanceDashboardProps = {
+  entries?: FinanceEntry[];
+  members?: Profile[];
+};
+
+export function FinanceDashboard({ entries, members = [] }: FinanceDashboardProps) {
+  const entryList = entries ?? previewFinanceEntries;
+  const { start, end } = currentMonthRange();
+  const summary = summarizeMonth(entryList, start, end);
+  const trend = buildMonthlySeries(entryList, 6);
+  const donutSlices = expenseByCategory(summary.entries).slice(0, 4);
+  const donutTones = ['is-brand', 'is-gold', 'is-info', 'is-neutral'];
+  const recentEntries = [...entryList]
+    .sort((a, b) => (a.entry_date < b.entry_date ? 1 : -1))
+    .slice(0, 12);
+  const expenseTotalFormatted = formatBRL(summary.expense);
+  const monthName = new Date().toLocaleDateString('pt-BR', { month: 'long' });
+
   return (
     <div className="portal-page">
       <PageHeader
         eyebrow="Administração · Financeiro"
         title="Cuidado e transparência"
         description="Uma leitura clara das contribuições, despesas e necessidades da casa."
-        action={<><button className="portal-button portal-button--secondary"><FileText size={16} /> Exportar</button><button className="portal-button portal-button--primary"><Plus size={16} /> Novo lançamento</button></>}
+        action={<><FinanceExportButton entries={entryList} /><NewFinanceEntryButton members={members} /></>}
       />
 
       <section className="portal-metrics">
-        <MetricCard icon={BadgeDollarSign} label="Previsto em julho" value="R$ 4.450" detail="Mensalidades e contribuições" tone="neutral" />
-        <MetricCard icon={CircleDollarSign} label="Total recebido" value="R$ 3.840" detail="86% do valor previsto" tone="info" />
-        <MetricCard icon={Clock3} label="A receber" value="R$ 610" detail="7 mensalidades pendentes" tone="warning" />
-        <MetricCard icon={Landmark} label="Saldo do mês" value="R$ 1.275" detail="Após despesas registradas" tone="gold" />
+        <MetricCard icon={BadgeDollarSign} label={`Recebido em ${monthName}`} value={formatBRL(summary.income)} detail="Entradas confirmadas no mês" tone="info" />
+        <MetricCard icon={CircleDollarSign} label={`Saídas em ${monthName}`} value={expenseTotalFormatted} detail="Despesas registradas no mês" tone="neutral" />
+        <MetricCard icon={Clock3} label="Mensalidades no mês" value={formatBRL(summary.mensalidades)} detail="Contribuições dos filhos" tone="warning" />
+        <MetricCard icon={Landmark} label="Saldo do mês" value={formatBRL(summary.balance)} detail="Entradas menos saídas" tone="gold" />
       </section>
 
       <section className="portal-layout portal-layout--charts">
-        <FinanceTrendChart />
+        <FinanceTrendChart data={trend} />
 
         <article className="portal-panel">
-          <PanelHeader eyebrow="Julho" title="Despesas por categoria" />
+          <PanelHeader eyebrow={monthName} title="Despesas por categoria" />
           <div className="portal-donut-wrap">
-            <div className="portal-donut"><span><strong>R$ 2.565</strong><small>Total</small></span></div>
-            <ul className="portal-legend-list">
-              <li><i className="is-brand" /><span>Manutenção</span><strong>38%</strong></li>
-              <li><i className="is-gold" /><span>Materiais</span><strong>27%</strong></li>
-              <li><i className="is-info" /><span>Contas</span><strong>21%</strong></li>
-              <li><i className="is-neutral" /><span>Outros</span><strong>14%</strong></li>
-            </ul>
+            <div className="portal-donut"><span><strong>{expenseTotalFormatted}</strong><small>Total</small></span></div>
+            {donutSlices.length === 0 ? (
+              <p className="portal-panel__copy">Nenhuma despesa registrada neste mês.</p>
+            ) : (
+              <ul className="portal-legend-list">
+                {donutSlices.map((slice, index) => (
+                  <li key={slice.label}>
+                    <i className={donutTones[index % donutTones.length]} />
+                    <span>{slice.label}</span>
+                    <strong>{slice.percent}%</strong>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </article>
       </section>
 
       <article className="portal-panel">
-        <PanelHeader eyebrow="Conciliação" title="Movimentações recentes" action={<button className="portal-filter"><Filter size={14} /> Filtrar</button>} />
+        <PanelHeader eyebrow="Conciliação" title="Movimentações recentes" />
         <div className="portal-table-wrap">
           <table className="portal-table">
-            <thead><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>Forma</th><th>Valor</th><th>Status</th></tr></thead>
+            <thead><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>Tipo</th><th>Valor</th><th>Ações</th></tr></thead>
             <tbody>
-              {[
-                ['21 jul', 'Mensalidade · M. Souza', 'Contribuição', 'Pix', '+ R$ 90,00', 'Confirmado', 'info'],
-                ['20 jul', 'Materiais de limpeza', 'Manutenção', 'Débito', '- R$ 186,40', 'Conciliado', 'neutral'],
-                ['18 jul', 'Conta de energia', 'Contas', 'Pix', '- R$ 342,18', 'Conciliado', 'neutral'],
-                ['17 jul', 'Mensalidade · R. Santos', 'Contribuição', 'Dinheiro', '+ R$ 90,00', 'Pendente', 'warning'],
-              ].map(([date, desc, category, method, value, status, tone]) => (
-                <tr key={`${date}-${desc}`}><td>{date}</td><td><strong>{desc}</strong></td><td>{category}</td><td>{method}</td><td className={value.startsWith('+') ? 'is-positive' : 'is-negative'}>{value}</td><td><StatusPill tone={tone as 'info' | 'neutral' | 'warning'}>{status}</StatusPill></td></tr>
-              ))}
+              {recentEntries.length === 0 ? (
+                <tr><td colSpan={6}>Nenhum lançamento registrado.</td></tr>
+              ) : (
+                recentEntries.map((entry) => (
+                  <tr key={entry.id}>
+                    <td>{formatFinanceDate(entry.entry_date)}</td>
+                    <td><strong>{entry.description}</strong></td>
+                    <td>{financeCategoryLabel(entry.category)}</td>
+                    <td><StatusPill tone={entry.type === 'entrada' ? 'info' : 'neutral'}>{entry.type === 'entrada' ? 'Entrada' : 'Saída'}</StatusPill></td>
+                    <td className={entry.type === 'entrada' ? 'is-positive' : 'is-negative'}>{formatEntryAmount(entry)}</td>
+                    <td><FinanceEntryRowActions entry={entry} members={members} /></td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
