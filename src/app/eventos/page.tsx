@@ -241,6 +241,19 @@ export default function EventosPage() {
     document.body.style.overflow = 'auto';
   };
 
+  // Fechar modal e lightbox com Escape (navegação por teclado)
+  useEffect(() => {
+    if (!selectedEvent && !selectedImage) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      if (selectedEvent) handleCloseModal();
+      else setSelectedImage(null);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedEvent, selectedImage]);
+
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedEvent) return;
@@ -448,10 +461,12 @@ export default function EventosPage() {
           }`}
         >
           {galeriaImagens.map((img, index) => (
-            <div 
+            <button
               key={index}
+              type="button"
               onClick={() => setSelectedImage(img)}
-              className="group relative h-72 rounded-md overflow-hidden cursor-pointer shadow-md hover:shadow-2xl transition-all duration-500 border border-black/5"
+              aria-label={`Ampliar foto: ${img.title}`}
+              className="group relative h-72 rounded-md overflow-hidden cursor-pointer shadow-md hover:shadow-2xl transition-all duration-500 border border-black/5 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-sacred-gold)]"
             >
               <img 
                 src={img.url} 
@@ -478,7 +493,7 @@ export default function EventosPage() {
               <div className="absolute top-4 right-4 w-8 h-8 rounded-full bg-[#0D0B08]/60 backdrop-blur-xs flex items-center justify-center text-white/80 opacity-0 group-hover:opacity-100 transition-all duration-500 scale-90 group-hover:scale-100">
                 <Eye size={14} />
               </div>
-            </div>
+            </button>
           ))}
         </div>
       </section>
@@ -516,6 +531,7 @@ export default function EventosPage() {
                 >
                   <button
                     onClick={() => setActiveFaqIndex(isOpen ? null : index)}
+                    aria-expanded={isOpen}
                     className="w-full flex justify-between items-center text-left py-4 focus:outline-none group"
                   >
                     <h3 className="text-lg md:text-xl font-normal text-black font-sans group-hover:text-[var(--color-sacred-gold)] transition-colors">
@@ -547,11 +563,12 @@ export default function EventosPage() {
 
       {/* MODAL DE DETALHES E INSCRIÇÃO DO EVENTO */}
       {selectedEvent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto" role="dialog" aria-modal="true" aria-label={`Detalhes do evento: ${selectedEvent.title}`}>
           {/* Overlay Desfocado e Escuro */}
           <div 
             className="fixed inset-0 bg-[#0D0B08]/80 backdrop-blur-md transition-opacity duration-500 opacity-100"
             onClick={handleCloseModal}
+            aria-hidden="true"
           />
           
           {/* Caixa do Modal com efeito Glassmorphism */}
@@ -725,11 +742,12 @@ export default function EventosPage() {
 
       {/* LIGHTBOX DE IMAGENS DA GALERIA */}
       {selectedImage && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-label={`Foto ampliada: ${selectedImage.title}`}>
           {/* Overlay Desfocado e Escuro */}
           <div 
             className="fixed inset-0 bg-[#0D0B08]/90 backdrop-blur-md transition-opacity duration-500 opacity-100"
             onClick={() => setSelectedImage(null)}
+            aria-hidden="true"
           />
 
           {/* Visualizador de Imagem */}

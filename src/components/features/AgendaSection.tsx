@@ -46,11 +46,10 @@ export const AgendaSection = ({
         {events && events.length > 0 ? (
           <>
             {/* Grid de Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" role="list">
+            <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 list-none p-0 m-0">
               {events.map((event) => (
-                <div
+                <li
                   key={`${event.title}-${event.date}`}
-                  role="listitem"
                   className="transition-transform duration-300 hover:-translate-y-1"
                 >
                   {onEventClick ? (
@@ -66,9 +65,9 @@ export const AgendaSection = ({
                       <EventCard {...event} onClick={undefined} />
                     </Link>
                   )}
-                </div>
+                </li>
               ))}
-            </div>
+            </ul>
 
             {/* Footer View All Button */}
             {showViewAllButton && (
