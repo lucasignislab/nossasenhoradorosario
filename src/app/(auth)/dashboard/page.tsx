@@ -1,57 +1,77 @@
-import Link from 'next/link';
-import { ArrowRight, Bell, BookOpen, CalendarCheck, CalendarDays, CreditCard, Sparkles, UsersRound } from 'lucide-react';
+import { MemberHome, type MemberHomeSummary } from './MemberHome';
+import { todayISODate } from '@/lib/events';
+import { currentMonthRange } from '@/lib/finance';
+import { createClient } from '@/lib/supabase/server';
+import type { ChoreSchedule, ChoreTeam, Notice, PortalEvent } from '@/types';
 
-const modules = [
-  { title: 'Agenda interna', description: 'Giras, reuniões e compromissos da corrente.', icon: CalendarDays, status: 'Disponível', path: '/agenda' },
-  { title: 'Escala de cuidados', description: 'Organização das equipes e dias de cuidado da casa.', icon: UsersRound, status: 'Disponível', path: '/faxinas' },
-  { title: 'Minha frequência', description: 'Seu histórico de presença nas atividades da casa.', icon: CalendarCheck, status: 'Disponível', path: '/frequencia' },
-  { title: 'Mensalidades', description: 'Situação, pagamentos e comprovantes em um só lugar.', icon: CreditCard, status: 'Disponível', path: '/financeiro' },
-  { title: 'Estudos da casa', description: 'Materiais e conteúdos de desenvolvimento mediúnico.', icon: BookOpen, status: 'Disponível', path: '/aulas' },
-  { title: 'Avisos', description: 'Comunicados e orientações importantes para a corrente.', icon: Bell, status: 'Disponível', path: '/avisos' },
-];
+export default async function DashboardPage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
 
-export function MemberHome({ basePath = '/dashboard' }: { basePath?: string }) {
-  return (
-    <div className="dashboard-home">
-      <header className="dashboard-home__welcome">
-        <div>
-          <p className="dashboard-home__eyebrow"><Sparkles size={14} /> Nossa comunidade</p>
-          <h1>Axé, seja bem-vindo à sua área.</h1>
-          <p>Este será o seu ponto de encontro com a rotina, os cuidados e os aprendizados da casa.</p>
-        </div>
-        <div className="dashboard-home__seal" aria-hidden="true">SR</div>
-      </header>
+  const { start, end } = currentMonthRange();
+  const today = todayISODate();
 
-      <section aria-labelledby="modules-title">
-        <div className="dashboard-home__section-heading">
-          <div>
-            <p className="dashboard-home__eyebrow">Rotina da comunidade</p>
-            <h2 id="modules-title">Serviços da casa</h2>
-          </div>
-          <span>6 serviços disponíveis</span>
-        </div>
+  const [eventsResult, confirmationsResult, noticesResult, membershipsResult, feeResult] = await Promise.all([
+    supabase
+      .from('events')
+      .select('*')
+      .eq('status', 'confirmada')
+      .gte('event_date', today)
+      .order('event_date', { ascending: true })
+      .order('event_time', { ascending: true })
+      .limit(1),
+    user
+      ? supabase.from('event_confirmations').select('event_id').eq('profile_id', user.id)
+      : Promise.resolve({ data: [] as { event_id: string }[] }),
+    supabase
+      .from('notices')
+      .select('*')
+      .order('pinned', { ascending: false })
+      .order('published_at', { ascending: false })
+      .limit(3),
+    user
+      ? supabase.from('chore_team_members').select('team_id').eq('profile_id', user.id)
+      : Promise.resolve({ data: [] as { team_id: string }[] }),
+    user
+      ? supabase
+          .from('finance_entries')
+          .select('id', { count: 'exact', head: true })
+          .eq('profile_id', user.id)
+          .eq('type', 'entrada')
+          .eq('category', 'mensalidade')
+          .gte('entry_date', start)
+          .lte('entry_date', end)
+      : Promise.resolve({ count: 0 }),
+  ]);
 
-        <div className="dashboard-home__grid">
-          {modules.map(({ title, description, icon: Icon, status, path }) => {
-            const href = `${basePath}${path}`;
-            const content = (
-              <>
-                <div className="dashboard-home__module-icon"><Icon size={22} /></div>
-                <p className="dashboard-home__module-status">{status}</p>
-                <h3>{title}</h3>
-                <p>{description}</p>
-                <span className="dashboard-home__module-link">Acessar serviço <ArrowRight size={15} /></span>
-              </>
-            );
+  const nextEvent = ((eventsResult.data ?? []) as PortalEvent[])[0] ?? null;
+  const confirmedIds = new Set((confirmationsResult.data ?? []).map((row) => row.event_id));
 
-            return <Link className="dashboard-home__module" href={href} key={title}>{content}</Link>;
-          })}
-        </div>
-      </section>
-    </div>
-  );
-}
+  let nextChore: MemberHomeSummary['nextChore'] = null;
+  const teamIds = [...new Set((membershipsResult.data ?? []).map((row) => row.team_id))];
+  if (teamIds.length > 0) {
+    const { data: schedules } = await supabase
+      .from('chore_schedules')
+      .select('*')
+      .in('team_id', teamIds)
+      .eq('status', 'agendada')
+      .gte('chore_date', today)
+      .order('chore_date', { ascending: true })
+      .limit(1);
+    const schedule = ((schedules ?? []) as ChoreSchedule[])[0] ?? null;
+    if (schedule) {
+      const { data: team } = await supabase.from('chore_teams').select('name').eq('id', schedule.team_id).single();
+      nextChore = { schedule, teamName: (team as Pick<ChoreTeam, 'name'> | null)?.name ?? 'Sua equipe' };
+    }
+  }
 
-export default function DashboardPage() {
-  return <MemberHome />;
+  const summary: MemberHomeSummary = {
+    nextEvent,
+    nextEventConfirmed: nextEvent ? confirmedIds.has(nextEvent.id) : false,
+    notices: (noticesResult.data ?? []) as Notice[],
+    nextChore,
+    monthFeePaid: (feeResult.count ?? 0) > 0,
+  };
+
+  return <MemberHome summary={summary} />;
 }

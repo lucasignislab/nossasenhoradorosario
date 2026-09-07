@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs-vite';
-import { MemberHome } from '@/app/(auth)/dashboard/page';
+import { MemberHome } from '@/app/(auth)/dashboard/MemberHome';
 import { ProfileForm } from '@/components/features/ProfileForm';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import {

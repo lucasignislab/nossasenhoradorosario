@@ -17,19 +17,19 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const AmbienteDeTestes: Story = {
-  args: { configured: true, previewEnabled: true, returnTo: '/portal-preview/dashboard' },
+  args: { configured: true, returnTo: '/dashboard' },
 };
 
 export const AcessoReal: Story = {
-  args: { configured: true, previewEnabled: false, returnTo: '/dashboard' },
+  args: { configured: true, returnTo: '/dashboard' },
 };
 
 export const ConfiguracaoPendente: Story = {
-  args: { configured: false, previewEnabled: false, returnTo: '/dashboard' },
+  args: { configured: false, returnTo: '/dashboard' },
 };
 
 export const FluxoDeCadastro: Story = {
-  args: { configured: true, previewEnabled: false, returnTo: '/dashboard' },
+  args: { configured: true, returnTo: '/dashboard' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(canvas.getByRole('button', { name: 'Criar acesso' }));

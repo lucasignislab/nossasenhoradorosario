@@ -204,3 +204,11 @@ Margens, paddings e gaps são estritamente múltiplos de 8px:
 *   **RLS:** leitura para membros ativos (`is_active_member()`); escrita exclusiva da administração.
 *   **Admin (`/admin/faxinas`):** cria/edita/exclui equipes, gerencia membros por equipe (adicionar/remover), agenda faxinas e marca escalas como concluídas/canceladas. Nova entrada no menu da administração.
 *   **Filho (`/dashboard/faxinas`):** vê a própria equipe, a próxima escala com os cuidados do dia e o histórico com StatusPill. Como a RLS de `profiles` só expõe o próprio perfil, os companheiros de equipe aparecem como contagem ("+N companheiros"), sem nomes — privacidade por padrão.
+
+### 5.7. Visões gerais e limpeza final
+
+*   **`/admin` (visão geral):** 100% dados reais — filhos ativos e pendentes (com nomes e datas), próximas atividades confirmadas, avisos fixados e resumo financeiro do mês (entradas/saídas/saldo).
+*   **`/dashboard` (home do filho):** mantém os cartões de serviços e ganha um resumo real no topo — próxima atividade (com estado de confirmação), próxima faxina da sua equipe, situação da mensalidade do mês e os 3 últimos avisos.
+*   **`/admin/configuracoes`:** contagens reais de papéis (admins, desenvolvedores, membros ativos) e de cadastros pendentes.
+*   **Login:** a página de acesso não anuncia mais a prévia demonstrativa; o `portal-preview` continua disponível apenas com `NEXT_PUBLIC_PORTAL_PREVIEW=true` no ambiente (ver `.env.example`) e serve os mocks de fallback das views.
+*   Componente morto `LoginForm` removido (substituído pelo `AuthForm`).

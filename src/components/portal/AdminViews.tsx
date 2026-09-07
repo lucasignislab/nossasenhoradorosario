@@ -96,11 +96,32 @@ type AdminOverviewProps = {
   basePath?: string;
   activeMembers?: number;
   pendingMembers?: number;
+  upcomingEvents?: PortalEvent[];
+  pendingProfiles?: Profile[];
+  pinnedNotices?: Notice[];
+  financeSummary?: { income: number; expense: number; balance: number };
 };
 
-export function AdminOverview({ basePath = '/admin', activeMembers, pendingMembers }: AdminOverviewProps) {
+// Dados demonstrativos usados apenas pela prévia visual (portal-preview / Storybook).
+const previewOverviewEvents: PortalEvent[] = [
+  { id: 'preview-o1', title: 'Estudo mediúnico', entity: 'Desenvolvimento', description: null, details: null, category: 'curso', event_date: '2026-07-24', event_time: '20:00:00', location: 'T. U. Senhora do Rosário', image_url: null, status: 'confirmada', created_by: null, created_at: '2026-07-01T00:00:00Z', updated_at: '2026-07-01T00:00:00Z' },
+  { id: 'preview-o2', title: 'Gira de Baianos', entity: 'Baianos', description: null, details: null, category: 'gira', event_date: '2026-07-28', event_time: '19:30:00', location: 'T. U. Senhora do Rosário', image_url: null, status: 'confirmada', created_by: null, created_at: '2026-07-01T00:00:00Z', updated_at: '2026-07-01T00:00:00Z' },
+];
+
+const previewOverviewPending: Profile[] = [
+  { id: 'preview-op1', full_name: 'Marina de Souza', phone: null, role: 'member', status: 'pending', joined_at: null, created_at: '2026-07-21T00:00:00Z', updated_at: '2026-07-21T00:00:00Z' },
+  { id: 'preview-op2', full_name: 'Rafael Santos', phone: null, role: 'member', status: 'pending', joined_at: null, created_at: '2026-07-20T00:00:00Z', updated_at: '2026-07-20T00:00:00Z' },
+];
+
+export function AdminOverview({ basePath = '/admin', activeMembers, pendingMembers, upcomingEvents, pendingProfiles, pinnedNotices, financeSummary }: AdminOverviewProps) {
   const activeMembersLabel = activeMembers ?? 42;
-  const pendingMembersLabel = pendingMembers ?? 3;
+  const pendingMembersLabel = pendingMembers ?? previewOverviewPending.length;
+  const eventList = upcomingEvents ?? previewOverviewEvents;
+  const pendingList = pendingProfiles ?? previewOverviewPending;
+  const pinnedList = pinnedNotices ?? previewNotices.filter((notice) => notice.pinned);
+  const finance = financeSummary ?? { income: 384000, expense: 256500, balance: 127500 };
+  const nextEvent = eventList[0] ?? null;
+  const currentMonthName = new Date().toLocaleDateString('pt-BR', { month: 'long' });
   return (
     <div className="portal-page">
       <PageHeader
@@ -112,63 +133,76 @@ export function AdminOverview({ basePath = '/admin', activeMembers, pendingMembe
 
       <section className="portal-metrics" aria-label="Indicadores principais">
         <MetricCard icon={UsersRound} label="Filhos ativos" value={String(activeMembersLabel)} detail={`${pendingMembersLabel} cadastro${pendingMembersLabel === 1 ? '' : 's'} aguardando`} tone="brand" />
-        <MetricCard icon={CalendarCheck} label="Próxima atividade" value="24 jul" detail="Estudo mediúnico · 20h" tone="gold" />
-        <MetricCard icon={WalletCards} label="Recebido no mês" value="R$ 3.840" detail="86% do previsto" tone="info" />
-        <MetricCard icon={UserRoundCheck} label="Frequência média" value="87%" detail="+6% em relação a junho" tone="neutral" />
+        <MetricCard icon={CalendarCheck} label="Próxima atividade" value={nextEvent ? `${eventDateParts(nextEvent.event_date).day} ${eventDateParts(nextEvent.event_date).month.toLowerCase()}` : '—'} detail={nextEvent ? `${nextEvent.title} · ${formatEventTime(nextEvent.event_time)}` : 'Nenhuma atividade futura'} tone="gold" />
+        <MetricCard icon={WalletCards} label={`Recebido em ${currentMonthName}`} value={formatBRL(finance.income)} detail={`Saldo ${formatBRL(finance.balance)}`} tone="info" />
+        <MetricCard icon={UserRoundCheck} label="Avisos e escalas" value="Portal" detail="Gestão completa no menu lateral" tone="neutral" />
       </section>
 
       <section className="portal-layout portal-layout--overview">
         <div className="portal-stack">
           <article className="portal-panel">
-            <PanelHeader eyebrow="Próximos 7 dias" title="Agenda da casa" action={<Link href={`${basePath}/agenda`} className="portal-text-link">Ver agenda <ArrowRight size={14} /></Link>} />
-            <div className="portal-event-list">
-              {[
-                ['24', 'QUI', 'Estudo mediúnico', '20:00', 'Desenvolvimento'],
-                ['26', 'SÁB', 'Cuidado da casa', '09:00', 'Equipe Dourada'],
-                ['28', 'SEG', 'Reunião da corrente', '19:30', 'Todos os filhos'],
-              ].map(([day, week, title, time, group]) => (
-                <div className="portal-event" key={`${day}-${title}`}>
-                  <div className="portal-event__date"><strong>{day}</strong><span>{week}</span></div>
-                  <div><h3>{title}</h3><p><Clock3 size={13} /> {time} · {group}</p></div>
-                  <button aria-label={`Opções para ${title}`}><MoreHorizontal size={19} /></button>
-                </div>
-              ))}
-            </div>
+            <PanelHeader eyebrow="Próximas atividades" title="Agenda da casa" action={<Link href={`${basePath}/agenda`} className="portal-text-link">Ver agenda <ArrowRight size={14} /></Link>} />
+            {eventList.length === 0 ? (
+              <p className="portal-panel__copy">Nenhuma atividade futura cadastrada.</p>
+            ) : (
+              <div className="portal-event-list">
+                {eventList.map((event) => {
+                  const parts = eventDateParts(event.event_date);
+                  return (
+                    <div className="portal-event" key={event.id}>
+                      <div className="portal-event__date"><strong>{parts.day}</strong><span>{parts.weekday}</span></div>
+                      <div><h3>{event.title}</h3><p><Clock3 size={13} /> {formatEventTime(event.event_time)} · {event.entity ?? eventCategoryLabel(event.category)}</p></div>
+                      <Link href={`${basePath}/agenda`} aria-label={`Abrir agenda para ${event.title}`}><ArrowRight size={19} /></Link>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </article>
 
           <article className="portal-panel">
-            <PanelHeader eyebrow="Acompanhamento" title="Movimento da comunidade" />
-            <div className="portal-split-metrics">
-              <div><ProgressBar value={87} label="Frequência nas giras de desenvolvimento" /><ProgressBar value={79} label="Participação nos estudos" /><ProgressBar value={92} label="Escalas confirmadas" /></div>
-              <div className="portal-note-card">
-                <Sparkles size={22} />
-                <p>O comparecimento cresceu nas últimas três atividades.</p>
-                <span>Dados demonstrativos</span>
+            <PanelHeader eyebrow="Comunicados" title="Avisos fixados" action={<Link href={`${basePath}/avisos`} className="portal-text-link">Ver avisos <ArrowRight size={14} /></Link>} />
+            {pinnedList.length === 0 ? (
+              <p className="portal-panel__copy">Nenhum aviso fixado no momento.</p>
+            ) : (
+              <div className="portal-person-list">
+                {pinnedList.map((notice) => (
+                  <div className="portal-person" key={notice.id}>
+                    <span><BellRing size={15} /></span>
+                    <div><strong>{notice.title}</strong><small>{formatRelativeDate(notice.published_at)}</small></div>
+                    <Link href={`${basePath}/avisos`} aria-label={`Abrir aviso ${notice.title}`}><ArrowRight size={16} /></Link>
+                  </div>
+                ))}
               </div>
-            </div>
+            )}
           </article>
         </div>
 
         <div className="portal-stack">
           <article className="portal-panel portal-panel--accent">
             <PanelHeader eyebrow="Atenção hoje" title={`${pendingMembersLabel} aprovaç${pendingMembersLabel === 1 ? 'ão pendente' : 'ões pendentes'}`} />
-            <div className="portal-person-list">
-              {['Marina de Souza', 'Rafael Santos', 'Clara Oliveira'].map((name, index) => (
-                <div className="portal-person" key={name}>
-                  <span>{name.charAt(0)}</span><div><strong>{name}</strong><small>Cadastro há {index + 1} dia{index ? 's' : ''}</small></div>
-                  <button aria-label={`Revisar cadastro de ${name}`}><ArrowRight size={16} /></button>
-                </div>
-              ))}
-            </div>
+            {pendingList.length === 0 ? (
+              <p className="portal-panel__copy">Nenhum cadastro aguardando aprovação.</p>
+            ) : (
+              <div className="portal-person-list">
+                {pendingList.map((profile) => (
+                  <div className="portal-person" key={profile.id}>
+                    <span>{profileInitial(profile)}</span>
+                    <div><strong>{profileDisplayName(profile)}</strong><small>Recebido em {formatJoinedAt(profile.created_at)}</small></div>
+                    <Link href={`${basePath}/membros`} aria-label={`Revisar cadastro de ${profileDisplayName(profile)}`}><ArrowRight size={16} /></Link>
+                  </div>
+                ))}
+              </div>
+            )}
             <Link href={`${basePath}/membros`} className="portal-button portal-button--dark">Revisar cadastros</Link>
           </article>
 
           <article className="portal-panel">
-            <PanelHeader eyebrow="Financeiro" title="Resumo de julho" />
+            <PanelHeader eyebrow="Financeiro" title={`Resumo de ${currentMonthName}`} />
             <dl className="portal-definition-list">
-              <div><dt>Previsto</dt><dd>R$ 4.450</dd></div>
-              <div><dt>Recebido</dt><dd>R$ 3.840</dd></div>
-              <div><dt>Pendente</dt><dd>R$ 610</dd></div>
+              <div><dt>Entradas</dt><dd>{formatBRL(finance.income)}</dd></div>
+              <div><dt>Saídas</dt><dd>{formatBRL(finance.expense)}</dd></div>
+              <div><dt>Saldo do mês</dt><dd>{formatBRL(finance.balance)}</dd></div>
             </dl>
             <Link href={`${basePath}/financeiro`} className="portal-text-link">Abrir financeiro <ArrowRight size={14} /></Link>
           </article>
@@ -593,18 +627,24 @@ export function ContentManagement({ contents }: { contents?: StudyContent[] }) {
   );
 }
 
-export function AdminSettings() {
+type AdminSettingsProps = {
+  counts?: { admins: number; developers: number; members: number; pending: number };
+};
+
+export function AdminSettings({ counts }: AdminSettingsProps) {
+  const resolved = counts ?? { admins: 2, developers: 1, members: 42, pending: 3 };
+  const plural = (n: number) => (n === 1 ? '1 pessoa' : `${n} pessoas`);
   const roles = [
-    ['Iyás administradoras', 'Gestão completa da casa', '2 pessoas', 'Administração'],
-    ['Filhos da casa', 'Acesso somente aos próprios dados', '42 pessoas', 'Membro'],
-    ['Acesso técnico', 'Configuração sem dados sensíveis por padrão', '1 pessoa', 'Técnico'],
+    ['Iyás administradoras', 'Gestão completa da casa', plural(resolved.admins), 'Administração'],
+    ['Filhos da casa', 'Acesso somente aos próprios dados', plural(resolved.members), 'Membro'],
+    ['Acesso técnico', 'Configuração sem dados sensíveis por padrão', plural(resolved.developers), 'Técnico'],
   ];
   return (
     <div className="portal-page">
       <PageHeader eyebrow="Administração · Configurações" title="Permissões e segurança" description="Defina quem pode ver, criar e alterar cada parte do sistema." />
       <section className="portal-layout portal-layout--settings">
-        <article className="portal-panel"><PanelHeader eyebrow="Papéis do sistema" title="Níveis de acesso" /><div className="portal-role-list">{roles.map(([title, desc, people, badge]) => <div key={title}><div className="portal-role-list__icon"><ShieldCheck size={19} /></div><div><h3>{title}</h3><p>{desc}</p></div><span>{people}</span><StatusPill tone={badge === 'Administração' ? 'gold' : 'neutral'}>{badge}</StatusPill><button className="portal-icon-button" aria-label={`Editar ${title}`}><Settings2 size={17} /></button></div>)}</div></article>
-        <div className="portal-stack"><article className="portal-panel portal-panel--accent"><PanelHeader eyebrow="Proteção" title="Boas práticas ativas" /><ul className="portal-check-list"><li><CheckCircle2 size={17} /> Regras por perfil</li><li><CheckCircle2 size={17} /> Dados sensíveis restritos</li><li><CheckCircle2 size={17} /> Sessões protegidas</li><li><Clock3 size={17} /> Auditoria detalhada na próxima etapa</li></ul></article><article className="portal-panel"><PanelHeader eyebrow="Sessão" title="Políticas de acesso" /><p className="portal-panel__copy">Contas suspensas perdem acesso imediatamente. Alterações de papel exigirão confirmação administrativa.</p></article></div>
+        <article className="portal-panel"><PanelHeader eyebrow="Papéis do sistema" title="Níveis de acesso" /><div className="portal-role-list">{roles.map(([title, desc, people, badge]) => <div key={title}><div className="portal-role-list__icon"><ShieldCheck size={19} /></div><div><h3>{title}</h3><p>{desc}</p></div><span>{people}</span><StatusPill tone={badge === 'Administração' ? 'gold' : 'neutral'}>{badge}</StatusPill></div>)}</div></article>
+        <div className="portal-stack"><article className="portal-panel portal-panel--accent"><PanelHeader eyebrow="Proteção" title="Boas práticas ativas" /><ul className="portal-check-list"><li><CheckCircle2 size={17} /> Regras por perfil</li><li><CheckCircle2 size={17} /> Dados sensíveis restritos</li><li><CheckCircle2 size={17} /> Sessões protegidas</li><li><Clock3 size={17} /> Auditoria detalhada na próxima etapa</li></ul></article><article className="portal-panel"><PanelHeader eyebrow="Sessão" title="Políticas de acesso" /><dl className="portal-definition-list"><div><dt>Cadastros pendentes</dt><dd>{resolved.pending}</dd></div><div><dt>Aprovação</dt><dd>Manual, pela administração</dd></div></dl><p className="portal-panel__copy">Contas suspensas perdem acesso imediatamente. Alterações de papel exigirão confirmação administrativa.</p></article></div>
       </section>
     </div>
   );
