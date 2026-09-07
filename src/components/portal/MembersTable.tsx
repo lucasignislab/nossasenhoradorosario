@@ -58,7 +58,14 @@ export function MembersTable({ members }: { members: Profile[] }) {
                     <td>{formatJoinedAt(member.joined_at)}</td>
                     <td>{member.phone?.trim() || '—'}</td>
                     <td><StatusPill tone={status.tone}>{status.label}</StatusPill></td>
-                    <td><MemberStatusActions profileId={member.id} status={member.status} /></td>
+                    <td>
+                      <MemberStatusActions
+                        profileId={member.id}
+                        status={member.status}
+                        role={member.role}
+                        name={profileDisplayName(member)}
+                      />
+                    </td>
                   </tr>
                 );
               })

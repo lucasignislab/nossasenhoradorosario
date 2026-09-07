@@ -167,6 +167,7 @@ Margens, paddings e gaps são estritamente múltiplos de 8px:
 ### 5.1. Gestão de membros (`/admin/membros`)
 
 *   Administração aprova, reprova (suspende), suspende e reativa cadastros da tabela `profiles` via server actions (`src/app/(auth)/admin/membros/actions.ts`). Nenhuma ação exclui usuários do Auth.
+*   A aprovação já define o papel: **Aprovar** (filho da casa) ou **Aprovar como comunicação** (editor). Cadastros ativos alternam entre os dois papéis direto na lista de membros (botão *Tornar comunicação* / *Tornar filho da casa*, com confirmação), sem SQL. A troca nunca atinge admin/developer e ninguém altera o próprio papel.
 *   A listagem, a busca por nome e as contagens (ativos, aguardando, administração) são dados reais; a visão geral (`/admin`) mostra as contagens de filhos ativos e cadastros pendentes.
 
 ### 5.2. Agenda e giras (tabelas `events` e `event_confirmations`)
