@@ -225,10 +225,10 @@ export function AdminOverview({ basePath = '/admin', activeMembers, pendingMembe
 
 // Dados demonstrativos usados apenas pela prévia visual (portal-preview / Storybook).
 const previewFinanceEntries: FinanceEntry[] = [
-  { id: 'preview-f1', type: 'entrada', category: 'mensalidade', description: 'Mensalidade · Marina Souza', amount_cents: 9000, entry_date: '2026-07-21', profile_id: null, created_by: null, created_at: '2026-07-21T00:00:00Z', updated_at: '2026-07-21T00:00:00Z' },
-  { id: 'preview-f2', type: 'saida', category: 'material', description: 'Materiais de limpeza', amount_cents: 18640, entry_date: '2026-07-20', profile_id: null, created_by: null, created_at: '2026-07-20T00:00:00Z', updated_at: '2026-07-20T00:00:00Z' },
-  { id: 'preview-f3', type: 'saida', category: 'energia', description: 'Conta de energia', amount_cents: 34218, entry_date: '2026-07-18', profile_id: null, created_by: null, created_at: '2026-07-18T00:00:00Z', updated_at: '2026-07-18T00:00:00Z' },
-  { id: 'preview-f4', type: 'entrada', category: 'mensalidade', description: 'Mensalidade · Rafael Santos', amount_cents: 9000, entry_date: '2026-07-17', profile_id: null, created_by: null, created_at: '2026-07-17T00:00:00Z', updated_at: '2026-07-17T00:00:00Z' },
+  { id: 'preview-f1', type: 'entrada', category: 'mensalidade', description: 'Mensalidade · Marina Souza', amount_cents: 9000, entry_date: '2026-07-21', status: 'pago', receipt_path: null, profile_id: null, created_by: null, created_at: '2026-07-21T00:00:00Z', updated_at: '2026-07-21T00:00:00Z' },
+  { id: 'preview-f2', type: 'saida', category: 'material', description: 'Materiais de limpeza', amount_cents: 18640, entry_date: '2026-07-20', status: 'pago', receipt_path: null, profile_id: null, created_by: null, created_at: '2026-07-20T00:00:00Z', updated_at: '2026-07-20T00:00:00Z' },
+  { id: 'preview-f3', type: 'saida', category: 'energia', description: 'Conta de energia', amount_cents: 34218, entry_date: '2026-07-18', status: 'pago', receipt_path: null, profile_id: null, created_by: null, created_at: '2026-07-18T00:00:00Z', updated_at: '2026-07-18T00:00:00Z' },
+  { id: 'preview-f4', type: 'entrada', category: 'mensalidade', description: 'Mensalidade · Rafael Santos', amount_cents: 9000, entry_date: '2026-07-17', status: 'pago', receipt_path: null, profile_id: null, created_by: null, created_at: '2026-07-17T00:00:00Z', updated_at: '2026-07-17T00:00:00Z' },
 ];
 
 type FinanceDashboardProps = {
@@ -243,6 +243,8 @@ export function FinanceDashboard({ entries, members = [] }: FinanceDashboardProp
   const trend = buildMonthlySeries(entryList, 6);
   const donutSlices = expenseByCategory(summary.entries).slice(0, 4);
   const donutTones = ['is-brand', 'is-gold', 'is-info', 'is-neutral'];
+  const namesById = new Map(members.map((member) => [member.id, profileDisplayName(member)]));
+  const pendingCount = entryList.filter((entry) => entry.status === 'pendente').length;
   const recentEntries = [...entryList]
     .sort((a, b) => (a.entry_date < b.entry_date ? 1 : -1))
     .slice(0, 12);
@@ -291,19 +293,29 @@ export function FinanceDashboard({ entries, members = [] }: FinanceDashboardProp
 
       <article className="portal-panel">
         <PanelHeader eyebrow="Conciliação" title="Movimentações recentes" />
+        {pendingCount > 0 ? (
+          <p className="portal-panel__copy" role="status">
+            <strong>{pendingCount} {pendingCount === 1 ? 'mensalidade aguarda' : 'mensalidades aguardam'} comprovante</strong> — entram nos totais quando ficam pagas.
+          </p>
+        ) : null}
         <div className="portal-table-wrap">
           <table className="portal-table">
-            <thead><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>Tipo</th><th>Valor</th><th>Ações</th></tr></thead>
+            <thead><tr><th>Data</th><th>Descrição</th><th>Filho</th><th>Categoria</th><th>Tipo</th><th>Valor</th><th>Ações</th></tr></thead>
             <tbody>
               {recentEntries.length === 0 ? (
-                <tr><td colSpan={6}>Nenhum lançamento registrado.</td></tr>
+                <tr><td colSpan={7}>Nenhum lançamento registrado.</td></tr>
               ) : (
                 recentEntries.map((entry) => (
                   <tr key={entry.id}>
                     <td>{formatFinanceDate(entry.entry_date)}</td>
                     <td><strong>{entry.description}</strong></td>
+                    <td>{entry.profile_id ? (namesById.get(entry.profile_id) ?? '—') : '—'}</td>
                     <td>{financeCategoryLabel(entry.category)}</td>
-                    <td><StatusPill tone={entry.type === 'entrada' ? 'info' : 'neutral'}>{entry.type === 'entrada' ? 'Entrada' : 'Saída'}</StatusPill></td>
+                    <td>
+                      <StatusPill tone={entry.status === 'pendente' ? 'warning' : entry.type === 'entrada' ? 'info' : 'neutral'}>
+                        {entry.status === 'pendente' ? 'Pendente' : entry.type === 'entrada' ? 'Entrada' : 'Saída'}
+                      </StatusPill>
+                    </td>
                     <td className={entry.type === 'entrada' ? 'is-positive' : 'is-negative'}>{formatEntryAmount(entry)}</td>
                     <td><FinanceEntryRowActions entry={entry} members={members} /></td>
                   </tr>

@@ -1,5 +1,14 @@
 import type { FinanceEntry, MonthlyFinancePoint } from '@/types';
 
+// Faixa da mensalidade registrada pelo próprio filho (validada também no banco).
+export const MENSALIDADE_MIN_CENTS = 7000;
+export const MENSALIDADE_MAX_CENTS = 10000;
+
+/** Lançamentos confirmados: pendentes (mensalidade aguardando comprovante) não entram nos totais. */
+function confirmed(entries: FinanceEntry[]): FinanceEntry[] {
+  return entries.filter((entry) => entry.status !== 'pendente');
+}
+
 export const FINANCE_INCOME_CATEGORIES = [
   { value: 'mensalidade', label: 'Mensalidade' },
   { value: 'doacao', label: 'Doação' },
@@ -65,7 +74,7 @@ export function buildMonthlySeries(entries: FinanceEntry[], count = 6): MonthlyF
   }
 
   const firstMonth = new Date(now.getFullYear(), now.getMonth() - (count - 1), 1);
-  for (const entry of entries) {
+  for (const entry of confirmed(entries)) {
     const [year, month] = entry.entry_date.split('-').map(Number);
     const entryMonth = new Date(year, month - 1, 1);
     const index =
@@ -80,7 +89,7 @@ export function buildMonthlySeries(entries: FinanceEntry[], count = 6): MonthlyF
 }
 
 export function summarizeMonth(entries: FinanceEntry[], monthStart: string, monthEnd: string) {
-  const inMonth = entries.filter((entry) => entry.entry_date >= monthStart && entry.entry_date <= monthEnd);
+  const inMonth = confirmed(entries).filter((entry) => entry.entry_date >= monthStart && entry.entry_date <= monthEnd);
   const income = inMonth.filter((e) => e.type === 'entrada').reduce((t, e) => t + e.amount_cents, 0);
   const expense = inMonth.filter((e) => e.type === 'saida').reduce((t, e) => t + e.amount_cents, 0);
   const mensalidades = inMonth

@@ -43,6 +43,8 @@ export type EventConfirmation = {
 
 export type FinanceEntryType = 'entrada' | 'saida';
 
+export type FinanceEntryStatus = 'pendente' | 'pago';
+
 export type FinanceEntry = {
   id: string;
   type: FinanceEntryType;
@@ -50,6 +52,8 @@ export type FinanceEntry = {
   description: string;
   amount_cents: number;
   entry_date: string;
+  status: FinanceEntryStatus;
+  receipt_path: string | null;
   profile_id: string | null;
   created_by: string | null;
   created_at: string;

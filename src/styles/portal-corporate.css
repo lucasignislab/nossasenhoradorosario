@@ -759,3 +759,7 @@
 .portal-self-attendance .portal-row-actions { flex-wrap: wrap; }
 .portal-unrecorded-tag { margin-left: 8px; padding: 2px 8px; border-radius: 999px; background: rgba(176, 122, 26, .12); color: var(--portal-warning, #8f7227); font-size: 10px; font-style: normal; font-weight: 650; text-transform: uppercase; letter-spacing: .04em; }
 .portal-table tr.is-unrecorded td { background: rgba(176, 122, 26, .05); }
+
+/* Mensalidades: registro pelo membro */
+.portal-steps { margin: 0 0 16px; padding-left: 18px; display: grid; gap: 6px; color: var(--portal-text-soft); font-size: 12px; line-height: 1.6; }
+.portal-file-input { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }

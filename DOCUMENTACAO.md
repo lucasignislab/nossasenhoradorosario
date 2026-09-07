@@ -179,10 +179,12 @@ Margens, paddings e gaps são estritamente múltiplos de 8px:
 
 ### 5.3. Financeiro (tabela `finance_entries`)
 
-*   Lançamentos de entrada (mensalidade, doação, evento, outros) e saída (aluguel, água, energia, material, evento, outros), com valores em centavos (`amount_cents`). Migration: `supabase/migrations/202609070003_finance.sql`.
-*   **RLS:** administração tem acesso total; cada filho visualiza apenas os próprios lançamentos (`profile_id`), preenchido quando a entrada é uma mensalidade vinculada.
-*   **Admin (`/admin/financeiro`):** métricas do mês (entradas, saídas, mensalidades, saldo), gráfico de fluxo dos últimos 6 meses (`FinanceTrendChart` recebe dados reais), despesas por categoria e tabela de movimentações com criar/editar/excluir (`FinanceEntryForm`) e exportação CSV gerada no navegador.
-*   **Filho (`/dashboard/financeiro`):** situação do mês corrente (Em dia / Aguardando contribuição), resumo do ano e histórico das próprias contribuições. Somente leitura.
+*   Lançamentos de entrada (mensalidade, doação, evento, outros) e saída (aluguel, água, energia, material, evento, outros), com valores em centavos (`amount_cents`). Migration: `supabase/migrations/202609070003_finance.sql`. Desde a migration `supabase/migrations/202609070013_member_mensalidades.sql`, cada lançamento tem `status` (`pendente`/`pago`, padrão `pago`) e `receipt_path` (comprovante no Storage).
+*   **RLS:** administração tem acesso total; cada filho visualiza os próprios lançamentos e também **registra a própria mensalidade** (sempre `pendente`, categoria `mensalidade`, uma por mês — índice único parcial) e a **marca como paga ao anexar o comprovante**. Valor de mensalidade restrito no banco a R$ 70–100 (`finance_mensalidade_valor_faixa`).
+*   **Comprovantes:** bucket privado `comprovantes` no Supabase Storage — o membro envia apenas para a própria pasta (`<profile_id>/…`), lê os próprios arquivos e a administração lê/gerencia tudo.
+*   **Seed (migration 013):** mensalidades de janeiro a setembro/2026 do Lucas (`lucascoelho.cps@gmail.com`), R$ 100,00 cada, dia 10, status `pago` — idempotente (`where not exists` por mês).
+*   **Fluxo do filho (`/dashboard/financeiro`):** registra a mensalidade do mês informando o valor que vai pagar (R$ 70–100) → paga via Pix (chave com botão de copiar) → envia o comprovante na linha do histórico → a mensalidade vira **Pago**. Histórico com StatusPill (Pendente/Pago) e resumo anual considerando só pagas.
+*   **Admin (`/admin/financeiro`):** mensalidades pagas pelos filhos entram automaticamente como entradas da categoria `mensalidade` nos totais e no gráfico; lançamentos **pendentes não entram nos totais** (`summarizeMonth`/`buildMonthlySeries` os filtram). A tabela de movimentações mostra o nome do filho, destaca pendências com pill "Pendente" e mantém criar/editar/excluir (`FinanceEntryForm`) e exportação CSV — a administração pode corrigir qualquer lançamento.
 
 ### 5.4. Frequência (tabela `attendance`)
 
