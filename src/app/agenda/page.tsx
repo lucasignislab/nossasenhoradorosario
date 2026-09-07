@@ -2,7 +2,7 @@ import { Header } from "@/components/layout/header/Header";
 import { Hero } from "@/components/layout/Hero";
 import { Footer } from "@/components/layout/footer/footer";
 import { AgendaTabs } from "@/components/features/agenda-tabs";
-import { toEventCardProps, todayISODate } from "@/lib/events";
+import { currentMonthStartISODate, toEventCardProps } from "@/lib/events";
 import { createClient } from "@/lib/supabase/server";
 import type { PortalEvent } from "@/types";
 
@@ -15,7 +15,7 @@ export default async function AgendaPage() {
       .from('events')
       .select('*')
       .eq('status', 'confirmada')
-      .gte('event_date', todayISODate())
+      .gte('event_date', currentMonthStartISODate())
       .order('event_date', { ascending: true })
       .order('event_time', { ascending: true });
     events = (data ?? []) as PortalEvent[];

@@ -65,3 +65,8 @@ export function todayISODate(): string {
   const day = String(now.getDate()).padStart(2, '0');
   return `${now.getFullYear()}-${month}-${day}`;
 }
+
+/** Primeiro dia do mês corrente em ISO ('2026-09-01') — a agenda pública mostra o mês inteiro. */
+export function currentMonthStartISODate(): string {
+  return `${todayISODate().slice(0, 8)}01`;
+}
