@@ -65,6 +65,9 @@ export function MemberAgenda({ events, confirmedEventIds, selfAttendance }: Memb
                 windowOpen={self[nextEvent.id].windowOpen}
               />
             ) : null}
+            {self[nextEvent.id] && !self[nextEvent.id].windowOpen ? (
+              <p className="portal-action-note">A frequência desta gira poderá ser registrada no dia {nextEvent.event_date.split('-').slice(1).reverse().join('/')}.</p>
+            ) : null}
           </div>
           <EventConfirmationButton eventId={nextEvent.id} confirmed={confirmed.has(nextEvent.id)} />
         </section>

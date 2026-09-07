@@ -24,7 +24,7 @@ export function EventConfirmationButton({ eventId, confirmed }: { eventId: strin
         disabled={isPending}
         onClick={handleClick}
       >
-        {confirmed ? <><XCircle size={14} /> Cancelar confirmação</> : <><CheckCircle2 size={14} /> Confirmar presença</>}
+        {confirmed ? <><XCircle size={14} /> Não pretendo mais ir</> : <><CheckCircle2 size={14} /> Pretendo ir</>}
       </button>
       {error ? <span className="portal-action-error" role="alert">{error}</span> : null}
     </span>
