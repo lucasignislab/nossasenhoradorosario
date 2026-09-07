@@ -223,4 +223,11 @@ Margens, paddings e gaps são estritamente múltiplos de 8px:
 *   **Pode:** visão geral, agenda (`/admin/agenda`), avisos (`/admin/avisos`) e conteúdos (`/admin/conteudos`) — as políticas de escrita de `events`, `notices` e `contents` agora usam a nova função `public.is_content_manager()` (admin, developer ou editor ativo).
 *   **Não pode:** membros, financeiro, frequência, faxinas e configurações — essas páginas redirecionam editores para `/admin/agenda` (guarda `redirectEditorsAway()`), o menu omite esses itens e as tabelas seguem protegidas por `is_administrator()`.
 *   Na visão geral, editores não veem os painéis de cadastros pendentes nem o resumo financeiro — no lugar, um painel neutro descreve o escopo do acesso.
-*   A promoção a editor é feita via SQL pela administração (ver seção de ativação no README do Supabase).
+*   A promoção a editor é feita com um clique em `/admin/membros` ("Aprovar como comunicação") ou via SQL pela administração (ver seção de ativação no README do Supabase).
+
+### 5.9. Roadmap — onboarding por perfil
+
+*   Criar fluxo de onboarding para cada cadastro novo, específico por papel:
+    *   **Filho da casa (member):** boas-vindas, como registrar a frequência (antecipado em `/dashboard/frequencia` ou no dia pelo banner/home), escala de cuidados (`/dashboard/faxinas`) e mensalidade via Pix.
+    *   **Comunicação (editor):** como cadastrar giras, avisos e conteúdos; padrão da arte em 1080×1350 (4:5, formato do feed do Instagram) para não cortar nos cards.
+    *   **Administração (admin):** aprovações de cadastro (com escolha de papel), correções de frequência, visão financeira e configurações.
