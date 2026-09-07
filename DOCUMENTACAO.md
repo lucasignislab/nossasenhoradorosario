@@ -197,3 +197,10 @@ Margens, paddings e gaps são estritamente múltiplos de 8px:
 *   **`content_progress`**: conclusão pessoal por conteúdo (`unique(content_id, profile_id)`); cada filho marca/desfaz apenas o próprio progresso.
 *   **RLS:** nova função `is_active_member()` (membro autenticado ativo) protege a leitura de avisos e de conteúdos publicados; escrita e rascunhos são exclusivos da administração.
 *   **Fluxos:** `/admin/avisos` (CRUD de comunicados, novo item no menu de administração), `/admin/conteudos` (CRUD com publicar/despublicar), `/dashboard/avisos` (lista com data relativa em pt-BR), `/dashboard/aulas` (percursos por módulo com barra de progresso e "Marcar como concluído").
+
+### 5.6. Cuidados da casa — faxinas (tabelas `chore_teams`, `chore_team_members`, `chore_schedules`)
+
+*   Equipes de cuidado com membros vinculados e escalas por data, com lista de cuidados (`tasks text[]`, um por linha no formulário) e situação (`agendada`/`concluida`/`cancelada`). Migration: `supabase/migrations/202609070006_chores.sql`.
+*   **RLS:** leitura para membros ativos (`is_active_member()`); escrita exclusiva da administração.
+*   **Admin (`/admin/faxinas`):** cria/edita/exclui equipes, gerencia membros por equipe (adicionar/remover), agenda faxinas e marca escalas como concluídas/canceladas. Nova entrada no menu da administração.
+*   **Filho (`/dashboard/faxinas`):** vê a própria equipe, a próxima escala com os cuidados do dia e o histórico com StatusPill. Como a RLS de `profiles` só expõe o próprio perfil, os companheiros de equipe aparecem como contagem ("+N companheiros"), sem nomes — privacidade por padrão.

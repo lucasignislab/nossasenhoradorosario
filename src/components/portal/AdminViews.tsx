@@ -41,6 +41,13 @@ import { eventCategoryLabel, eventDateParts, formatEventTime, todayISODate } fro
 import { EventRowActions, NewEventButton } from './EventForm';
 import { ContentRowActions, NewContentButton } from './ContentForm';
 import { NewNoticeButton, NoticeRowActions } from './NoticeForm';
+import {
+  ChoreScheduleActions,
+  ChoreTeamActions,
+  ChoreTeamMembersEditor,
+  NewChoreScheduleButton,
+  NewChoreTeamButton,
+} from './ChoreForms';
 import { contentKindLabel, formatDuration, formatRelativeDate, noticeCategoryLabel } from '@/lib/notices';
 import {
   FinanceEntryRowActions,
@@ -57,7 +64,7 @@ import {
   formatFinanceDate,
   summarizeMonth,
 } from '@/lib/finance';
-import type { Attendance, FinanceEntry, Notice, PortalEvent, Profile, StudyContent } from '@/types';
+import type { Attendance, ChoreSchedule, ChoreScheduleStatus, ChoreTeam, FinanceEntry, Notice, PortalEvent, Profile, StudyContent } from '@/types';
 import { AttendanceSheet } from './AttendanceSheet';
 
 // Dados demonstrativos usados apenas pela prévia visual (portal-preview / Storybook).
@@ -645,6 +652,122 @@ export function NoticesManagement({ notices }: { notices?: Notice[] }) {
           </div>
         )}
       </article>
+    </div>
+  );
+}
+
+// Dados demonstrativos usados apenas pela prévia visual (portal-preview / Storybook).
+const previewChoreTeams: ChoreTeam[] = [
+  { id: 'preview-t1', name: 'Equipe Dourada', description: 'Cuidados do salão principal', active: true, created_at: '2026-01-01T00:00:00Z', updated_at: '2026-01-01T00:00:00Z' },
+  { id: 'preview-t2', name: 'Equipe Vermelha', description: 'Cozinha e área externa', active: true, created_at: '2026-01-01T00:00:00Z', updated_at: '2026-01-01T00:00:00Z' },
+];
+
+const previewChoreSchedules: ChoreSchedule[] = [
+  { id: 'preview-cs1', team_id: 'preview-t1', chore_date: '2026-07-26', tasks: ['Limpeza do salão principal', 'Cuidados com o congá'], notes: null, status: 'agendada', created_by: null, created_at: '2026-07-01T00:00:00Z', updated_at: '2026-07-01T00:00:00Z' },
+  { id: 'preview-cs2', team_id: 'preview-t2', chore_date: '2026-08-16', tasks: ['Organização da cozinha'], notes: null, status: 'agendada', created_by: null, created_at: '2026-07-01T00:00:00Z', updated_at: '2026-07-01T00:00:00Z' },
+];
+
+const previewChoreTeamMembers: ChoreTeamMemberRow[] = [
+  { team_id: 'preview-t1', profile_id: 'preview-a1' },
+  { team_id: 'preview-t1', profile_id: 'preview-a2' },
+  { team_id: 'preview-t2', profile_id: 'preview-a3' },
+];
+
+export type ChoreTeamMemberRow = { team_id: string; profile_id: string };
+
+type ChoresManagementProps = {
+  teams?: ChoreTeam[];
+  schedules?: ChoreSchedule[];
+  teamMembers?: ChoreTeamMemberRow[];
+  members?: Profile[];
+};
+
+const scheduleStatusPill: Record<ChoreScheduleStatus, { label: string; tone: 'info' | 'neutral' | 'danger' }> = {
+  agendada: { label: 'Agendada', tone: 'info' },
+  concluida: { label: 'Concluída', tone: 'neutral' },
+  cancelada: { label: 'Cancelada', tone: 'danger' },
+};
+
+export function ChoresManagement({ teams, schedules, teamMembers, members }: ChoresManagementProps) {
+  const teamList = teams ?? previewChoreTeams;
+  const scheduleList = schedules ?? previewChoreSchedules;
+  const teamMemberRows = teamMembers ?? previewChoreTeamMembers;
+  const memberList = members ?? previewAttendanceMembers;
+
+  const teamsById = new Map(teamList.map((team) => [team.id, team]));
+  const today = todayISODate();
+  const upcoming = scheduleList
+    .filter((schedule) => schedule.chore_date >= today && schedule.status === 'agendada')
+    .sort((a, b) => (a.chore_date < b.chore_date ? -1 : 1));
+  const orderedSchedules = [...scheduleList].sort((a, b) => (a.chore_date < b.chore_date ? 1 : -1));
+  const peopleInTeams = new Set(teamMemberRows.map((row) => row.profile_id)).size;
+  const nextSchedule = upcoming[0] ?? null;
+
+  return (
+    <div className="portal-page">
+      <PageHeader
+        eyebrow="Administração · Cuidados da casa"
+        title="Faxinas e equipes"
+        description="Organize as equipes e as escalas de cuidado com a casa."
+        action={<><NewChoreTeamButton /><NewChoreScheduleButton teams={teamList} /></>}
+      />
+
+      <section className="portal-metrics portal-metrics--compact">
+        <MetricCard icon={UsersRound} label="Equipes ativas" value={String(teamList.filter((team) => team.active).length)} detail={`${peopleInTeams} pessoas em equipes`} tone="brand" />
+        <MetricCard icon={CalendarCheck} label="Próxima faxina" value={nextSchedule ? `${eventDateParts(nextSchedule.chore_date).day} ${eventDateParts(nextSchedule.chore_date).month}` : '—'} detail={nextSchedule ? (teamsById.get(nextSchedule.team_id)?.name ?? '') : 'Nenhuma escala futura'} tone="gold" />
+        <MetricCard icon={ListChecks} label="Escalas agendadas" value={String(upcoming.length)} detail="Nas próximas semanas" tone="info" />
+      </section>
+
+      <section className="portal-layout portal-layout--overview">
+        <div className="portal-stack">
+          {teamList.length === 0 ? (
+            <article className="portal-panel"><PanelHeader eyebrow="Equipes" title="Cuidado organizado" /><p className="portal-panel__copy">Nenhuma equipe criada. Comece criando a primeira equipe de cuidados.</p></article>
+          ) : (
+            teamList.map((team) => (
+              <article className="portal-panel" key={team.id}>
+                <PanelHeader
+                  eyebrow={team.active ? 'Equipe ativa' : 'Equipe inativa'}
+                  title={team.name}
+                  action={<ChoreTeamActions team={team} />}
+                />
+                {team.description ? <p className="portal-panel__copy">{team.description}</p> : null}
+                <ChoreTeamMembersEditor
+                  team={team}
+                  memberIds={teamMemberRows.filter((row) => row.team_id === team.id).map((row) => row.profile_id)}
+                  members={memberList}
+                />
+              </article>
+            ))
+          )}
+        </div>
+
+        <article className="portal-panel">
+          <PanelHeader eyebrow="Escalas" title="Linha do tempo" />
+          {orderedSchedules.length === 0 ? (
+            <p className="portal-panel__copy">Nenhuma faxina agendada.</p>
+          ) : (
+            <div className="portal-timeline">
+              {orderedSchedules.map((schedule) => {
+                const parts = eventDateParts(schedule.chore_date);
+                const pill = scheduleStatusPill[schedule.status];
+                return (
+                  <div className={`portal-timeline__item${schedule.status === 'cancelada' ? ' is-canceled' : ''}`} key={schedule.id}>
+                    <div className="portal-timeline__date"><strong>{parts.day}</strong><span>{parts.month}</span></div>
+                    <i />
+                    <div>
+                      <span className="portal-timeline__type">{teamsById.get(schedule.team_id)?.name ?? 'Equipe'}</span>
+                      <h3>{schedule.tasks[0] ?? 'Cuidado da casa'}{schedule.tasks.length > 1 ? ` +${schedule.tasks.length - 1}` : ''}</h3>
+                      <p><Clock3 size={13} /> {schedule.tasks.length} {schedule.tasks.length === 1 ? 'cuidado previsto' : 'cuidados previstos'}</p>
+                    </div>
+                    <StatusPill tone={pill.tone}>{pill.label}</StatusPill>
+                    <ChoreScheduleActions schedule={schedule} />
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </article>
+      </section>
     </div>
   );
 }

@@ -96,6 +96,11 @@
 .portal-action-success { margin: 0; color: #2f7a4f; font-size: 12px; }
 .portal-field--checkbox { display: flex; flex-direction: row; align-items: center; gap: 8px; align-self: end; }
 .portal-field--checkbox input { min-height: auto; width: 16px; height: 16px; accent-color: var(--portal-accent); }
+.portal-team-editor { display: grid; gap: 12px; }
+.portal-team-editor .member-team-grid > div { position: relative; }
+.portal-team-editor .member-team-grid .portal-icon-button { position: absolute; top: 4px; right: 4px; }
+.portal-team-editor__add { display: flex; gap: 8px; align-items: center; }
+.portal-team-editor__add select { flex: 1; min-height: 34px; padding: 0 10px; border: 1px solid var(--portal-border-strong); border-radius: 6px; background: #fafafa; color: var(--portal-text); font: 12px var(--font-body); }
 .member-course-items { list-style: none; margin: 10px 0 0; padding: 10px 0 0; border-top: 1px solid var(--portal-border); display: grid; gap: 10px; }
 .member-course-items li { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .member-course-item__link { display: inline-flex; align-items: center; gap: 8px; color: var(--portal-text); text-decoration: none; }

@@ -109,3 +109,26 @@ export type ContentProgress = {
   profile_id: string;
   completed_at: string;
 };
+
+export type ChoreTeam = {
+  id: string;
+  name: string;
+  description: string | null;
+  active: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ChoreScheduleStatus = 'agendada' | 'concluida' | 'cancelada';
+
+export type ChoreSchedule = {
+  id: string;
+  team_id: string;
+  chore_date: string;
+  tasks: string[];
+  notes: string | null;
+  status: ChoreScheduleStatus;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};

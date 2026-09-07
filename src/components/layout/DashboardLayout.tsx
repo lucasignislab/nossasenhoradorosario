@@ -57,6 +57,7 @@ const adminMenu = [
   { label: 'Frequência', path: '/frequencia', icon: ClipboardCheck },
   { label: 'Financeiro', path: '/financeiro', icon: CircleDollarSign },
   { label: 'Conteúdos', path: '/conteudos', icon: BookOpen },
+  { label: 'Faxinas', path: '/faxinas', icon: Sparkles },
   { label: 'Avisos', path: '/avisos', icon: Bell },
   { label: 'Configurações', path: '/configuracoes', icon: Settings },
 ];

@@ -21,7 +21,8 @@ import { ContentProgressToggle } from './ContentProgressToggle';
 import { eventDateParts, formatEventDateLong, formatEventTime } from '@/lib/events';
 import { currentMonthRange, formatBRL, formatFinanceDate } from '@/lib/finance';
 import { contentKindLabel, formatDuration, formatRelativeDate, noticeCategoryLabel } from '@/lib/notices';
-import type { FinanceEntry, Notice, PortalEvent, StudyContent } from '@/types';
+import { profileDisplayName, profileInitial } from '@/lib/members';
+import type { ChoreSchedule, ChoreScheduleStatus, ChoreTeam, FinanceEntry, Notice, PortalEvent, Profile, StudyContent } from '@/types';
 
 // Dados demonstrativos usados apenas pela prévia visual (portal-preview / Storybook).
 const previewMemberEvents: PortalEvent[] = [
@@ -84,14 +85,114 @@ export function MemberAgenda({ events, confirmedEventIds }: MemberAgendaProps) {
   );
 }
 
-export function MemberChores() {
+export type MemberChoresData = {
+  teams: ChoreTeam[];
+  schedules: ChoreSchedule[];
+  /** Pessoas da(s) equipe(s) do usuário que ele consegue ver (RLS mostra só o próprio perfil). */
+  visibleTeammates: Profile[];
+  /** Total de pessoas nas equipes do usuário, incluindo quem a RLS não expõe. */
+  teammatesTotal: number;
+  currentUserId: string;
+};
+
+// Dados demonstrativos usados apenas pela prévia visual (portal-preview / Storybook).
+const previewMemberChores: MemberChoresData = {
+  teams: [
+    { id: 'preview-t1', name: 'Equipe Dourada', description: 'Cuidados do salão principal', active: true, created_at: '2026-01-01T00:00:00Z', updated_at: '2026-01-01T00:00:00Z' },
+  ],
+  schedules: [
+    { id: 'preview-cs1', team_id: 'preview-t1', chore_date: '2026-07-26', tasks: ['Limpeza do salão principal', 'Organização da cozinha', 'Cuidados com o congá'], notes: 'Chegar 15 min antes.', status: 'agendada', created_by: null, created_at: '2026-07-01T00:00:00Z', updated_at: '2026-07-01T00:00:00Z' },
+    { id: 'preview-cs2', team_id: 'preview-t1', chore_date: '2026-06-28', tasks: ['Área externa e materiais'], notes: null, status: 'concluida', created_by: null, created_at: '2026-06-01T00:00:00Z', updated_at: '2026-06-28T00:00:00Z' },
+  ],
+  visibleTeammates: [{ id: 'preview-self', full_name: 'Você', phone: null, role: 'member', status: 'active', joined_at: null, created_at: '2026-01-01T00:00:00Z', updated_at: '2026-01-01T00:00:00Z' }],
+  teammatesTotal: 6,
+  currentUserId: 'preview-self',
+};
+
+export function MemberChores({ data }: { data?: MemberChoresData }) {
+  const { teams, schedules, visibleTeammates, teammatesTotal } = data ?? previewMemberChores;
+  const teamsById = new Map(teams.map((team) => [team.id, team]));
+  const today = new Date();
+  const todayISO = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+  const upcoming = schedules
+    .filter((schedule) => schedule.chore_date >= todayISO && schedule.status === 'agendada')
+    .sort((a, b) => (a.chore_date < b.chore_date ? -1 : 1));
+  const past = schedules
+    .filter((schedule) => schedule.chore_date < todayISO || schedule.status !== 'agendada')
+    .sort((a, b) => (a.chore_date < b.chore_date ? 1 : -1));
+  const next = upcoming[0] ?? null;
+  const done = past.filter((schedule) => schedule.status === 'concluida').length;
+  const teamNames = teams.map((team) => team.name).join(' e ') || '—';
+
+  const statusPill = (status: ChoreScheduleStatus) =>
+    status === 'concluida' ? { label: 'Concluída', tone: 'info' as const }
+      : status === 'cancelada' ? { label: 'Cancelada', tone: 'danger' as const }
+        : { label: 'Agendada', tone: 'warning' as const };
+
   return (
     <div className="portal-page">
-      <PageHeader eyebrow="Área dos filhos · Cuidados" title="Cuidar da casa é parte do axé" description="Consulte sua equipe, confirme sua participação e acompanhe as próximas escalas." />
-      <section className="portal-metrics portal-metrics--compact"><MetricCard icon={Sparkles} label="Próxima escala" value="26 jul" detail="Sábado · 9h" tone="gold" /><MetricCard icon={UsersRound} label="Sua equipe" value="Dourada" detail="6 pessoas confirmadas" tone="brand" /><MetricCard icon={CheckCircle2} label="Participação" value="4 de 4" detail="Escalas realizadas em 2026" tone="info" /></section>
+      <PageHeader eyebrow="Área dos filhos · Cuidados" title="Cuidar da casa é parte do axé" description="Consulte sua equipe e acompanhe as próximas escalas de cuidado." />
+      <section className="portal-metrics portal-metrics--compact">
+        <MetricCard icon={Sparkles} label="Próxima escala" value={next ? `${eventDateParts(next.chore_date).day} ${eventDateParts(next.chore_date).month}` : '—'} detail={next ? formatEventDateLong(next.chore_date) : 'Nenhuma escala futura'} tone="gold" />
+        <MetricCard icon={UsersRound} label="Sua equipe" value={teams.length > 0 ? teams[0].name.replace('Equipe ', '') : '—'} detail={`${teammatesTotal} ${teammatesTotal === 1 ? 'pessoa' : 'pessoas'} na equipe`} tone="brand" />
+        <MetricCard icon={CheckCircle2} label="Participação" value={String(done)} detail="Escalas concluídas pela sua equipe" tone="info" />
+      </section>
       <section className="portal-layout portal-layout--overview">
-        <article className="portal-panel"><PanelHeader eyebrow="Sábado · 26 de julho" title="Equipe Dourada" action={<StatusPill tone="warning">Confirmação pendente</StatusPill>} /><div className="member-team-grid">{['Ana Martins', 'Caio Almeida', 'Helena Rocha', 'Pedro Lima', 'Você', 'Marina Souza'].map((name, index) => <div key={name}><span>{name === 'Você' ? 'V' : name.charAt(0)}</span><strong>{name}</strong><small>{index < 4 ? 'Confirmado' : 'Aguardando'}</small></div>)}</div><div className="member-task-list"><h3>Cuidados deste dia</h3>{['Limpeza do salão principal', 'Organização da cozinha', 'Cuidados com o congá', 'Área externa e materiais'].map(item => <p key={item}><CheckCircle2 size={15} /> {item}</p>)}</div><button className="portal-button portal-button--primary">Confirmar minha participação</button></article>
-        <div className="portal-stack"><article className="portal-panel"><PanelHeader eyebrow="Calendário" title="Próximas escalas" /><div className="member-small-list"><div><strong>16 ago</strong><span>Equipe Vermelha</span></div><div><strong>30 ago</strong><span>Equipe Dourada</span></div><div><strong>13 set</strong><span>Equipe Branca</span></div></div></article><article className="portal-note-card portal-note-card--light"><Sparkles size={22} /><p>Precisa trocar sua escala? Solicite com antecedência para a administração.</p><span>Troca de equipe</span></article></div>
+        {teams.length === 0 ? (
+          <article className="portal-panel"><PanelHeader eyebrow="Sua equipe" title="Cuidado da casa" /><p className="portal-panel__copy">Você ainda não está em uma equipe de cuidados. Fale com a administração da casa.</p></article>
+        ) : (
+          <article className="portal-panel">
+            <PanelHeader
+              eyebrow={next ? formatEventDateLong(next.chore_date) : 'Sua equipe'}
+              title={next ? (teamsById.get(next.team_id)?.name ?? teamNames) : teamNames}
+              action={next ? <StatusPill tone={statusPill(next.status).tone}>{statusPill(next.status).label}</StatusPill> : undefined}
+            />
+            <div className="member-team-grid">
+              {visibleTeammates.map((member) => (
+                <div key={member.id}>
+                  <span>{profileInitial(member)}</span>
+                  <strong>{profileDisplayName(member)}</strong>
+                  <small>{teams.map((team) => team.name.replace('Equipe ', '')).join(' · ')}</small>
+                </div>
+              ))}
+              {teammatesTotal > visibleTeammates.length ? (
+                <div><span>+{teammatesTotal - visibleTeammates.length}</span><strong>Companheiros</strong><small>na equipe</small></div>
+              ) : null}
+            </div>
+            {next ? (
+              <div className="member-task-list">
+                <h3>Cuidados deste dia</h3>
+                {next.tasks.map((task) => <p key={task}><CheckCircle2 size={15} /> {task}</p>)}
+                {next.notes ? <p><Sparkles size={15} /> {next.notes}</p> : null}
+              </div>
+            ) : (
+              <p className="portal-panel__copy">Nenhuma faxina agendada para a sua equipe no momento.</p>
+            )}
+          </article>
+        )}
+        <div className="portal-stack">
+          <article className="portal-panel">
+            <PanelHeader eyebrow="Calendário" title="Escalas da sua equipe" />
+            {schedules.length === 0 ? (
+              <p className="portal-panel__copy">Nenhuma escala registrada ainda.</p>
+            ) : (
+              <div className="member-small-list">
+                {[...upcoming, ...past].map((schedule) => {
+                  const parts = eventDateParts(schedule.chore_date);
+                  return (
+                    <div key={schedule.id}>
+                      <strong>{parts.day} {parts.month.toLowerCase()}</strong>
+                      <span>{teamsById.get(schedule.team_id)?.name ?? 'Equipe'}</span>
+                      <StatusPill tone={statusPill(schedule.status).tone}>{statusPill(schedule.status).label}</StatusPill>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </article>
+          <article className="portal-note-card portal-note-card--light"><Sparkles size={22} /><p>Precisa trocar sua escala? Solicite com antecedência para a administração.</p><span>Troca de equipe</span></article>
+        </div>
       </section>
     </div>
   );
