@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import Link from 'next/link';
 import { EventCard, type EventCardProps } from './event-card';
 import { Calendar } from 'lucide-react';

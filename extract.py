@@ -1,5 +1,4 @@
 from pypdf import PdfReader
-import sys
 
 try:
     reader = PdfReader('Manual_Boas_Vindas.pdf')

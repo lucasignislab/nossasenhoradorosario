@@ -50,7 +50,6 @@ const TIPO_PARA_FILA: Record<TipoAtendimento, string> = {
 export const useSenhaStore = create<SenhaState>()(
   persist(
     (set, get) => ({
-      // ─── Estado Inicial ───
       filas: [
         { id: "fila-1", nome: "Consultas Espirituais", tipoAtendimento: "consulta_espiritual", prefixo: "CE", senhaAtual: 0, ativa: true, cor: "#C9A227" },
         { id: "fila-2", nome: "Giras", tipoAtendimento: "gira", prefixo: "GR", senhaAtual: 0, ativa: true, cor: "#8B3A2A" },
@@ -61,7 +60,6 @@ export const useSenhaStore = create<SenhaState>()(
       senhaAtualChamada: null,
       historico: [],
 
-      // ─── Filas ───
       adicionarFila: (fila) => {
         const newFila: Fila = { ...fila, id: gerarId() };
         set((state) => ({ filas: [...state.filas, newFila] }));
@@ -82,7 +80,6 @@ export const useSenhaStore = create<SenhaState>()(
 
       setFilaAtiva: (id) => set({ filaAtiva: id }),
 
-      // ─── Senhas ───
       gerarSenha: (nomePessoa, tipoAtendimento, observacao) => {
         const state = get();
         const fila = state.filas.find((f) => f.tipoAtendimento === tipoAtendimento && f.ativa);
@@ -224,7 +221,6 @@ export const useSenhaStore = create<SenhaState>()(
         }));
       },
 
-      // ─── Getters ───
       getSenhasPorFila: (filaId) => {
         const state = get();
         const fila = state.filas.find((f) => f.id === filaId);

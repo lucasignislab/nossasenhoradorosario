@@ -7,9 +7,7 @@ Based on Vercel Engineering best practices
 
 import os
 import re
-import json
 from pathlib import Path
-from typing import List, Dict, Tuple
 
 class PerformanceChecker:
     def __init__(self, project_path: str):

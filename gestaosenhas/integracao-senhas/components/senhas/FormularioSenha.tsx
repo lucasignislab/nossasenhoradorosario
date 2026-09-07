@@ -9,7 +9,7 @@
 
 import { useState } from "react";
 import { useSenhaStore } from "@/store/useSenhaStore";
-import { TIPOS_ATENDIMENTO, type TipoAtendimento } from "@/types/senhas";
+import { type TipoAtendimento } from "@/types/senhas";
 import { UserPlus, CheckCircle2, Sparkles, Flame, Eye, Calendar, Heart } from "lucide-react";
 
 const ICONE_MAP = { Sparkles, Flame, Eye, Calendar, Heart };

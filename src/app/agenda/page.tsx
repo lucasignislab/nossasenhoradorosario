@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { Header } from "@/components/layout/header/Header";
 import { Hero } from "@/components/layout/Hero";
 import { Footer } from "@/components/layout/footer/footer";

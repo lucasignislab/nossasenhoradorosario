@@ -172,7 +172,7 @@ export default function EventosPage() {
   const galeriaRef = useRef<HTMLDivElement>(null);
   const faqRef = useRef<HTMLDivElement>(null);
   
-  const [introVisible, setIntroVisible] = useState(false);
+  const [_introVisible, setIntroVisible] = useState(false);
   const [gridVisible, setGridVisible] = useState(false);
   const [galeriaVisible, setGaleriaVisible] = useState(false);
   const [faqVisible, setFaqVisible] = useState(false);

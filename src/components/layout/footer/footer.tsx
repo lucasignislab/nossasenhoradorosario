@@ -1,4 +1,3 @@
-import React from 'react';
 import Link from 'next/link';
 
 // SVGs Inline para não depender de pacotes externos na Home

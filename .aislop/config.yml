@@ -1,0 +1,25 @@
+version: 1
+
+# Ferramentas de terceiros, saídas de build e utilitários fora do produto
+exclude:
+  - node_modules
+  - .git
+  - dist
+  - build
+  - coverage
+  - .next
+  - .agent
+  - storybook-static
+  - gestaosenhas
+  - extract.py
+
+engines:
+  format: true
+  lint: true
+  code-quality: true
+  ai-slop: true
+  architecture: false
+  security: true
+
+telemetry:
+  enabled: false

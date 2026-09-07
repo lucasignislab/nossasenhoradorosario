@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useState } from "react";
 import { Header } from "@/components/layout/header/Header";
 import { Footer } from "@/components/layout/footer/footer";
 import {
@@ -8,13 +8,10 @@ import {
   Check,
   Calendar,
   Clock,
-  MapPin,
   ChevronDown,
   Loader2,
   BookOpen,
-  ArrowRight,
   Info,
-  ExternalLink,
   Search,
 } from "lucide-react";
 
@@ -237,10 +234,6 @@ const SOURCE_LABEL: Record<string, string> = {
   'system-proposal': 'Proposta do sistema',
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Motion tokens — Sacred Modernism
-// Fonte: design-system/foundation/motion.tokens.json
-// ─────────────────────────────────────────────────────────────────────────────
 type MotionStatus = 'approved' | 'provisional';
 type DurationToken = {
   name: string;
@@ -279,10 +272,6 @@ function cubicBezierCss(pts: [number, number, number, number]): string {
   return `cubic-bezier(${pts.join(', ')})`;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Opacity tokens — Sacred Modernism
-// Fonte: design-system/foundation/opacity.tokens.json
-// ─────────────────────────────────────────────────────────────────────────────
 type OpacityToken = {
   name: string;
   /** Valor entre 0 e 1 */
@@ -302,10 +291,6 @@ const opacityTokens: OpacityToken[] = [
   { name: 'opaque',      value: 1,    status: 'provisional', source: 'system-proposal' },
 ];
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Shadow tokens — Sacred Modernism
-// Fonte: design-system/foundation/shadow.tokens.json
-// ─────────────────────────────────────────────────────────────────────────────
 type ShadowValue = {
   color: string;
   offsetX: string;
@@ -334,11 +319,6 @@ function shadowCss(v: ShadowValue): string {
   return `${v.offsetX} ${v.offsetY} ${v.blur} ${v.spread} ${v.color}`;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Shape tokens — Sacred Modernism
-// Fonte: design-system/foundation/shape.tokens.json
-// Cobre radius (border-radius) e border-width.
-// ─────────────────────────────────────────────────────────────────────────────
 type ShapeToken = {
   name: string;
   /** Valor em CSS (ex.: "2px", "999px") */
@@ -367,11 +347,6 @@ const borderWidthTokens: ShapeToken[] = [
   { name: 'thick',  value: '4px', status: 'provisional', source: 'system-proposal', use: 'Indicadores laterais, destaques.' },
 ];
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Space tokens — Sacred Modernism
-// Fonte: design-system/foundation/space.tokens.json
-// Escala baseada no grid de 8px documentado.
-// ─────────────────────────────────────────────────────────────────────────────
 type SpaceToken = {
   name: string;
   /** Valor em pixels (numérico para facilitar cálculos) */
@@ -403,12 +378,6 @@ function pxToRem(px: number): string {
   return `${(px / 16).toFixed(2)}rem`;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Typography tokens — Sacred Modernism
-// Fonte: design-system/foundation/typography.tokens.json
-// Cobre font-family, font-weight, font-size, line-height, letter-spacing
-// e composições tipográficas prontas.
-// ─────────────────────────────────────────────────────────────────────────────
 type FontFamilyToken = {
   name: string;
   stack: string[];
@@ -501,11 +470,6 @@ const typographyCompositions: TypographyComposition[] = [
   { name: 'label-medium',   fontFamily: 'body',    fontSizePx: 14, fontWeight: 600, letterSpacing: '0.04em',  lineHeight: 1.25, status: 'provisional', source: 'system-proposal' },
 ];
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Z-Index tokens — Sacred Modernism
-// Fonte: design-system/foundation/z-index.tokens.json
-// Hierarquia de empilhamento que define quem fica por cima de quem.
-// ─────────────────────────────────────────────────────────────────────────────
 type ZIndexToken = {
   name: string;
   value: number;
@@ -644,9 +608,6 @@ const semanticTokens: Record<Theme, SemanticRole[]> = {
   { path: 'overlay.highlight', foundationRef: '{color.base.ancestral-gold.300}', hex: '#D3B870', desc: 'Luz de destaque e efeitos atmosféricos.',                               status: 'approved',    category: 'overlay' },
   ],
 
-  // ─── DARK THEME ────────────────────────────────────────────────────────
-  // Espelha a estrutura do light; foundationRefs e hex resolvem para a
-  // base escura correspondente.
   dark: [
   // background
   { path: 'background.canvas',     foundationRef: '{color.base.warm-neutral.950}',  hex: '#0D0B08', desc: 'Fundo principal das páginas.',                                          status: 'approved',    category: 'background' },
@@ -750,14 +711,6 @@ const SEMANTIC_CATEGORIES: Array<{
   { key: 'overlay',    label: 'Overlay',        desc: 'Camadas atmosféricas e overlays.' },
 ];
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Component tokens — Button
-// Fonte: design-system/component/button.tokens.json
-// Estes tokens são REFERÊNCIAS a outros tokens (space, radius, color, etc.).
-// Abaixo eles são resolvidos para valores literais a partir dos arrays
-// já definidos (foundation + semantic).
-// ─────────────────────────────────────────────────────────────────────────────
-
 // Helpers de resolução
 const getSpace = (name: string): string => {
   const t = spaceTokens.find((s) => s.name === name);
@@ -855,11 +808,6 @@ const buttonEasing    = cubicBezierCss(
   cubicBezierTokens.find((c) => c.name === 'standard')?.points ?? [0.2, 0, 0, 1]
 );
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Component tokens — Card
-// Fonte: design-system/component/card.tokens.json
-// ─────────────────────────────────────────────────────────────────────────────
-
 const getShadow = (name: string): ShadowValue | null => {
   return shadowTokens.find((s) => s.name === name)?.value ?? null;
 };
@@ -902,11 +850,6 @@ const cardTokens = {
   },
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Component tokens — Input
-// Fonte: design-system/component/input.tokens.json
-// ─────────────────────────────────────────────────────────────────────────────
-
 const inputTokens = {
   height: {
     small:  getSpace('500'),  // 40px
@@ -944,11 +887,6 @@ const inputTokens = {
     ),
   },
 };
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Component tokens — Modal
-// Fonte: design-system/component/modal.tokens.json
-// ─────────────────────────────────────────────────────────────────────────────
 
 const getOpacity = (name: string): number => {
   const t = opacityTokens.find((o) => o.name === name);
@@ -992,11 +930,6 @@ const modalTokens = {
   },
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Component tokens — Navigation (Header, Links, Footer, Mobile menu)
-// Fonte: design-system/component/navigation.tokens.json
-// ─────────────────────────────────────────────────────────────────────────────
-
 const navigationTokens = {
   header: {
     height:        getSpace('1000'),                // 80px (approved)
@@ -1029,11 +962,6 @@ const navigationTokens = {
   },
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Component tokens — Tabs
-// Fonte: design-system/component/tabs.tokens.json
-// ─────────────────────────────────────────────────────────────────────────────
-
 const tabsTokens = {
   list: {
     gap:    getSpace('100'),                  // 8px
@@ -1063,9 +991,6 @@ const tabsTokens = {
   },
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Utilitário WCAG: converte HEX → luminance relativa e calcula contrast ratio
-// ─────────────────────────────────────────────────────────────────────────────
 function hexToRgb(hex: string): [number, number, number] {
   const clean = hex.replace('#', '');
   return [
@@ -1126,9 +1051,6 @@ const contrastMatrix: ContrastRow[] = contrastRowDefs.map((row) => ({
   }),
 }));
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Subcomponente: card de um Color Role (semantic token)
-// ─────────────────────────────────────────────────────────────────────────────
 type RoleCardProps = {
   role: SemanticRole;
   copiedValue: string | null;
@@ -1295,7 +1217,7 @@ export default function DesignSystemPage() {
   const [inputNormal, setInputNormal] = useState('');
   const [inputFocus, setInputFocus] = useState('Texto focado…');
   const [inputErro, setInputErro] = useState('Texto inválido');
-  const [inputPreenchido, setInputPreenchido] = useState('Preenchido com sucesso');
+  const [_inputPreenchido, _setInputPreenchido] = useState('Preenchido com sucesso');
 
   const copyToClipboard = (text: string, valueId: string) => {
     navigator.clipboard.writeText(text);
