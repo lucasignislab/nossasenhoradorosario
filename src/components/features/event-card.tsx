@@ -10,6 +10,8 @@ export interface EventCardProps {
   status: 'confirmada' | 'cancelada';
   description?: string;
   imageUrl?: string; // Flyer background
+  /** Gira do mês corrente já realizada (data anterior a hoje). */
+  past?: boolean;
   onClick?: () => void;
 }
 
@@ -21,6 +23,7 @@ export const EventCard = ({
   status,
   description,
   imageUrl,
+  past = false,
   onClick,
 }: EventCardProps) => {
   const isConfirmed = status === 'confirmada';
@@ -50,7 +53,7 @@ export const EventCard = ({
           <img
             src={imageUrl}
             alt={title}
-            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]"
+            className={`w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02] ${past ? 'opacity-80 saturate-[0.85]' : ''}`}
           />
         </div>
       ) : (
@@ -68,16 +71,23 @@ export const EventCard = ({
           <span className="text-[10px] font-semibold tracking-[0.2em] uppercase text-[var(--color-sacred-gold)] font-inter">
             {entity}
           </span>
-          <span
-            className={`inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-sm border ${
-              isConfirmed
-                ? 'bg-green-500/10 border-green-500/20 text-green-700'
-                : 'bg-red-500/10 border-red-500/20 text-red-700'
-            }`}
-          >
-            {isConfirmed ? <Check size={10} /> : <X size={10} />}
-            {isConfirmed ? 'Confirmada' : 'Cancelada'}
-          </span>
+          {past && isConfirmed ? (
+            <span className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-sm border bg-neutral-500/10 border-neutral-500/20 text-neutral-500">
+              <Check size={10} />
+              Realizada
+            </span>
+          ) : (
+            <span
+              className={`inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-sm border ${
+                isConfirmed
+                  ? 'bg-green-500/10 border-green-500/20 text-green-700'
+                  : 'bg-red-500/10 border-red-500/20 text-red-700'
+              }`}
+            >
+              {isConfirmed ? <Check size={10} /> : <X size={10} />}
+              {isConfirmed ? 'Confirmada' : 'Cancelada'}
+            </span>
+          )}
         </div>
 
         <h3 className="text-xl md:text-2xl font-normal text-[#0D0B08] font-[var(--font-heading)] leading-tight tracking-wide">

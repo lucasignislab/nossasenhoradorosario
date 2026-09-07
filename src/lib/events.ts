@@ -55,6 +55,7 @@ export function toEventCardProps(event: PortalEvent): EventCardProps {
     status: event.status,
     description: event.description ?? undefined,
     imageUrl: event.image_url ?? undefined,
+    past: event.event_date < todayISODate(),
   };
 }
 
