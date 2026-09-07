@@ -1,4 +1,5 @@
 import { MemberHome, type MemberHomeSummary } from './MemberHome';
+import { attendanceWindowOpen } from '@/lib/attendance';
 import { todayISODate } from '@/lib/events';
 import { currentMonthRange } from '@/lib/finance';
 import { createClient } from '@/lib/supabase/server';
@@ -62,12 +63,34 @@ export default async function DashboardPage() {
     if (shiftDate) nextChore = { shiftDate: shiftDate.shift_date };
   }
 
+  // Gira de hoje ainda sem registro de frequência: destaque na home.
+  let pendingAttendanceEvent: PortalEvent | null = null;
+  if (user) {
+    const { data: todayGiras } = await supabase
+      .from('events')
+      .select('*')
+      .eq('status', 'confirmada')
+      .eq('category', 'gira')
+      .eq('event_date', today);
+    const giras = ((todayGiras ?? []) as PortalEvent[]).filter((event) => attendanceWindowOpen(event));
+    if (giras.length > 0) {
+      const { data: rows } = await supabase
+        .from('attendance')
+        .select('event_id')
+        .eq('profile_id', user.id)
+        .in('event_id', giras.map((event) => event.id));
+      const recorded = new Set((rows ?? []).map((row) => row.event_id));
+      pendingAttendanceEvent = giras.find((event) => !recorded.has(event.id)) ?? null;
+    }
+  }
+
   const summary: MemberHomeSummary = {
     nextEvent,
     nextEventConfirmed: nextEvent ? confirmedIds.has(nextEvent.id) : false,
     notices: (noticesResult.data ?? []) as Notice[],
     nextChore,
     monthFeePaid: (feeResult.count ?? 0) > 0,
+    pendingAttendanceEvent,
   };
 
   return <MemberHome summary={summary} />;

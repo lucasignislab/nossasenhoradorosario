@@ -187,9 +187,10 @@ Margens, paddings e gaps são estritamente múltiplos de 8px:
 ### 5.4. Frequência (tabela `attendance`)
 
 *   Presença por atividade: uma linha por pessoa por evento (`unique(event_id, profile_id)`), com `present`, `justified` (falta justificada — só vale com `present = false`) e `marked_by`. Migration: `supabase/migrations/202609070004_attendance.sql`.
-*   **RLS:** administração tem acesso total; cada filho visualiza apenas os próprios registros.
-*   **Admin (`/admin/frequencia`):** chamada por atividade (`AttendanceSheet`) — escolhe o evento, marca Presente/Faltou/Justificada por filho e salva em lote (upsert). Painel com frequência geral, presenças no mês, justificadas, barras de presença das últimas 6 atividades com chamada e tabela de % individual com leitura de acompanhamento.
-*   **Filho (`/dashboard/frequencia`):** métricas pessoais (presença %, presenças, justificadas, faltas) e histórico com status por atividade. Somente leitura.
+*   **RLS:** administração tem acesso total; cada filho visualiza os próprios registros e, desde a migration `supabase/migrations/202609070012_self_attendance.sql`, também **insere e corrige o próprio registro** (`profile_id = auth.uid()` + `is_active_member()`).
+*   **Auto-registro do membro (oficial, sem validação):** no dia da atividade e até 24h após o início (janela calculada em `src/lib/attendance.ts` e conferida na action `registerOwnAttendance` em `src/app/(auth)/dashboard/frequencia/actions.ts`), o membro registra presença ou justifica falta (com motivo opcional) pelos botões em `/dashboard/agenda` e, quando há gira hoje sem registro, por um cartão de destaque na home `/dashboard`. O registro já vale como frequência oficial; `marked_by` guarda o próprio membro. Depois que a janela fecha, o membro só visualiza — correções ficam com a administração.
+*   **Admin (`/admin/frequencia`):** chamada por atividade (`AttendanceSheet`) — escolhe o evento, marca Presente/Faltou/Justificada por filho e salva em lote (upsert). Em atividades passadas, quem não tem nenhum registro aparece com a marca **"Sem registro"** (linha destacada) e não entra no salvamento até ser marcada — nada é gravado como falta automaticamente. Painel com frequência geral, presenças no mês, justificadas, barras de presença das últimas 6 atividades com chamada e tabela de % individual com leitura de acompanhamento. A administração pode corrigir qualquer registro a qualquer momento.
+*   **Filho (`/dashboard/frequencia`):** métricas pessoais (presença %, presenças, justificadas, faltas) e histórico com status por atividade, incluindo os registros feitos pelo próprio membro.
 
 ### 5.5. Avisos e conteúdos de estudo (tabelas `notices`, `contents`, `content_progress`)
 

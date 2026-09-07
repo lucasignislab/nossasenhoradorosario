@@ -19,6 +19,7 @@ import { MetricCard, PageHeader, PanelHeader, ProgressBar, StatusPill } from './
 import { EventConfirmationButton } from './EventConfirmationButton';
 import { ContentProgressToggle } from './ContentProgressToggle';
 import { ShiftSignupButton } from './CleaningShiftControls';
+import { SelfAttendanceControls, type SelfAttendanceRecord } from './SelfAttendanceControls';
 import { eventDateParts, formatEventDateLong, formatEventTime } from '@/lib/events';
 import { currentMonthRange, formatBRL, formatFinanceDate } from '@/lib/finance';
 import { CLEANING_SHIFT_MAX, CLEANING_SHIFT_MIN, cleaningKindLabel, cleaningShiftStatus } from '@/lib/cleaning';
@@ -32,14 +33,19 @@ const previewMemberEvents: PortalEvent[] = [
   { id: 'preview-m3', title: 'Gira interna', entity: 'Corrente completa', description: null, details: null, category: 'gira', event_date: '2026-08-02', event_time: '19:00:00', location: 'T. U. Senhora do Rosário', image_url: null, status: 'confirmada', created_by: null, created_at: '2026-07-01T00:00:00Z', updated_at: '2026-07-01T00:00:00Z' },
 ];
 
+export type MemberSelfAttendanceMap = Record<string, { record: SelfAttendanceRecord | null; windowOpen: boolean }>;
+
 type MemberAgendaProps = {
   events?: PortalEvent[];
   confirmedEventIds?: string[];
+  /** Auto-registro de frequência do membro, por eventId, com janela aberta. */
+  selfAttendance?: MemberSelfAttendanceMap;
 };
 
-export function MemberAgenda({ events, confirmedEventIds }: MemberAgendaProps) {
+export function MemberAgenda({ events, confirmedEventIds, selfAttendance }: MemberAgendaProps) {
   const eventList = events ?? previewMemberEvents;
   const confirmed = new Set(confirmedEventIds ?? []);
+  const self = selfAttendance ?? {};
   const nextEvent = eventList[0] ?? null;
 
   return (
@@ -52,6 +58,13 @@ export function MemberAgenda({ events, confirmedEventIds }: MemberAgendaProps) {
             <h2>{nextEvent.title}</h2>
             <p><CalendarDays size={15} /> {formatEventDateLong(nextEvent.event_date)} · {formatEventTime(nextEvent.event_time)}</p>
             <span>{nextEvent.entity ?? 'Corrente'} · {nextEvent.location}</span>
+            {self[nextEvent.id] ? (
+              <SelfAttendanceControls
+                eventId={nextEvent.id}
+                current={self[nextEvent.id].record}
+                windowOpen={self[nextEvent.id].windowOpen}
+              />
+            ) : null}
           </div>
           <EventConfirmationButton eventId={nextEvent.id} confirmed={confirmed.has(nextEvent.id)} />
         </section>
@@ -72,6 +85,13 @@ export function MemberAgenda({ events, confirmedEventIds }: MemberAgendaProps) {
                       <StatusPill tone={isConfirmed ? 'info' : 'neutral'}>{isConfirmed ? 'Presença confirmada' : (event.entity ?? 'Corrente')}</StatusPill>
                       <h3>{event.title}</h3>
                       <p><Clock3 size={13} /> {formatEventTime(event.event_time)} · {event.location}</p>
+                      {self[event.id] ? (
+                        <SelfAttendanceControls
+                          eventId={event.id}
+                          current={self[event.id].record}
+                          windowOpen={self[event.id].windowOpen}
+                        />
+                      ) : null}
                     </div>
                     <EventConfirmationButton eventId={event.id} confirmed={isConfirmed} />
                   </div>
@@ -80,7 +100,7 @@ export function MemberAgenda({ events, confirmedEventIds }: MemberAgendaProps) {
             </div>
           )}
         </article>
-        <div className="portal-stack"><article className="portal-panel"><PanelHeader eyebrow="Sua agenda" title="Resumo" /><dl className="portal-definition-list"><div><dt>Atividades</dt><dd>{eventList.length}</dd></div><div><dt>Confirmadas</dt><dd>{confirmed.size}</dd></div><div><dt>Aguardando você</dt><dd>{eventList.length - confirmed.size}</dd></div></dl></article><article className="portal-note-card portal-note-card--light"><HeartHandshake size={22} /><p>Se não puder comparecer, avise com antecedência para cuidarmos da organização.</p><span>Cuidado coletivo</span></article></div>
+        <div className="portal-stack"><article className="portal-panel"><PanelHeader eyebrow="Sua agenda" title="Resumo" /><dl className="portal-definition-list"><div><dt>Atividades</dt><dd>{eventList.length}</dd></div><div><dt>Confirmadas</dt><dd>{confirmed.size}</dd></div><div><dt>Aguardando você</dt><dd>{eventList.length - confirmed.size}</dd></div></dl></article><article className="portal-note-card portal-note-card--light"><HeartHandshake size={22} /><p>No dia da gira, registre sua presença por aqui mesmo — vale como frequência oficial. Se não puder vir, justifique por aqui também.</p><span>Frequência oficial</span></article></div>
       </section>
     </div>
   );

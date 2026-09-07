@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { ArrowRight, Bell, BookOpen, CalendarCheck, CalendarDays, CreditCard, Sparkles, UsersRound, WalletCards } from 'lucide-react';
 import { MetricCard, PanelHeader, StatusPill } from '@/components/portal/PortalUI';
+import { SelfAttendanceControls } from '@/components/portal/SelfAttendanceControls';
 import { eventDateParts, formatEventDateLong, formatEventTime } from '@/lib/events';
 import { formatRelativeDate, noticeCategoryLabel } from '@/lib/notices';
 import type { Notice, PortalEvent } from '@/types';
@@ -20,6 +21,8 @@ export type MemberHomeSummary = {
   notices: Notice[];
   nextChore: { shiftDate: string } | null;
   monthFeePaid: boolean;
+  /** Gira de hoje (janela aberta) ainda sem registro de frequência do membro. */
+  pendingAttendanceEvent?: PortalEvent | null;
 };
 
 export function MemberHome({ basePath = '/dashboard', summary }: { basePath?: string; summary?: MemberHomeSummary }) {
@@ -37,6 +40,20 @@ export function MemberHome({ basePath = '/dashboard', summary }: { basePath?: st
 
       {realSummary ? (
         <section aria-label="Resumo da sua rotina">
+          {realSummary.pendingAttendanceEvent ? (
+            <article className="portal-panel portal-panel--pending" style={{ marginBottom: 24 }}>
+              <PanelHeader
+                eyebrow="Hoje na casa"
+                title={`${realSummary.pendingAttendanceEvent.title} — registre sua frequência`}
+                action={<StatusPill tone="warning">Aguardando você</StatusPill>}
+              />
+              <p className="portal-panel__copy">
+                {formatEventDateLong(realSummary.pendingAttendanceEvent.event_date)} · {formatEventTime(realSummary.pendingAttendanceEvent.event_time)} · {realSummary.pendingAttendanceEvent.location}.
+                O registro feito aqui já vale como frequência oficial.
+              </p>
+              <SelfAttendanceControls eventId={realSummary.pendingAttendanceEvent.id} current={null} windowOpen />
+            </article>
+          ) : null}
           <div className="dashboard-home__section-heading">
             <div>
               <p className="dashboard-home__eyebrow">Hoje na casa</p>

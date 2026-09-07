@@ -3,7 +3,7 @@
 import { useMemo, useState, useTransition } from 'react';
 import { Check, ListChecks } from 'lucide-react';
 import { saveAttendance, type AttendanceRecord } from '@/app/(auth)/admin/frequencia/actions';
-import { formatEventDate } from '@/lib/events';
+import { formatEventDate, todayISODate } from '@/lib/events';
 import { profileDisplayName, profileInitial } from '@/lib/members';
 import type { PortalEvent, Profile } from '@/types';
 
@@ -30,9 +30,15 @@ export function AttendanceSheet({ events, members, existing }: AttendanceSheetPr
   const [feedback, setFeedback] = useState<{ kind: 'ok' | 'error'; message: string } | null>(null);
   const [isPending, startTransition] = useTransition();
 
+  const selectedEvent = events.find((event) => event.id === selectedEventId) ?? null;
+  // Em atividades passadas, quem não tem registro aparece como "sem registro"
+  // (nunca marcado automaticamente como falta). Em atividades de hoje/futuras,
+  // mantemos o comportamento rápido da chamada: todos começam como presentes.
+  const isPastEvent = selectedEvent ? selectedEvent.event_date < todayISODate() : false;
+
   const effectiveMarks = useMemo(() => {
     const stored = existing[selectedEventId] ?? {};
-    const result: Record<string, MemberMark> = {};
+    const result: Record<string, MemberMark | undefined> = {};
     for (const member of members) {
       if (marks[member.id]) {
         result[member.id] = marks[member.id];
@@ -40,11 +46,16 @@ export function AttendanceSheet({ events, members, existing }: AttendanceSheetPr
         const mark = stored[member.id];
         result[member.id] = mark.present ? 'present' : mark.justified ? 'justified' : 'absent';
       } else {
-        result[member.id] = 'present';
+        result[member.id] = isPastEvent ? undefined : 'present';
       }
     }
     return result;
-  }, [existing, marks, members, selectedEventId]);
+  }, [existing, marks, members, selectedEventId, isPastEvent]);
+
+  const unrecordedCount = useMemo(
+    () => members.filter((member) => !effectiveMarks[member.id]).length,
+    [members, effectiveMarks],
+  );
 
   const selectEvent = (eventId: string) => {
     setSelectedEventId(eventId);
@@ -54,14 +65,21 @@ export function AttendanceSheet({ events, members, existing }: AttendanceSheetPr
 
   const save = () => {
     if (!selectedEventId) return;
-    const records: AttendanceRecord[] = members.map((member) => {
-      const mark = effectiveMarks[member.id] ?? 'present';
-      return {
-        profileId: member.id,
-        present: mark === 'present',
-        justified: mark === 'justified',
-      };
-    });
+    // Só envia quem tem marca definida — nunca grava falta automaticamente.
+    const records: AttendanceRecord[] = members
+      .filter((member) => effectiveMarks[member.id])
+      .map((member) => {
+        const mark = effectiveMarks[member.id]!;
+        return {
+          profileId: member.id,
+          present: mark === 'present',
+          justified: mark === 'justified',
+        };
+      });
+    if (records.length === 0) {
+      setFeedback({ kind: 'error', message: 'Marque pelo menos uma pessoa antes de salvar.' });
+      return;
+    }
     setFeedback(null);
     startTransition(async () => {
       const result = await saveAttendance(selectedEventId, records);
@@ -88,6 +106,12 @@ export function AttendanceSheet({ events, members, existing }: AttendanceSheetPr
         </select>
       </label>
 
+      {isPastEvent && unrecordedCount > 0 ? (
+        <p className="portal-panel__copy" role="status">
+          <strong>{unrecordedCount} {unrecordedCount === 1 ? 'pessoa está' : 'pessoas estão'} sem registro</strong> nesta atividade — verifique com as Iyás antes de fechar a chamada. Nada é marcado automaticamente.
+        </p>
+      ) : null}
+
       <div className="portal-table-wrap">
         <table className="portal-table">
           <thead>
@@ -98,11 +122,12 @@ export function AttendanceSheet({ events, members, existing }: AttendanceSheetPr
               <tr><td colSpan={2}>Nenhum filho ativo para a chamada.</td></tr>
             ) : (
               members.map((member) => (
-                <tr key={member.id}>
+                <tr key={member.id} className={effectiveMarks[member.id] ? undefined : 'is-unrecorded'}>
                   <td>
                     <div className="portal-table-person">
                       <span>{profileInitial(member)}</span>
                       <strong>{profileDisplayName(member)}</strong>
+                      {!effectiveMarks[member.id] ? <em className="portal-unrecorded-tag">Sem registro</em> : null}
                     </div>
                   </td>
                   <td>
