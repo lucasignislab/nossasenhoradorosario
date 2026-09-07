@@ -34,7 +34,7 @@ export const Footer = () => {
 
           {/* Coluna 2: Links Rápidos */}
           <div>
-            <h4 className="text-xs font-semibold tracking-[0.25em] uppercase text-[var(--color-sacred-gold)] mb-6">Navegação</h4>
+            <h3 className="text-xs font-semibold tracking-[0.25em] uppercase text-[var(--color-sacred-gold)] mb-6">Navegação</h3>
             <ul className="space-y-4 text-sm text-[var(--color-cream)]/75">
               <li><Link href="/" className="hover:text-[var(--color-sacred-gold)] transition-colors duration-300">Início</Link></li>
               <li><Link href="/sobre" className="hover:text-[var(--color-sacred-gold)] transition-colors duration-300">A Nossa Casa</Link></li>
@@ -47,7 +47,7 @@ export const Footer = () => {
 
           {/* Coluna 3: Área Administrativa */}
           <div>
-            <h4 className="text-xs font-semibold tracking-[0.25em] uppercase text-[var(--color-sacred-gold)] mb-6">Membros</h4>
+            <h3 className="text-xs font-semibold tracking-[0.25em] uppercase text-[var(--color-sacred-gold)] mb-6">Membros</h3>
             <ul className="space-y-4 text-sm text-[var(--color-cream)]/75">
               <li><Link href="/login" className="hover:text-[var(--color-sacred-gold)] transition-colors duration-300">Área do Filho</Link></li>
               <li><Link href="/financeiro" className="hover:text-[var(--color-sacred-gold)] transition-colors duration-300">Mensalidades</Link></li>
@@ -57,9 +57,9 @@ export const Footer = () => {
 
           {/* Coluna 4: Redes Sociais */}
           <div>
-            <h4 className="text-xs font-semibold tracking-[0.25em] uppercase text-[var(--color-sacred-gold)] mb-6">Redes Sociais</h4>
+            <h3 className="text-xs font-semibold tracking-[0.25em] uppercase text-[var(--color-sacred-gold)] mb-6">Redes Sociais</h3>
             <div className="flex space-x-3">
-              <a href="https://instagram.com/t.u.senhoradorosario" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="p-2.5 rounded-full border border-white/10 hover:border-[var(--color-sacred-gold)] hover:bg-[var(--color-sacred-gold)]/10 text-[var(--color-cream)] transition-all duration-300">
+              <a href="https://instagram.com/t.u.senhoradorosario" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="w-11 h-11 flex items-center justify-center rounded-full border border-white/10 hover:border-[var(--color-sacred-gold)] hover:bg-[var(--color-sacred-gold)]/10 text-[var(--color-cream)] transition-all duration-300">
                 <InstagramIcon />
               </a>
             </div>

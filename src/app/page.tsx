@@ -40,10 +40,11 @@ const mockEvents: EventCardProps[] = [
 
 export default function Home() {
   return (
-    <main className="min-h-screen" aria-label="Conteúdo Principal">
+    <>
       {/* 1. O Cabeçalho fica fixo no topo */}
       <Header />
 
+      <main className="min-h-screen" aria-label="Conteúdo Principal">
       {/* 2. A primeira dobra do site (Impacto) */}
       <Hero
         title="Portas abertas para a caridade e o Axé"
@@ -83,7 +84,9 @@ export default function Home() {
       />
 
       {/* 7. Rodapé com links e redes sociais */}
+      </main>
+
       <Footer />
-    </main>
+    </>
   );
 }

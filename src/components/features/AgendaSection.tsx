@@ -47,15 +47,20 @@ export const AgendaSection = ({
           <>
             {/* Grid de Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" role="list">
-              {events.map((event, index) => (
+              {events.map((event) => (
                 <div
-                  key={`${event.title}-${event.date}-${index}`}
-                  className="transition-transform duration-300 hover:-translate-y-1"
-                  onClick={onEventClick ? () => onEventClick(event) : undefined}
+                  key={`${event.title}-${event.date}`}
                   role="listitem"
+                  className="transition-transform duration-300 hover:-translate-y-1"
                 >
                   {onEventClick ? (
-                    <EventCard {...event} />
+                    <button
+                      type="button"
+                      className="block w-full h-full text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-sacred-gold)] rounded-md cursor-pointer"
+                      onClick={() => onEventClick(event)}
+                    >
+                      <EventCard {...event} />
+                    </button>
                   ) : (
                     <Link href="/agenda" className="block w-full h-full">
                       <EventCard {...event} onClick={undefined} />

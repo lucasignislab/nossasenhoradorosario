@@ -25,21 +25,31 @@ export const EventCard = ({
 }: EventCardProps) => {
   const isConfirmed = status === 'confirmada';
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!onClick) return;
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onClick();
+    }
+  };
+
   return (
     <div
       onClick={onClick}
+      onKeyDown={handleKeyDown}
+      tabIndex={onClick ? 0 : undefined}
       className={`relative group overflow-hidden rounded-md border border-black/5 hover:border-[var(--color-sacred-gold)]/30 transition-all duration-500 ease-out shadow-md hover:shadow-2xl flex flex-col justify-between min-h-[350px] p-6 ${
         !isConfirmed ? 'opacity-60' : ''
-      }`}
+      } ${onClick ? 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-sacred-gold)]' : ''}`}
       style={{ cursor: onClick ? 'pointer' : 'default' }}
-      role="article"
+      role={onClick ? 'button' : 'article'}
     >
       {/* Background Image / Flyer */}
       {imageUrl ? (
         <div className="absolute inset-0 z-0">
           <img 
             src={imageUrl} 
-            alt={title} 
+            alt="" 
             className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105" 
           />
           {/* Dark gradient overlay for typography readability */}

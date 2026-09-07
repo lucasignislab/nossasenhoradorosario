@@ -56,7 +56,7 @@ export const Header = () => {
               >
                 {label}
                 <span
-                  className="absolute -bottom-0.5 left-0 h-px w-0 group-hover:w-full transition-all duration-300"
+                  className="absolute -bottom-0.5 left-0 h-px w-0 group-hover:w-full group-focus-visible:w-full transition-all duration-300"
                   style={{ backgroundColor: 'var(--color-sacred-gold)' }}
                 />
               </Link>
@@ -82,7 +82,7 @@ export const Header = () => {
 
           {/* Hamburger Mobile */}
           <button
-            className="md:hidden flex flex-col justify-center items-center w-10 h-10 cursor-pointer"
+            className="md:hidden flex flex-col justify-center items-center w-11 h-11 cursor-pointer"
             aria-label={mobileOpen ? 'Fechar menu' : 'Abrir menu'}
             aria-expanded={mobileOpen}
             onClick={() => setMobileOpen((v) => !v)}
