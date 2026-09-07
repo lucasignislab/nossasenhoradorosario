@@ -1,45 +1,34 @@
 import { MemberChores, type MemberChoresData } from '@/components/portal/MemberViews';
 import { createClient } from '@/lib/supabase/server';
-import type { ChoreSchedule, ChoreTeam, Profile } from '@/types';
+import { todayISODate } from '@/lib/events';
+import type { CleaningShiftDate, CleaningShiftSignup } from '@/types';
 
 export default async function FaxinasPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
-    return <MemberChores data={{ teams: [], schedules: [], visibleTeammates: [], teammatesTotal: 0, currentUserId: '' }} />;
+    return <MemberChores data={{ dates: [], signups: [], currentUserId: '' }} />;
   }
 
-  const { data: memberships } = await supabase
-    .from('chore_team_members')
-    .select('team_id')
-    .eq('profile_id', user.id);
+  // Gera as datas do mês atual e do próximo (todas as quintas + o sábado do mês).
+  await supabase.rpc('ensure_cleaning_shift_dates');
 
-  const teamIds = [...new Set((memberships ?? []).map((row) => row.team_id))];
+  const { data: dates } = await supabase
+    .from('cleaning_shift_dates')
+    .select('*')
+    .gte('shift_date', todayISODate())
+    .order('shift_date', { ascending: true });
 
-  if (teamIds.length === 0) {
-    return <MemberChores data={{ teams: [], schedules: [], visibleTeammates: [], teammatesTotal: 0, currentUserId: user.id }} />;
-  }
+  const dateIds = (dates ?? []).map((date) => date.id);
 
-  const [teamsResult, schedulesResult, teammatesResult] = await Promise.all([
-    supabase.from('chore_teams').select('*').in('id', teamIds).order('name', { ascending: true }),
-    supabase.from('chore_schedules').select('*').in('team_id', teamIds).order('chore_date', { ascending: false }),
-    supabase.from('chore_team_members').select('profile_id').in('team_id', teamIds),
-  ]);
-
-  const teammateIds = [...new Set((teammatesResult.data ?? []).map((row) => row.profile_id))];
-
-  // RLS de profiles expõe apenas o próprio perfil para membros comuns;
-  // os demais aparecem apenas como contagem.
-  const { data: visibleProfiles } = teammateIds.length > 0
-    ? await supabase.from('profiles').select('*').in('id', teammateIds)
+  const { data: signups } = dateIds.length > 0
+    ? await supabase.from('cleaning_shift_signups').select('*').in('shift_date_id', dateIds)
     : { data: [] };
 
   const data: MemberChoresData = {
-    teams: (teamsResult.data ?? []) as ChoreTeam[],
-    schedules: (schedulesResult.data ?? []) as ChoreSchedule[],
-    visibleTeammates: (visibleProfiles ?? []) as Profile[],
-    teammatesTotal: teammateIds.length,
+    dates: (dates ?? []) as CleaningShiftDate[],
+    signups: (signups ?? []) as CleaningShiftSignup[],
     currentUserId: user.id,
   };
 

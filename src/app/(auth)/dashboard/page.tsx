@@ -2,7 +2,7 @@ import { MemberHome, type MemberHomeSummary } from './MemberHome';
 import { todayISODate } from '@/lib/events';
 import { currentMonthRange } from '@/lib/finance';
 import { createClient } from '@/lib/supabase/server';
-import type { ChoreSchedule, ChoreTeam, Notice, PortalEvent } from '@/types';
+import type { CleaningShiftDate, Notice, PortalEvent } from '@/types';
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -11,7 +11,7 @@ export default async function DashboardPage() {
   const { start, end } = currentMonthRange();
   const today = todayISODate();
 
-  const [eventsResult, confirmationsResult, noticesResult, membershipsResult, feeResult] = await Promise.all([
+  const [eventsResult, confirmationsResult, noticesResult, signupsResult, feeResult] = await Promise.all([
     supabase
       .from('events')
       .select('*')
@@ -30,8 +30,8 @@ export default async function DashboardPage() {
       .order('published_at', { ascending: false })
       .limit(3),
     user
-      ? supabase.from('chore_team_members').select('team_id').eq('profile_id', user.id)
-      : Promise.resolve({ data: [] as { team_id: string }[] }),
+      ? supabase.from('cleaning_shift_signups').select('shift_date_id').eq('profile_id', user.id)
+      : Promise.resolve({ data: [] as { shift_date_id: string }[] }),
     user
       ? supabase
           .from('finance_entries')
@@ -47,22 +47,19 @@ export default async function DashboardPage() {
   const nextEvent = ((eventsResult.data ?? []) as PortalEvent[])[0] ?? null;
   const confirmedIds = new Set((confirmationsResult.data ?? []).map((row) => row.event_id));
 
+  // Próxima data de cuidado em que a pessoa está inscrita.
   let nextChore: MemberHomeSummary['nextChore'] = null;
-  const teamIds = [...new Set((membershipsResult.data ?? []).map((row) => row.team_id))];
-  if (teamIds.length > 0) {
-    const { data: schedules } = await supabase
-      .from('chore_schedules')
-      .select('*')
-      .in('team_id', teamIds)
-      .eq('status', 'agendada')
-      .gte('chore_date', today)
-      .order('chore_date', { ascending: true })
+  const shiftDateIds = (signupsResult.data ?? []).map((row) => row.shift_date_id);
+  if (shiftDateIds.length > 0) {
+    const { data: shiftDates } = await supabase
+      .from('cleaning_shift_dates')
+      .select('shift_date')
+      .in('id', shiftDateIds)
+      .gte('shift_date', today)
+      .order('shift_date', { ascending: true })
       .limit(1);
-    const schedule = ((schedules ?? []) as ChoreSchedule[])[0] ?? null;
-    if (schedule) {
-      const { data: team } = await supabase.from('chore_teams').select('name').eq('id', schedule.team_id).single();
-      nextChore = { schedule, teamName: (team as Pick<ChoreTeam, 'name'> | null)?.name ?? 'Sua equipe' };
-    }
+    const shiftDate = ((shiftDates ?? []) as Pick<CleaningShiftDate, 'shift_date'>[])[0] ?? null;
+    if (shiftDate) nextChore = { shiftDate: shiftDate.shift_date };
   }
 
   const summary: MemberHomeSummary = {

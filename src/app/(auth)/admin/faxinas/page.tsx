@@ -1,25 +1,39 @@
-import { ChoresManagement, type ChoreTeamMemberRow } from '@/components/portal/AdminViews';
+import { ChoresManagement } from '@/components/portal/AdminViews';
 import { redirectEditorsAway } from '@/lib/server/access';
 import { createClient } from '@/lib/supabase/server';
-import type { ChoreSchedule, ChoreTeam, Profile } from '@/types';
+import { todayISODate } from '@/lib/events';
+import type { CleaningShiftDate, CleaningShiftSignup, Profile } from '@/types';
 
 export default async function AdminChoresPage() {
   await redirectEditorsAway();
   const supabase = await createClient();
 
-  const [teamsResult, schedulesResult, teamMembersResult, membersResult] = await Promise.all([
-    supabase.from('chore_teams').select('*').order('name', { ascending: true }),
-    supabase.from('chore_schedules').select('*').order('chore_date', { ascending: false }),
-    supabase.from('chore_team_members').select('team_id, profile_id'),
-    supabase.from('profiles').select('*').eq('status', 'active').order('full_name', { ascending: true }),
-  ]);
+  // Gera as datas do mês atual e do próximo (todas as quintas + o sábado do mês).
+  await supabase.rpc('ensure_cleaning_shift_dates');
+
+  const { data: dates } = await supabase
+    .from('cleaning_shift_dates')
+    .select('*')
+    .gte('shift_date', todayISODate())
+    .order('shift_date', { ascending: true });
+
+  const dateIds = (dates ?? []).map((date) => date.id);
+
+  const { data: signups } = dateIds.length > 0
+    ? await supabase.from('cleaning_shift_signups').select('*').in('shift_date_id', dateIds)
+    : { data: [] };
+
+  const profileIds = [...new Set((signups ?? []).map((signup) => signup.profile_id))];
+
+  const { data: profiles } = profileIds.length > 0
+    ? await supabase.from('profiles').select('*').in('id', profileIds).order('full_name', { ascending: true })
+    : { data: [] };
 
   return (
     <ChoresManagement
-      teams={(teamsResult.data ?? []) as ChoreTeam[]}
-      schedules={(schedulesResult.data ?? []) as ChoreSchedule[]}
-      teamMembers={(teamMembersResult.data ?? []) as ChoreTeamMemberRow[]}
-      members={(membersResult.data ?? []) as Profile[]}
+      dates={(dates ?? []) as CleaningShiftDate[]}
+      signups={(signups ?? []) as CleaningShiftSignup[]}
+      profiles={(profiles ?? []) as Profile[]}
     />
   );
 }

@@ -18,11 +18,12 @@ import {
 import { MetricCard, PageHeader, PanelHeader, ProgressBar, StatusPill } from './PortalUI';
 import { EventConfirmationButton } from './EventConfirmationButton';
 import { ContentProgressToggle } from './ContentProgressToggle';
+import { ShiftSignupButton } from './CleaningShiftControls';
 import { eventDateParts, formatEventDateLong, formatEventTime } from '@/lib/events';
 import { currentMonthRange, formatBRL, formatFinanceDate } from '@/lib/finance';
+import { CLEANING_SHIFT_MAX, CLEANING_SHIFT_MIN, cleaningKindLabel, cleaningShiftStatus } from '@/lib/cleaning';
 import { contentKindLabel, formatDuration, formatRelativeDate, noticeCategoryLabel } from '@/lib/notices';
-import { profileDisplayName, profileInitial } from '@/lib/members';
-import type { ChoreSchedule, ChoreScheduleStatus, ChoreTeam, FinanceEntry, Notice, PortalEvent, Profile, StudyContent } from '@/types';
+import type { CleaningShiftDate, CleaningShiftSignup, FinanceEntry, Notice, PortalEvent, StudyContent } from '@/types';
 
 // Dados demonstrativos usados apenas pela prévia visual (portal-preview / Storybook).
 const previewMemberEvents: PortalEvent[] = [
@@ -86,112 +87,86 @@ export function MemberAgenda({ events, confirmedEventIds }: MemberAgendaProps) {
 }
 
 export type MemberChoresData = {
-  teams: ChoreTeam[];
-  schedules: ChoreSchedule[];
-  /** Pessoas da(s) equipe(s) do usuário que ele consegue ver (RLS mostra só o próprio perfil). */
-  visibleTeammates: Profile[];
-  /** Total de pessoas nas equipes do usuário, incluindo quem a RLS não expõe. */
-  teammatesTotal: number;
+  dates: CleaningShiftDate[];
+  signups: CleaningShiftSignup[];
   currentUserId: string;
 };
 
 // Dados demonstrativos usados apenas pela prévia visual (portal-preview / Storybook).
 const previewMemberChores: MemberChoresData = {
-  teams: [
-    { id: 'preview-t1', name: 'Equipe Dourada', description: 'Cuidados do salão principal', active: true, created_at: '2026-01-01T00:00:00Z', updated_at: '2026-01-01T00:00:00Z' },
+  dates: [
+    { id: 'preview-d1', shift_date: '2026-07-23', kind: 'thursday', created_at: '2026-07-01T00:00:00Z', updated_at: '2026-07-01T00:00:00Z' },
+    { id: 'preview-d2', shift_date: '2026-07-25', kind: 'saturday', created_at: '2026-07-01T00:00:00Z', updated_at: '2026-07-01T00:00:00Z' },
+    { id: 'preview-d3', shift_date: '2026-07-30', kind: 'thursday', created_at: '2026-07-01T00:00:00Z', updated_at: '2026-07-01T00:00:00Z' },
   ],
-  schedules: [
-    { id: 'preview-cs1', team_id: 'preview-t1', chore_date: '2026-07-26', tasks: ['Limpeza do salão principal', 'Organização da cozinha', 'Cuidados com o congá'], notes: 'Chegar 15 min antes.', status: 'agendada', created_by: null, created_at: '2026-07-01T00:00:00Z', updated_at: '2026-07-01T00:00:00Z' },
-    { id: 'preview-cs2', team_id: 'preview-t1', chore_date: '2026-06-28', tasks: ['Área externa e materiais'], notes: null, status: 'concluida', created_by: null, created_at: '2026-06-01T00:00:00Z', updated_at: '2026-06-28T00:00:00Z' },
+  signups: [
+    { id: 'preview-s1', shift_date_id: 'preview-d1', profile_id: 'preview-self', created_at: '2026-07-10T00:00:00Z' },
+    { id: 'preview-s2', shift_date_id: 'preview-d1', profile_id: 'preview-a1', created_at: '2026-07-10T00:00:00Z' },
+    { id: 'preview-s3', shift_date_id: 'preview-d1', profile_id: 'preview-a2', created_at: '2026-07-11T00:00:00Z' },
+    { id: 'preview-s4', shift_date_id: 'preview-d2', profile_id: 'preview-a3', created_at: '2026-07-11T00:00:00Z' },
   ],
-  visibleTeammates: [{ id: 'preview-self', full_name: 'Você', phone: null, role: 'member', status: 'active', joined_at: null, created_at: '2026-01-01T00:00:00Z', updated_at: '2026-01-01T00:00:00Z' }],
-  teammatesTotal: 6,
   currentUserId: 'preview-self',
 };
 
 export function MemberChores({ data }: { data?: MemberChoresData }) {
-  const { teams, schedules, visibleTeammates, teammatesTotal } = data ?? previewMemberChores;
-  const teamsById = new Map(teams.map((team) => [team.id, team]));
-  const today = new Date();
-  const todayISO = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  const { dates, signups, currentUserId } = data ?? previewMemberChores;
+  const countByDate = new Map<string, number>();
+  for (const signup of signups) {
+    countByDate.set(signup.shift_date_id, (countByDate.get(signup.shift_date_id) ?? 0) + 1);
+  }
+  const mySignupDateIds = new Set(
+    signups.filter((signup) => signup.profile_id === currentUserId).map((signup) => signup.shift_date_id),
+  );
 
-  const upcoming = schedules
-    .filter((schedule) => schedule.chore_date >= todayISO && schedule.status === 'agendada')
-    .sort((a, b) => (a.chore_date < b.chore_date ? -1 : 1));
-  const past = schedules
-    .filter((schedule) => schedule.chore_date < todayISO || schedule.status !== 'agendada')
-    .sort((a, b) => (a.chore_date < b.chore_date ? 1 : -1));
-  const next = upcoming[0] ?? null;
-  const done = past.filter((schedule) => schedule.status === 'concluida').length;
-  const teamNames = teams.map((team) => team.name).join(' e ') || '—';
-
-  const statusPill = (status: ChoreScheduleStatus) =>
-    status === 'concluida' ? { label: 'Concluída', tone: 'info' as const }
-      : status === 'cancelada' ? { label: 'Cancelada', tone: 'danger' as const }
-        : { label: 'Agendada', tone: 'warning' as const };
+  const next = dates[0] ?? null;
+  const myNext = dates.find((date) => mySignupDateIds.has(date.id)) ?? null;
+  const datesNeedingPeople = dates.filter((date) => (countByDate.get(date.id) ?? 0) < CLEANING_SHIFT_MIN).length;
 
   return (
     <div className="portal-page">
-      <PageHeader eyebrow="Área dos filhos · Cuidados" title="Cuidar da casa é parte do axé" description="Consulte sua equipe e acompanhe as próximas escalas de cuidado." />
+      <PageHeader
+        eyebrow="Área dos filhos · Cuidados"
+        title="Cuidar da casa é parte do axé"
+        description="Escolha as datas em que você pode ajudar. Cada dia precisa de pelo menos 7 pessoas e tem no máximo 9."
+      />
       <section className="portal-metrics portal-metrics--compact">
-        <MetricCard icon={Sparkles} label="Próxima escala" value={next ? `${eventDateParts(next.chore_date).day} ${eventDateParts(next.chore_date).month}` : '—'} detail={next ? formatEventDateLong(next.chore_date) : 'Nenhuma escala futura'} tone="gold" />
-        <MetricCard icon={UsersRound} label="Sua equipe" value={teams.length > 0 ? teams[0].name.replace('Equipe ', '') : '—'} detail={`${teammatesTotal} ${teammatesTotal === 1 ? 'pessoa' : 'pessoas'} na equipe`} tone="brand" />
-        <MetricCard icon={CheckCircle2} label="Participação" value={String(done)} detail="Escalas concluídas pela sua equipe" tone="info" />
+        <MetricCard icon={Sparkles} label="Próxima data" value={next ? `${eventDateParts(next.shift_date).day} ${eventDateParts(next.shift_date).month}` : '—'} detail={next ? formatEventDateLong(next.shift_date) : 'Nenhuma data futura'} tone="gold" />
+        <MetricCard icon={UserCheck} label="Sua participação" value={myNext ? `${eventDateParts(myNext.shift_date).day} ${eventDateParts(myNext.shift_date).month}` : '—'} detail={myNext ? formatEventDateLong(myNext.shift_date) : 'Você ainda não se inscreveu'} tone="brand" />
+        <MetricCard icon={UsersRound} label="Datas abertas" value={String(dates.length)} detail={datesNeedingPeople > 0 ? `${datesNeedingPeople} ${datesNeedingPeople === 1 ? 'data precisa' : 'datas precisam'} de gente` : 'Todas completas'} tone="info" />
       </section>
       <section className="portal-layout portal-layout--overview">
-        {teams.length === 0 ? (
-          <article className="portal-panel"><PanelHeader eyebrow="Sua equipe" title="Cuidado da casa" /><p className="portal-panel__copy">Você ainda não está em uma equipe de cuidados. Fale com a administração da casa.</p></article>
-        ) : (
-          <article className="portal-panel">
-            <PanelHeader
-              eyebrow={next ? formatEventDateLong(next.chore_date) : 'Sua equipe'}
-              title={next ? (teamsById.get(next.team_id)?.name ?? teamNames) : teamNames}
-              action={next ? <StatusPill tone={statusPill(next.status).tone}>{statusPill(next.status).label}</StatusPill> : undefined}
-            />
-            <div className="member-team-grid">
-              {visibleTeammates.map((member) => (
-                <div key={member.id}>
-                  <span>{profileInitial(member)}</span>
-                  <strong>{profileDisplayName(member)}</strong>
-                  <small>{teams.map((team) => team.name.replace('Equipe ', '')).join(' · ')}</small>
-                </div>
-              ))}
-              {teammatesTotal > visibleTeammates.length ? (
-                <div><span>+{teammatesTotal - visibleTeammates.length}</span><strong>Companheiros</strong><small>na equipe</small></div>
-              ) : null}
-            </div>
-            {next ? (
-              <div className="member-task-list">
-                <h3>Cuidados deste dia</h3>
-                {next.tasks.map((task) => <p key={task}><CheckCircle2 size={15} /> {task}</p>)}
-                {next.notes ? <p><Sparkles size={15} /> {next.notes}</p> : null}
-              </div>
-            ) : (
-              <p className="portal-panel__copy">Nenhuma faxina agendada para a sua equipe no momento.</p>
-            )}
-          </article>
-        )}
         <div className="portal-stack">
-          <article className="portal-panel">
-            <PanelHeader eyebrow="Calendário" title="Escalas da sua equipe" />
-            {schedules.length === 0 ? (
-              <p className="portal-panel__copy">Nenhuma escala registrada ainda.</p>
-            ) : (
-              <div className="member-small-list">
-                {[...upcoming, ...past].map((schedule) => {
-                  const parts = eventDateParts(schedule.chore_date);
-                  return (
-                    <div key={schedule.id}>
-                      <strong>{parts.day} {parts.month.toLowerCase()}</strong>
-                      <span>{teamsById.get(schedule.team_id)?.name ?? 'Equipe'}</span>
-                      <StatusPill tone={statusPill(schedule.status).tone}>{statusPill(schedule.status).label}</StatusPill>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </article>
-          <article className="portal-note-card portal-note-card--light"><Sparkles size={22} /><p>Precisa trocar sua escala? Solicite com antecedência para a administração.</p><span>Troca de equipe</span></article>
+          {dates.length === 0 ? (
+            <article className="portal-panel"><PanelHeader eyebrow="Próximas datas" title="Cuidado da casa" /><p className="portal-panel__copy">Nenhuma data de cuidado disponível no momento.</p></article>
+          ) : (
+            dates.map((date) => {
+              const parts = eventDateParts(date.shift_date);
+              const count = countByDate.get(date.id) ?? 0;
+              const status = cleaningShiftStatus(count);
+              const signedUp = mySignupDateIds.has(date.id);
+              return (
+                <article className={`portal-panel${signedUp ? ' portal-panel--highlight' : ''}`} key={date.id}>
+                  <PanelHeader
+                    eyebrow={`${parts.weekday} · ${cleaningKindLabel(date.kind)}`}
+                    title={formatEventDateLong(date.shift_date)}
+                    action={<StatusPill tone={status.tone}>{status.label}</StatusPill>}
+                  />
+                  <p className="portal-panel__copy">
+                    {count === 0
+                      ? 'Ninguém inscrito ainda — seja a primeira pessoa.'
+                      : `${count} de ${CLEANING_SHIFT_MAX} ${count === 1 ? 'pessoa confirmada' : 'pessoas confirmadas'}.`}
+                    {signedUp ? ' Você está nesta data.' : ''}
+                  </p>
+                  <ProgressBar value={Math.min(100, Math.round((count / CLEANING_SHIFT_MAX) * 100))} label="Vagas preenchidas" />
+                  <ShiftSignupButton shiftDateId={date.id} signedUp={signedUp} full={count >= CLEANING_SHIFT_MAX} />
+                </article>
+              );
+            })
+          )}
+        </div>
+        <div className="portal-stack">
+          <article className="portal-note-card portal-note-card--light"><Sparkles size={22} /><p>Cada dia de cuidado precisa de pelo menos 7 pessoas. Se puder, prefira as datas que ainda estão com vagas sobrando.</p><span>Mutirão do axé</span></article>
+          <article className="portal-note-card portal-note-card--light"><CalendarDays size={22} /><p>Mudou de planos? Cancele sua participação com antecedência para abrir a vaga para outra pessoa.</p><span>Sem burocracia</span></article>
         </div>
       </section>
     </div>

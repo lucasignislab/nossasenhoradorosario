@@ -744,3 +744,11 @@
 .portal-timeline__item > i::after { background: var(--portal-accent); }
 .portal-library-item__icon,
 .portal-role-list__icon { color: var(--portal-accent); }
+
+/* Escala de cuidados por data (inscrição dos membros) */
+.portal-roster { margin: 12px 0 0; padding: 0; display: grid; gap: 6px; list-style: none; }
+.portal-roster li { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 7px 10px; border: 1px solid var(--portal-border); border-radius: 6px; background: #fafafa; font-size: 12px; }
+.portal-inline-form { margin-top: 14px; padding-top: 12px; display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px; border-top: 1px dashed var(--portal-border); }
+.portal-field--inline { min-width: 170px; }
+.portal-panel--highlight { border-color: rgba(38, 90, 171, .45); background: #f6f9ff; }
+.portal-action-note { color: var(--portal-text-soft); font-size: 12px; }

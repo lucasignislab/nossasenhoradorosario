@@ -3,7 +3,7 @@ import { ArrowRight, Bell, BookOpen, CalendarCheck, CalendarDays, CreditCard, Sp
 import { MetricCard, PanelHeader, StatusPill } from '@/components/portal/PortalUI';
 import { eventDateParts, formatEventDateLong, formatEventTime } from '@/lib/events';
 import { formatRelativeDate, noticeCategoryLabel } from '@/lib/notices';
-import type { ChoreSchedule, Notice, PortalEvent } from '@/types';
+import type { Notice, PortalEvent } from '@/types';
 
 const modules = [
   { title: 'Agenda interna', description: 'Giras, reuniões e compromissos da corrente.', icon: CalendarDays, status: 'Disponível', path: '/agenda' },
@@ -18,7 +18,7 @@ export type MemberHomeSummary = {
   nextEvent: PortalEvent | null;
   nextEventConfirmed: boolean;
   notices: Notice[];
-  nextChore: { schedule: ChoreSchedule; teamName: string } | null;
+  nextChore: { shiftDate: string } | null;
   monthFeePaid: boolean;
 };
 
@@ -57,8 +57,8 @@ export function MemberHome({ basePath = '/dashboard', summary }: { basePath?: st
             <MetricCard
               icon={UsersRound}
               label="Próxima faxina"
-              value={realSummary.nextChore ? `${eventDateParts(realSummary.nextChore.schedule.chore_date).day} ${eventDateParts(realSummary.nextChore.schedule.chore_date).month}` : '—'}
-              detail={realSummary.nextChore ? realSummary.nextChore.teamName : 'Sem escala futura'}
+              value={realSummary.nextChore ? `${eventDateParts(realSummary.nextChore.shiftDate).day} ${eventDateParts(realSummary.nextChore.shiftDate).month}` : '—'}
+              detail={realSummary.nextChore ? 'Você está inscrito nesta data' : 'Escolha uma data e participe'}
               tone="gold"
             />
             <MetricCard

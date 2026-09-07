@@ -199,17 +199,19 @@ Margens, paddings e gaps são estritamente múltiplos de 8px:
 *   **RLS:** nova função `is_active_member()` (membro autenticado ativo) protege a leitura de avisos e de conteúdos publicados; escrita e rascunhos são exclusivos da administração.
 *   **Fluxos:** `/admin/avisos` (CRUD de comunicados, novo item no menu de administração), `/admin/conteudos` (CRUD com publicar/despublicar), `/dashboard/avisos` (lista com data relativa em pt-BR), `/dashboard/aulas` (percursos por módulo com barra de progresso e "Marcar como concluído").
 
-### 5.6. Cuidados da casa — faxinas (tabelas `chore_teams`, `chore_team_members`, `chore_schedules`)
+### 5.6. Cuidados da casa — escala por data (tabelas `cleaning_shift_dates`, `cleaning_shift_months`, `cleaning_shift_signups`)
 
-*   Equipes de cuidado com membros vinculados e escalas por data, com lista de cuidados (`tasks text[]`, um por linha no formulário) e situação (`agendada`/`concluida`/`cancelada`). Migration: `supabase/migrations/202609070006_chores.sql`.
-*   **RLS:** leitura para membros ativos (`is_active_member()`); escrita exclusiva da administração.
-*   **Admin (`/admin/faxinas`):** cria/edita/exclui equipes, gerencia membros por equipe (adicionar/remover), agenda faxinas e marca escalas como concluídas/canceladas. Nova entrada no menu da administração.
-*   **Filho (`/dashboard/faxinas`):** vê a própria equipe, a próxima escala com os cuidados do dia e o histórico com StatusPill. Como a RLS de `profiles` só expõe o próprio perfil, os companheiros de equipe aparecem como contagem ("+N companheiros"), sem nomes — privacidade por padrão.
+*   **Modelo novo (substitui as equipes fixas):** dias de cuidado em TODAS as quintas-feiras do mês + um sábado (por padrão o último; a administração pode ajustar por mês). Cada data tem equipe de no mínimo 7 e no máximo 9 pessoas. Migration: `supabase/migrations/202609070010_cleaning_shifts.sql`. As tabelas antigas (`chore_teams`, `chore_team_members`, `chore_schedules`, migration 006) seguem no banco, mas não são mais usadas pelas telas.
+*   **Geração das datas:** função `ensure_cleaning_shift_dates()` (security definer, idempotente) chamada ao abrir `/dashboard/faxinas` ou `/admin/faxinas` — cria as datas do mês atual e do próximo, respeitando o sábado ajustado em `cleaning_shift_months`.
+*   **Inscrição:** qualquer cadastro ativo (filho, comunicação, administração) se inscreve e cancela sozinho. Máximo de 9 por data travado na action **e** em trigger (`enforce_cleaning_shift_capacity`, com lock na linha da data). Datas com menos de 7 mostram "Faltam N pessoas" para todos; completas mostram "Completa"; lotadas, "Lotada".
+*   **RLS:** leitura de datas e inscrições para membros ativos (`is_active_member()`); inscrição/cancelamento apenas do próprio perfil; ajuste de sábado e remoção de inscritos exclusivos da administração.
+*   **Admin (`/admin/faxinas`):** lista as próximas datas com contagem, StatusPill, nomes dos inscritos (com botão para remover inscrição) e o seletor de sábado do mês em cada cartão de sábado.
+*   **Filho (`/dashboard/faxinas`):** cartões por data com contagem, barra de vagas e botão "Quero participar" / "Cancelar participação" — sem SQL e sem depender da administração.
 
 ### 5.7. Visões gerais e limpeza final
 
 *   **`/admin` (visão geral):** 100% dados reais — filhos ativos e pendentes (com nomes e datas), próximas atividades confirmadas, avisos fixados e resumo financeiro do mês (entradas/saídas/saldo).
-*   **`/dashboard` (home do filho):** mantém os cartões de serviços e ganha um resumo real no topo — próxima atividade (com estado de confirmação), próxima faxina da sua equipe, situação da mensalidade do mês e os 3 últimos avisos.
+*   **`/dashboard` (home do filho):** mantém os cartões de serviços e ganha um resumo real no topo — próxima atividade (com estado de confirmação), próxima data de cuidado em que a pessoa está inscrita, situação da mensalidade do mês e os 3 últimos avisos.
 *   **`/admin/configuracoes`:** contagens reais de papéis (admins, desenvolvedores, membros ativos) e de cadastros pendentes.
 *   **Login:** a página de acesso não anuncia mais a prévia demonstrativa; o `portal-preview` continua disponível apenas com `NEXT_PUBLIC_PORTAL_PREVIEW=true` no ambiente (ver `.env.example`) e serve os mocks de fallback das views.
 *   Componente morto `LoginForm` removido (substituído pelo `AuthForm`).

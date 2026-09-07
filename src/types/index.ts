@@ -110,6 +110,23 @@ export type ContentProgress = {
   completed_at: string;
 };
 
+export type CleaningShiftKind = 'thursday' | 'saturday';
+
+export type CleaningShiftDate = {
+  id: string;
+  shift_date: string;
+  kind: CleaningShiftKind;
+  created_at: string;
+  updated_at: string;
+};
+
+export type CleaningShiftSignup = {
+  id: string;
+  shift_date_id: string;
+  profile_id: string;
+  created_at: string;
+};
+
 export type ChoreTeam = {
   id: string;
   name: string;
