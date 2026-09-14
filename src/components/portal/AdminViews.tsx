@@ -9,7 +9,6 @@ import {
   CircleDollarSign,
   Clock3,
   FileText,
-  Filter,
   Landmark,
   ListChecks,
   MessageSquareText,
@@ -553,10 +552,20 @@ export function AgendaManagement({ events }: { events?: PortalEvent[] }) {
   const upcoming = eventList.filter((event) => event.event_date >= todayISODate());
   const canceled = eventList.filter((event) => event.status === 'cancelada');
 
+  // Faixa de meses real: mês vigente + os dois seguintes.
+  const monthFormatter = new Intl.DateTimeFormat('pt-BR', { month: 'long' });
+  const now = new Date();
+  const stripMonths = [0, 1, 2].map((offset) => {
+    const date = new Date(now.getFullYear(), now.getMonth() + offset, 1);
+    const name = monthFormatter.format(date);
+    const capitalized = name.charAt(0).toUpperCase() + name.slice(1);
+    return offset === 0 ? `${capitalized} ${date.getFullYear()}` : capitalized;
+  });
+
   return (
     <div className="portal-page">
       <PageHeader eyebrow="Administração · Agenda" title="Agenda e giras" description="Organize atividades, responsáveis, confirmações e comunicados em um só fluxo." action={<NewEventButton />} />
-      <div className="portal-calendar-strip"><button className="is-active">Julho 2026</button><button>Agosto</button><button>Setembro</button><span /><button className="portal-filter"><Filter size={14} /> Filtros</button></div>
+      <div className="portal-calendar-strip">{stripMonths.map((label, index) => <button key={label} className={index === 0 ? 'is-active' : ''}>{label}</button>)}</div>
       <section className="portal-agenda-layout">
         <article className="portal-panel">
           <PanelHeader eyebrow="Atividades cadastradas" title="Linha do tempo" />
