@@ -2,6 +2,7 @@ import { ChoresManagement } from '@/components/portal/AdminViews';
 import { redirectEditorsAway } from '@/lib/server/access';
 import { createClient } from '@/lib/supabase/server';
 import { todayISODate } from '@/lib/events';
+import { currentMonthRange } from '@/lib/finance';
 import type { CleaningShiftDate, CleaningShiftSignup, Profile } from '@/types';
 
 export default async function AdminChoresPage() {
@@ -11,10 +12,14 @@ export default async function AdminChoresPage() {
   // Gera as datas do mês atual e do próximo (todas as quintas + o sábado do mês).
   await supabase.rpc('ensure_cleaning_shift_dates');
 
+  // Visível: somente o calendário do mês vigente.
+  const { end } = currentMonthRange();
+
   const { data: dates } = await supabase
     .from('cleaning_shift_dates')
     .select('*')
     .gte('shift_date', todayISODate())
+    .lte('shift_date', end)
     .order('shift_date', { ascending: true });
 
   const dateIds = (dates ?? []).map((date) => date.id);
