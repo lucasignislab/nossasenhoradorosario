@@ -11,6 +11,7 @@ import {
   type EventFormInput,
 } from '@/app/(auth)/admin/agenda/actions';
 import { EVENT_CATEGORY_OPTIONS, formatEventTime } from '@/lib/events';
+import { ImageUploadDropzone } from './ImageUploadDropzone';
 import type { PortalEvent } from '@/types';
 
 const DEFAULT_LOCATION = 'T. U. Senhora do Rosário';
@@ -141,10 +142,11 @@ function EventFormModal({ event, onClose }: EventFormModalProps) {
             <textarea rows={4} value={form.details} onChange={set('details')} placeholder="Orientações, o que levar, observações..." />
           </label>
 
-          <label className="portal-field">
-            <span>URL da imagem (flyer)</span>
-            <input type="url" value={form.image_url} onChange={set('image_url')} placeholder="https://..." />
-          </label>
+          <ImageUploadDropzone
+            value={form.image_url}
+            onChange={(url) => setForm((current) => ({ ...current, image_url: url }))}
+            disabled={isPending}
+          />
 
           {error ? <p className="portal-action-error" role="alert">{error}</p> : null}
 

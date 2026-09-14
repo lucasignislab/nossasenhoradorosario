@@ -173,6 +173,7 @@ Margens, paddings e gaps são estritamente múltiplos de 8px:
 ### 5.2. Agenda e giras (tabelas `events` e `event_confirmations`)
 
 *   **`events`**: giras, festividades, ações sociais e cursos (`category`), com data, horário, local, entidade, descrição, flyer (`image_url`) e `status` (`confirmada`/`cancelada`). Migration: `supabase/migrations/202609070002_events.sql`.
+*   **Flyer (arte do evento):** upload por clique ou arrastar-e-soltar no formulário de `/admin/agenda` (`ImageUploadDropzone`), com preview, limite de 5 MB (JPG/PNG/WebP) e fallback opcional de URL. A imagem vai para o bucket **público** `artes` do Supabase Storage (leitura aberta — usada no site público; escrita só de `is_content_manager()` — migration `supabase/migrations/202609070014_event_art_bucket.sql`) e o campo `image_url` recebe a URL pública. Avisos não têm campo de imagem e seguem sem upload.
 *   **RLS:** eventos confirmados têm leitura pública (Home e `/agenda`); criar, editar, cancelar e excluir exige administração (`is_administrator()`). Cancelamento é reversível (mudança de status); exclusão remove o evento e suas confirmações (cascade).
 *   **`event_confirmations`**: presença dos filhos, uma por pessoa por evento (`unique(event_id, profile_id)`). Cada filho confirma/cancela apenas a própria presença em `/dashboard/agenda`; a administração pode consultar todas.
 *   **Fluxos:** `/admin/agenda` (CRUD com `EventForm`), `/dashboard/agenda` (confirmação de presença), `/agenda` e Home (próximos eventos confirmados, com estado vazio em caso de falha — sem mocks).
