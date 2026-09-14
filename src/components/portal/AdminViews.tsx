@@ -559,7 +559,6 @@ export function AgendaManagement({ events }: { events?: PortalEvent[] }) {
       <PageHeader eyebrow="Administração · Agenda" title="Agenda e giras" description="Organize atividades, responsáveis, confirmações e comunicados em um só fluxo." action={<NewEventButton />} />
       <section className="portal-agenda-layout">
         <article className="portal-panel">
-          <PanelHeader eyebrow="Atividades cadastradas" title="Linha do tempo" />
           <AgendaTimeline events={eventList} />
         </article>
         <div className="portal-stack">

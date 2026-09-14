@@ -16,12 +16,12 @@ import type { PortalEvent } from '@/types';
 
 const DEFAULT_LOCATION = 'T. U. Senhora do Rosário';
 
-function emptyForm(): EventFormInput {
+function emptyForm(defaultMonth?: string): EventFormInput {
   return {
     title: '',
     entity: '',
     category: 'gira',
-    event_date: '',
+    event_date: defaultMonth ? `${defaultMonth}-01` : '',
     event_time: '19:30',
     location: DEFAULT_LOCATION,
     description: '',
@@ -47,10 +47,12 @@ function formFromEvent(event: PortalEvent): EventFormInput {
 type EventFormModalProps = {
   event: PortalEvent | null; // null = criação
   onClose: () => void;
+  /** Mês pré-selecionado (YYYY-MM) ao criar a partir de uma aba de mês. */
+  defaultMonth?: string;
 };
 
-function EventFormModal({ event, onClose }: EventFormModalProps) {
-  const [form, setForm] = useState<EventFormInput>(event ? formFromEvent(event) : emptyForm());
+function EventFormModal({ event, onClose, defaultMonth }: EventFormModalProps) {
+  const [form, setForm] = useState<EventFormInput>(event ? formFromEvent(event) : emptyForm(defaultMonth));
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -164,14 +166,14 @@ function EventFormModal({ event, onClose }: EventFormModalProps) {
   );
 }
 
-export function NewEventButton() {
+export function NewEventButton({ defaultMonth, label }: { defaultMonth?: string; label?: string }) {
   const [open, setOpen] = useState(false);
   return (
     <>
       <button type="button" className="portal-button portal-button--primary" onClick={() => setOpen(true)}>
-        <Plus size={16} /> Criar atividade
+        <Plus size={16} /> {label ?? 'Criar atividade'}
       </button>
-      {open ? <EventFormModal event={null} onClose={() => setOpen(false)} /> : null}
+      {open ? <EventFormModal event={null} onClose={() => setOpen(false)} defaultMonth={defaultMonth} /> : null}
     </>
   );
 }
