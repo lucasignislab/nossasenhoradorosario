@@ -37,7 +37,8 @@ import {
   roleLabel,
 } from '@/lib/members';
 import { eventCategoryLabel, eventDateParts, formatEventDateLong, formatEventTime, todayISODate } from '@/lib/events';
-import { EventRowActions, NewEventButton } from './EventForm';
+import { AgendaTimeline } from './AgendaTimeline';
+import { NewEventButton } from './EventForm';
 import { ContentRowActions, NewContentButton } from './ContentForm';
 import { NewNoticeButton, NoticeRowActions } from './NoticeForm';
 import { RemoveShiftSignupButton, SaturdayShiftEditor } from './CleaningShiftControls';
@@ -553,45 +554,13 @@ export function AgendaManagement({ events }: { events?: PortalEvent[] }) {
   const upcoming = eventList.filter((event) => event.event_date >= todayISODate());
   const canceled = eventList.filter((event) => event.status === 'cancelada');
 
-  // Faixa de meses real: mês vigente + os dois seguintes.
-  const monthFormatter = new Intl.DateTimeFormat('pt-BR', { month: 'long' });
-  const now = new Date();
-  const stripMonths = [0, 1, 2].map((offset) => {
-    const date = new Date(now.getFullYear(), now.getMonth() + offset, 1);
-    const name = monthFormatter.format(date);
-    const capitalized = name.charAt(0).toUpperCase() + name.slice(1);
-    return offset === 0 ? `${capitalized} ${date.getFullYear()}` : capitalized;
-  });
-
   return (
     <div className="portal-page">
       <PageHeader eyebrow="Administração · Agenda" title="Agenda e giras" description="Organize atividades, responsáveis, confirmações e comunicados em um só fluxo." action={<NewEventButton />} />
-      <div className="portal-calendar-strip">{stripMonths.map((label, index) => <button key={label} className={index === 0 ? 'is-active' : ''}>{label}</button>)}</div>
       <section className="portal-agenda-layout">
         <article className="portal-panel">
           <PanelHeader eyebrow="Atividades cadastradas" title="Linha do tempo" />
-          {eventList.length === 0 ? (
-            <p className="portal-panel__copy">Nenhum evento cadastrado. Crie a primeira atividade da casa.</p>
-          ) : (
-            <div className="portal-timeline">
-              {eventList.map((event) => {
-                const parts = eventDateParts(event.event_date);
-                return (
-                  <div className={`portal-timeline__item${event.status === 'cancelada' ? ' is-canceled' : ''}`} key={event.id}>
-                    <div className="portal-timeline__date"><strong>{parts.day}</strong><span>{parts.month}</span></div>
-                    <i />
-                    <div>
-                      <span className="portal-timeline__type">{eventCategoryLabel(event.category)}{event.entity ? ` · ${event.entity}` : ''}</span>
-                      <h3>{event.title}</h3>
-                      <p><Clock3 size={13} /> {formatEventTime(event.event_time)} · {event.location}</p>
-                    </div>
-                    <StatusPill tone={event.status === 'cancelada' ? 'danger' : 'neutral'}>{event.status === 'cancelada' ? 'Cancelada' : 'Confirmada'}</StatusPill>
-                    <EventRowActions event={event} />
-                  </div>
-                );
-              })}
-            </div>
-          )}
+          <AgendaTimeline events={eventList} />
         </article>
         <div className="portal-stack">
           <article className="portal-panel"><PanelHeader eyebrow="Resumo" title="Agenda" /><dl className="portal-definition-list"><div><dt>Atividades futuras</dt><dd>{upcoming.length}</dd></div><div><dt>Confirmadas</dt><dd>{eventList.filter((event) => event.status === 'confirmada').length}</dd></div><div><dt>Canceladas</dt><dd>{canceled.length}</dd></div></dl></article>
