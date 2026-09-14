@@ -251,6 +251,7 @@
 }
 
 .login-form__google {
+  width: 100%;
   min-height: 50px;
   margin-top: 4px;
   display: flex;
@@ -261,7 +262,9 @@
   border-radius: 2px;
   background: #fff;
   color: var(--color-warm-neutral-800, #292524);
-  font: 600 13px/1 var(--font-body);
+  font: 700 12px/1 var(--font-body);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   cursor: pointer;
   transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
 }
