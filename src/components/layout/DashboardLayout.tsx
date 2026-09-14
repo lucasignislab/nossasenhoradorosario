@@ -151,7 +151,7 @@ export function DashboardLayout({
             <Home size={16} />
             Ver minha área
           </Link>
-        ) : (user.role === 'admin' || user.role === 'developer') ? (
+        ) : (user.role === 'admin' || user.role === 'developer' || user.role === 'editor') ? (
           <Link href={`${previewRoot}/admin`} className="dashboard-layout__switch-area">
             <Settings size={16} />
             Acessar administração
