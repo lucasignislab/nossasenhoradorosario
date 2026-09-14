@@ -118,10 +118,11 @@ export function AdminOverview({ basePath = '/admin', activeMembers, pendingMembe
   const finance = financeSummary ?? { income: 384000, expense: 256500, balance: 127500 };
   const nextEvent = eventList[0] ?? null;
   const currentMonthName = new Date().toLocaleDateString('pt-BR', { month: 'long' });
+  const currentMonthLabel = `${currentMonthName.charAt(0).toUpperCase()}${currentMonthName.slice(1)} de ${new Date().getFullYear()}`;
   return (
     <div className="portal-page">
       <PageHeader
-        eyebrow="Visão geral · Julho de 2026"
+        eyebrow={`Visão geral · ${currentMonthLabel}`}
         title="A casa em um só olhar"
         description="Acompanhe o que precisa de cuidado hoje, sem perder de vista o movimento do mês."
         action={<button className="portal-button portal-button--primary"><Plus size={16} /> Novo evento</button>}
