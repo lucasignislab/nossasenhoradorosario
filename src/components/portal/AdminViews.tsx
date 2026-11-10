@@ -59,8 +59,9 @@ import {
   formatFinanceDate,
   summarizeMonth,
 } from '@/lib/finance';
-import type { Attendance, CleaningShiftDate, CleaningShiftSignup, FinanceEntry, Notice, Ponto, PontoFolder, PortalEvent, Profile, StudyContent } from '@/types';
+import type { Attendance, CleaningShiftDate, CleaningShiftSignup, FinanceEntry, HouseDocument, Notice, Ponto, PontoFolder, PortalEvent, Profile, StudyContent } from '@/types';
 import { PontosManager } from './PontosManager';
+import { HouseDocumentsManager } from './HouseDocumentsManager';
 import { AttendanceSheet } from './AttendanceSheet';
 
 // Dados demonstrativos usados apenas pela prévia visual (portal-preview / Storybook).
@@ -662,7 +663,7 @@ const previewContents: StudyContent[] = [
 
 const contentKindIcons = { video: Play, artigo: BookOpen, documento: FileText, material: FileText } as const;
 
-export function ContentManagement({ contents, pontoFolders = [], pontos = [] }: { contents?: StudyContent[]; pontoFolders?: PontoFolder[]; pontos?: Ponto[] }) {
+export function ContentManagement({ contents, pontoFolders = [], pontos = [], houseDocuments = [] }: { contents?: StudyContent[]; pontoFolders?: PontoFolder[]; pontos?: Ponto[]; houseDocuments?: HouseDocument[] }) {
   const contentList = contents ?? previewContents;
   const publishedCount = contentList.filter((content) => content.published).length;
   const modules = new Set(contentList.map((content) => content.module ?? 'Biblioteca geral'));
@@ -703,6 +704,7 @@ export function ContentManagement({ contents, pontoFolders = [], pontos = [] }: 
         )}
       </div></article>
       <PontosManager folders={pontoFolders} pontos={pontos} />
+      <HouseDocumentsManager documents={houseDocuments} />
     </div>
   );
 }

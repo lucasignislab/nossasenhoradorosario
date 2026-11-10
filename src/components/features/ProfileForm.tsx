@@ -15,12 +15,13 @@ type ProfileFormProps = {
   orixaCabeca: string | null;
   adjunto: string | null;
   avatarUrl: string | null;
+  birthDate: string | null;
 };
 
 const initialState: ProfileFormState = { status: 'idle', message: '' };
 const roleNames = { member: 'Filho da casa', admin: 'Administração', developer: 'Acesso técnico' };
 
-export function ProfileForm({ fullName, phone, email, role, joinedAt, guiaFrente, orixaCabeca, adjunto, avatarUrl }: ProfileFormProps) {
+export function ProfileForm({ fullName, phone, email, role, joinedAt, guiaFrente, orixaCabeca, adjunto, avatarUrl, birthDate }: ProfileFormProps) {
   const [state, formAction, pending] = useActionState(updateProfile, initialState);
   const [avatar, setAvatar] = useState(avatarUrl ?? '');
 
@@ -43,6 +44,11 @@ export function ProfileForm({ fullName, phone, email, role, joinedAt, guiaFrente
           <div className="profile-page__field">
             <label htmlFor="phone">WhatsApp</label>
             <input id="phone" name="phone" type="tel" defaultValue={phone} placeholder="(11) 99999-9999" />
+          </div>
+          <div className="profile-page__field">
+            <label htmlFor="birthDate">Data de nascimento</label>
+            <input id="birthDate" name="birthDate" type="date" defaultValue={birthDate ?? ''} />
+            <small>Usada para os aniversariantes do mês e sua carteirinha.</small>
           </div>
           <div className="profile-page__field">
             <label htmlFor="email">E-mail</label>

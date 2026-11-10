@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowRight, Bell, BookOpen, CalendarCheck, CalendarDays, CreditCard, Sparkles, UsersRound, WalletCards } from 'lucide-react';
+import { ArrowRight, Bell, BookOpen, Cake, CalendarCheck, CalendarDays, CreditCard, IdCard, Music2, ScrollText, Sparkles, UsersRound, WalletCards } from 'lucide-react';
 import { MetricCard, PanelHeader, StatusPill } from '@/components/portal/PortalUI';
 import { SelfAttendanceControls } from '@/components/portal/SelfAttendanceControls';
 import { eventDateParts, formatEventDateLong, formatEventTime } from '@/lib/events';
@@ -7,11 +7,14 @@ import { formatRelativeDate, noticeCategoryLabel } from '@/lib/notices';
 import type { Notice, PortalEvent } from '@/types';
 
 const modules = [
-  { title: 'Agenda interna', description: 'Giras, reuniões e compromissos da corrente.', icon: CalendarDays, status: 'Disponível', path: '/agenda' },
+  { title: 'Calendário', description: 'Giras, festividades e compromissos da corrente.', icon: CalendarDays, status: 'Disponível', path: '/agenda' },
   { title: 'Escala de cuidados', description: 'Organização das equipes e dias de cuidado da casa.', icon: UsersRound, status: 'Disponível', path: '/faxinas' },
   { title: 'Minha frequência', description: 'Seu histórico de presença nas atividades da casa.', icon: CalendarCheck, status: 'Disponível', path: '/frequencia' },
   { title: 'Mensalidades', description: 'Situação, pagamentos e comprovantes em um só lugar.', icon: CreditCard, status: 'Disponível', path: '/financeiro' },
   { title: 'Estudos da casa', description: 'Materiais e conteúdos de desenvolvimento mediúnico.', icon: BookOpen, status: 'Disponível', path: '/aulas' },
+  { title: 'Pontos cantados', description: 'PDFs dos pontos da casa organizados em pastas.', icon: Music2, status: 'Disponível', path: '/pontos' },
+  { title: 'Regras da casa', description: 'Documentos e preceitos internos da corrente.', icon: ScrollText, status: 'Disponível', path: '/regras' },
+  { title: 'Carteirinha', description: 'Sua identificação digital como membro da casa.', icon: IdCard, status: 'Disponível', path: '/carteirinha' },
   { title: 'Avisos', description: 'Comunicados e orientações importantes para a corrente.', icon: Bell, status: 'Disponível', path: '/avisos' },
 ];
 
@@ -21,6 +24,8 @@ export type MemberHomeSummary = {
   notices: Notice[];
   nextChore: { shiftDate: string } | null;
   monthFeePaid: boolean;
+  /** Aniversariantes do mês corrente (membros ativos). */
+  birthdays?: { name: string; day: number; avatarUrl: string | null }[];
   /** Gira de hoje (janela aberta) ainda sem registro de frequência do membro. */
   pendingAttendanceEvent?: PortalEvent | null;
 };
@@ -106,6 +111,22 @@ export function MemberHome({ basePath = '/dashboard', summary }: { basePath?: st
               </div>
             )}
           </article>
+
+          <article className="portal-panel" style={{ marginBottom: 32 }}>
+            <PanelHeader eyebrow="Celebrações" title="Aniversariantes do mês" />
+            {(realSummary.birthdays ?? []).length === 0 ? (
+              <p className="portal-panel__copy">Nenhum aniversário registrado neste mês.</p>
+            ) : (
+              <div className="portal-person-list">
+                {(realSummary.birthdays ?? []).map((person) => (
+                  <div className="portal-person" key={person.name}>
+                    <span><Cake size={15} /></span>
+                    <div><strong>{person.name}</strong><small>Dia {person.day}</small></div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </article>
         </section>
       ) : null}
 
@@ -115,7 +136,7 @@ export function MemberHome({ basePath = '/dashboard', summary }: { basePath?: st
             <p className="dashboard-home__eyebrow">Rotina da comunidade</p>
             <h2 id="modules-title">Serviços da casa</h2>
           </div>
-          <span>6 serviços disponíveis</span>
+          <span>{modules.length} serviços disponíveis</span>
         </div>
 
         <div className="dashboard-home__grid">

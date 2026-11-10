@@ -84,12 +84,31 @@ export default async function DashboardPage() {
     }
   }
 
+  // Aniversariantes do mês corrente (membros ativos, via diretório).
+  let birthdays: NonNullable<MemberHomeSummary['birthdays']> = [];
+  {
+    const { data: directory } = await supabase
+      .from('directory_members')
+      .select('full_name, avatar_url, birth_date')
+      .not('birth_date', 'is', null);
+    const currentMonth = new Date().getMonth();
+    birthdays = ((directory ?? []) as { full_name: string | null; avatar_url: string | null; birth_date: string | null }[])
+      .filter((row) => row.birth_date && new Date(`${row.birth_date}T12:00:00`).getMonth() === currentMonth)
+      .map((row) => ({
+        name: row.full_name?.trim() || 'Sem nome',
+        day: new Date(`${row.birth_date}T12:00:00`).getDate(),
+        avatarUrl: row.avatar_url,
+      }))
+      .sort((a, b) => a.day - b.day);
+  }
+
   const summary: MemberHomeSummary = {
     nextEvent,
     nextEventConfirmed: nextEvent ? confirmedIds.has(nextEvent.id) : false,
     notices: (noticesResult.data ?? []) as Notice[],
     nextChore,
     monthFeePaid: (feeResult.count ?? 0) > 0,
+    birthdays,
     pendingAttendanceEvent,
   };
 

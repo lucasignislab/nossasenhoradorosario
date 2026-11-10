@@ -15,7 +15,10 @@ export function statusPresentation(status: ProfileStatus): { label: string; tone
 
 export function formatJoinedAt(value: string | null): string {
   if (!value) return '—';
-  const date = new Date(value);
+  // Datas 'YYYY-MM-DD' sem hora são interpretadas como UTC; ao meio-dia local
+  // evita o recuo para o dia anterior no fuso de São Paulo.
+  const raw = value.length === 10 ? `${value}T12:00:00` : value;
+  const date = new Date(raw);
   if (Number.isNaN(date.getTime())) return '—';
   return date.toLocaleDateString('pt-BR');
 }

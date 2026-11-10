@@ -10,6 +10,7 @@ type Profile = {
   orixa_cabeca: string | null;
   adjunto: string | null;
   avatar_url: string | null;
+  birth_date: string | null;
   joined_at: string | null;
 };
 
@@ -20,7 +21,7 @@ export default async function ProfilePage() {
 
   const { data } = await supabase
     .from('profiles')
-    .select('full_name, phone, role, guia_frente, orixa_cabeca, adjunto, avatar_url, joined_at')
+    .select('full_name, phone, role, guia_frente, orixa_cabeca, adjunto, avatar_url, birth_date, joined_at')
     .eq('id', user.id)
     .single();
   const profile = data as Profile | null;
@@ -37,6 +38,7 @@ export default async function ProfilePage() {
       orixaCabeca={profile.orixa_cabeca}
       adjunto={profile.adjunto}
       avatarUrl={profile.avatar_url}
+      birthDate={profile.birth_date}
     />
   );
 }

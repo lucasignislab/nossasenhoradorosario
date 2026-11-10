@@ -247,3 +247,88 @@
     @apply font-sans;
   }
 }
+/* Página pública de doação (/doar) */
+.donate-page { padding: 120px 24px 80px; background: linear-gradient(180deg, #faf8f3 0%, #ffffff 100%); }
+.donate-page__inner { max-width: 640px; margin: 0 auto; text-align: center; }
+.donate-page__eyebrow { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: #8a6d3b; }
+.donate-page h1 { font-family: Georgia, 'Times New Roman', serif; font-size: clamp(30px, 5vw, 42px); color: #26221c; margin: 12px 0 14px; }
+.donate-page__lead { font-size: 16px; line-height: 1.7; color: #5d574c; margin: 0 0 28px; }
+.donate-page__card { background: #fff; border: 1px solid #e7e1d4; border-radius: 18px; padding: 28px; box-shadow: 0 14px 40px rgba(38,34,28,.07); text-align: left; }
+.donate-page__note { margin-top: 22px; font-size: 12.5px; line-height: 1.6; color: #8a8478; }
+
+/* Bloco Pix com QR (doação) */
+.pix-donation { display: flex; flex-direction: column; gap: 14px; align-items: flex-start; }
+.pix-donation__qr { align-self: center; width: 200px; height: 200px; display: grid; place-items: center; border: 1px solid #e7e1d4; border-radius: 14px; background: #fff; color: #b0a894; }
+.pix-donation__qr img { display: block; border-radius: 8px; }
+.pix-donation__amount { width: 100%; }
+.pix-donation__notify { width: 100%; border-top: 1px dashed #e7e1d4; padding-top: 14px; display: flex; flex-direction: column; gap: 10px; }
+
+/* Carteirinha digital — documento oficial (papel, guiloché, serifada) */
+.membership-card-wrap { max-width: 620px; }
+.membership-card {
+  position: relative; aspect-ratio: 85.6 / 53.98; border-radius: 12px; overflow: hidden;
+  background:
+    radial-gradient(closest-side, rgba(122,101,52,.06), transparent 70%) 0 0 / 26px 26px,
+    repeating-conic-gradient(from 0deg at 110% -10%, rgba(122,101,52,.05) 0deg 4deg, transparent 4deg 8deg),
+    linear-gradient(160deg, #f7f2e3 0%, #f1ead6 55%, #ebe2c9 100%);
+  color: #2c2820; border: 1.5px solid #7a6534;
+  box-shadow: 0 18px 45px rgba(30,26,16,.28), inset 0 0 0 4px rgba(255,255,255,.35);
+  display: flex; flex-direction: column;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+.membership-card__band {
+  display: flex; align-items: center; gap: 11px; padding: 8px 16px;
+  background: linear-gradient(90deg, #37503b 0%, #44604a 60%, #37503b 100%);
+  color: #f3efe2; border-bottom: 2px solid #7a6534;
+}
+.membership-card__seal {
+  width: 32px; height: 32px; flex: none; display: grid; place-items: center;
+  border-radius: 50%; border: 1.5px solid #d9c690; color: #e9dcc0;
+  font-size: 11px; font-weight: 700; letter-spacing: .05em;
+  box-shadow: 0 0 0 3px rgba(217,198,144,.25);
+}
+.membership-card__issuer { flex: 1; min-width: 0; }
+.membership-card__issuer strong { display: block; font-size: 11.5px; letter-spacing: .01em; }
+.membership-card__issuer small { display: block; font-size: 7.5px; letter-spacing: .14em; text-transform: uppercase; color: rgba(243,239,226,.75); }
+.membership-card__doc-number { flex: none; text-align: right; }
+.membership-card__doc-number span { display: block; font-size: 7px; letter-spacing: .14em; text-transform: uppercase; color: rgba(243,239,226,.7); }
+.membership-card__doc-number strong { font-size: 10.5px; letter-spacing: .08em; color: #e9dcc0; }
+.membership-card__body { flex: 1; display: flex; gap: 14px; padding: 12px 16px; align-items: flex-start; min-height: 0; }
+.membership-card__photo {
+  width: 84px; height: 108px; flex: none; margin: 0; border-radius: 4px; overflow: hidden;
+  background: #e4dcc4; border: 1px solid #7a6534; outline: 1px solid rgba(255,255,255,.6); outline-offset: 2px;
+  display: grid; place-items: center; color: #9a9077;
+}
+.membership-card__photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.membership-card__fields { flex: 1; min-width: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px; align-content: start; }
+.membership-card__field { min-width: 0; }
+.membership-card__field--name { grid-column: 1 / -1; border-bottom: 1px solid rgba(122,101,52,.4); padding-bottom: 4px; }
+.membership-card__field dt { font-size: 7px; letter-spacing: .12em; text-transform: uppercase; color: #7a6534; white-space: nowrap; }
+.membership-card__field dd { margin: 1px 0 0; font-size: 11.5px; font-weight: 700; color: #2c2820; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.membership-card__field--name dd { font-size: 14px; }
+.membership-card__side { flex: none; display: flex; flex-direction: column; align-items: center; gap: 8px; align-self: stretch; justify-content: space-between; }
+.membership-card__qr { text-align: center; }
+.membership-card__qr img { display: block; width: 74px; height: 74px; background: #fff; padding: 4px; border: 1px solid #7a6534; border-radius: 3px; }
+.membership-card__qr small { display: block; margin-top: 2px; font-size: 6.5px; letter-spacing: .1em; text-transform: uppercase; color: #7a6534; }
+.membership-card__signature { width: 100px; text-align: center; }
+.membership-card__signature-line { display: block; border-bottom: 1px solid #2c2820; height: 14px; }
+.membership-card__signature small { font-size: 6.5px; letter-spacing: .1em; text-transform: uppercase; color: #7a6534; }
+.membership-card__foot {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 6px 16px;
+  border-top: 1px solid rgba(122,101,52,.4); background: rgba(122,101,52,.1);
+  font-size: 7.5px; letter-spacing: .12em; text-transform: uppercase; color: #6d5c33;
+}
+@media (max-width: 560px) {
+  .membership-card { aspect-ratio: auto; }
+  .membership-card__body { flex-direction: column; align-items: center; }
+  .membership-card__fields { width: 100%; }
+  .membership-card__side { flex-direction: row; align-items: flex-end; width: 100%; }
+}
+@media print {
+  .membership-card { box-shadow: none; }
+}
+
+/* Descrição secundária nas listas de PDF */
+.ponto-file-list__desc { display: block; font-size: 11px; color: var(--portal-text-soft, #6b655b); margin-top: 1px; }
+
+/* bust */

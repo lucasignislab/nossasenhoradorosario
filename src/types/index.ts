@@ -198,6 +198,19 @@ export type Ponto = {
   updated_at: string;
 };
 
+export type HouseDocument = {
+  id: string;
+  title: string;
+  description: string | null;
+  file_path: string;
+  file_name: string | null;
+  sort_order: number;
+  published: boolean;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
 export type CleaningShiftKind = 'thursday' | 'saturday';
 
 export type CleaningShiftDate = {

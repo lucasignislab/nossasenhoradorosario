@@ -41,6 +41,6 @@ export const Mensalidades: Story = { render: () => <MemberFinance />, parameters
 export const Avisos: Story = { render: () => <MemberNotices />, parameters: { nextjs: { navigation: { pathname: '/portal-preview/dashboard/avisos' } } } };
 export const MeuPerfil: Story = {
   name: 'Meu perfil',
-  render: () => <ProfileForm fullName="Lucas Coelho" phone="(11) 99999-9999" email="preview@senhoradorosario.org" role="developer" joinedAt="2024-03-10" guiaFrente="Caboclo Sete Flechas" orixaCabeca="Oxóssi" adjunto="Ogum" avatarUrl={null} />,
+  render: () => <ProfileForm fullName="Lucas Coelho" phone="(11) 99999-9999" email="preview@senhoradorosario.org" role="developer" joinedAt="2024-03-10" guiaFrente="Caboclo Sete Flechas" orixaCabeca="Oxóssi" adjunto="Ogum" avatarUrl={null} birthDate="1990-05-20" />,
   parameters: { nextjs: { navigation: { pathname: '/portal-preview/dashboard/perfil' } } },
 };

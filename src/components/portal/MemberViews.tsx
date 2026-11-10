@@ -17,6 +17,7 @@ import { EventConfirmationButton } from './EventConfirmationButton';
 import { ContentProgressToggle } from './ContentProgressToggle';
 import { ShiftSignupButton } from './CleaningShiftControls';
 import { CopyPixKeyButton, ReceiptUploadButton, RegisterMensalidadeForm } from './MensalidadeControls';
+import { PixDonation } from '@/components/features/PixDonation';
 import { SelfAttendanceControls, type SelfAttendanceRecord } from './SelfAttendanceControls';
 import { MemberCalendar } from './CalendarViews';
 import { eventDateParts, formatEventDateLong, formatEventTime, todayISODate } from '@/lib/events';
@@ -375,6 +376,7 @@ export function MemberFinance({ entries }: { entries?: FinanceEntry[] }) {
         </article>
         <div className="portal-stack">
           <article className="portal-panel"><PanelHeader eyebrow="Forma de contribuição" title="Pagamento via Pix" /><div className="member-pix"><div><span>Chave Pix da casa</span><strong>tsenhoradorosario@gmail.com</strong></div><CopyPixKeyButton /></div><p className="portal-panel__copy">Depois do pagamento, envie o comprovante no histórico para a mensalidade constar como paga.</p></article>
+          <article className="portal-panel"><PanelHeader eyebrow="Além da mensalidade" title="Fazer uma doação" /><p className="portal-panel__copy">Quer contribuir um pouco mais? Doe qualquer valor pelo QR Code abaixo.</p><PixDonation /></article>
           <div className="portal-panel"><PanelHeader eyebrow={`Ano de ${currentYear}`} title="Resumo" /><dl className="portal-definition-list"><div><dt>Mensalidades pagas</dt><dd>{yearEntries.length}</dd></div><div><dt>Total contribuído</dt><dd>{formatBRL(yearTotalCents)}</dd></div><div><dt>Pendências</dt><dd>{monthPayment ? 'Nenhuma' : monthPending ? 'Comprovante' : 'Mês atual'}</dd></div></dl></div>
         </div>
       </section>

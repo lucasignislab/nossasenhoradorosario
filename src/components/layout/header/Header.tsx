@@ -9,6 +9,7 @@ const navLinks = [
   { href: '/agenda', label: 'Giras' },
   { href: '/eventos', label: 'Eventos' },
   { href: '/blog', label: 'Blog' },
+  { href: '/doar', label: 'Doe' },
   { href: '/design-system', label: 'Design System' },
 ];
 

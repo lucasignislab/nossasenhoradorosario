@@ -22,6 +22,7 @@ export async function updateProfile(
   const orixaCabeca = sanitize(formData.get('orixaCabeca'));
   const adjunto = sanitize(formData.get('adjunto'));
   const avatarUrl = sanitize(formData.get('avatarUrl'), 500);
+  const birthDate = sanitize(formData.get('birthDate'), 10);
 
   if (fullName.length < 3 || fullName.length > 120) {
     return { status: 'error', message: 'Informe seu nome completo.' };
@@ -29,6 +30,10 @@ export async function updateProfile(
 
   if (phone && phone.replace(/\D/g, '').length < 10) {
     return { status: 'error', message: 'Confira o número do WhatsApp.' };
+  }
+
+  if (birthDate && !/^\d{4}-\d{2}-\d{2}$/.test(birthDate)) {
+    return { status: 'error', message: 'Confira a data de nascimento.' };
   }
 
   const supabase = await createClient();
@@ -47,6 +52,7 @@ export async function updateProfile(
       orixa_cabeca: orixaCabeca || null,
       adjunto: adjunto || null,
       avatar_url: avatarUrl || null,
+      birth_date: birthDate || null,
     })
     .select('id')
     .single();

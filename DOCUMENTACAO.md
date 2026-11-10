@@ -269,3 +269,11 @@ Margens, paddings e gaps são estritamente múltiplos de 8px:
 *   Migration `supabase/migrations/202611100008_onboarding.sql`: marca quando o usuário concluiu o tour (editável pelo próprio usuário).
 *   Componente `OnboardingTour` (`src/components/features/OnboardingTour.tsx`): tour em etapas com conteúdo específico por papel — **Filho da casa** (8 passos: calendário, quem vai levar, escalas, frequência, estudos e pontos, mensalidades, perfil), **Comunicação** (6 passos: giras e artes, avisos, biblioteca, pontos cantados, área de filho) e **Administração** (8 passos: aprovações, membros, frequência, financeiro, escalas, conteúdos, configurações).
 *   Abre automaticamente no primeiro acesso de quem está ativo (`user.onboarded` no `DashboardLayout`) e pode ser reaberto a qualquer momento pelo botão de ajuda (?) no cabeçalho. Ao concluir ou pular, `markOnboarded` grava `profiles.onboarded_at`.
+
+### 5.16. Leva P1 de produtização (carteirinha, aniversariantes, doação Pix, Regras da Casa)
+
+*   Migrations `202611100009_p1.sql` (coluna `profiles.birth_date`, tabela `house_documents`, bucket `documentos`, policy de intenção de doação pública em `finance_entries`) e `202611100010_directory_birthdays.sql` (view `directory_members` passa a expor `avatar_url` e `birth_date`).
+*   **Carteirinha digital (`/dashboard/carteirinha`):** credencial com foto, função, ficha espiritual, datas e QR Code de identificação (gerado com o pacote `qrcode`). Item no menu lateral e no grid de serviços da visão geral.
+*   **Aniversariantes:** campo "Data de nascimento" na ficha (`/dashboard/perfil`); card "Aniversariantes do mês" na visão geral dos filhos (fonte: view `directory_members`).
+*   **Doação Pix:** `src/lib/pix.ts` monta o payload BR Code/EMV com CRC16 (chave `tsenhoradorosario@gmail.com`, valor opcional). Componente `PixDonation` com QR, copia da chave e "Pix copia e cola". Página pública `/doar` (link "Doe" no menu do site) com formulário de aviso que cria lançamento pendente `entrada/doacao` no financeiro; card de doação também em Mensalidades.
+*   **Regras da Casa:** gestão de documentos PDF em `/admin/conteudos` (somente administração, `HouseDocumentsManager` + `house-actions.ts`); leitura pelos filhos em `/dashboard/regras` (item no menu lateral).

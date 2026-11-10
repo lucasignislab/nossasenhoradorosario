@@ -15,9 +15,11 @@ import {
   DoorOpen,
   HelpCircle,
   Home,
+  IdCard,
   Menu,
   Music2,
   PackageCheck,
+  ScrollText,
   Search,
   Settings,
   Sparkles,
@@ -54,8 +56,10 @@ const memberMenu = [
   { label: 'Minha frequência', path: '/frequencia', icon: ClipboardCheck },
   { label: 'Estudos', path: '/aulas', icon: BookOpen },
   { label: 'Pontos Cantados', path: '/pontos', icon: Music2 },
+  { label: 'Regras da Casa', path: '/regras', icon: ScrollText },
   { label: 'Mensalidades', path: '/financeiro', icon: WalletCards },
   { label: 'Avisos', path: '/avisos', icon: Bell },
+  { label: 'Carteirinha', path: '/carteirinha', icon: IdCard },
   { label: 'Meu perfil', path: '/perfil', icon: UserRound },
 ];
 
