@@ -165,12 +165,12 @@ function FinanceFormModal({ entry, members, onClose }: FinanceFormModalProps) {
   );
 }
 
-export function NewFinanceEntryButton({ members }: { members: Profile[] }) {
+export function NewFinanceEntryButton({ members, label = 'Novo lançamento' }: { members: Profile[]; label?: string }) {
   const [open, setOpen] = useState(false);
   return (
     <>
       <button type="button" className="portal-button portal-button--primary" onClick={() => setOpen(true)}>
-        <Plus size={16} /> Novo lançamento
+        <Plus size={16} /> {label}
       </button>
       {open ? <FinanceFormModal entry={null} members={members} onClose={() => setOpen(false)} /> : null}
     </>
@@ -205,7 +205,7 @@ export function FinanceEntryRowActions({ entry, members }: { entry: FinanceEntry
   );
 }
 
-export function FinanceExportButton({ entries }: { entries: FinanceEntry[] }) {
+export function FinanceExportButton({ entries, label = 'Exportar' }: { entries: FinanceEntry[]; label?: string }) {
   const handleExport = () => {
     const header = 'Data;Descrição;Categoria;Tipo;Valor';
     const rows = entries.map((entry) => [
@@ -226,7 +226,7 @@ export function FinanceExportButton({ entries }: { entries: FinanceEntry[] }) {
 
   return (
     <button type="button" className="portal-button portal-button--secondary" onClick={handleExport}>
-      <Download size={16} /> Exportar
+      <Download size={16} /> {label}
     </button>
   );
 }

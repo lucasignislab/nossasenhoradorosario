@@ -261,6 +261,12 @@
 .portal-donut small { margin-top: 3px; color: var(--portal-text-faint); font-size: 6px; }
 .portal-legend-list { gap: 10px; }
 .portal-legend-list li { font-size: 8px; }
+.portal-legend-list .is-positive { color: var(--portal-success); }
+.portal-legend-list .is-negative { color: var(--portal-danger); }
+
+.portal-fundo { display: grid; gap: 10px; }
+.portal-fundo__value { margin: 0; color: var(--portal-text); font: 650 22px/1.1 var(--font-display, inherit); letter-spacing: -0.01em; }
+.portal-fundo__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
 
 .portal-table-wrap { width: 100%; overflow-x: auto; }
 .portal-table { width: 100%; min-width: 760px; border-collapse: separate; border-spacing: 0; }

@@ -252,6 +252,30 @@ export function FinanceDashboard({ entries, members = [] }: FinanceDashboardProp
   const expenseTotalFormatted = formatBRL(summary.expense);
   const monthName = new Date().toLocaleDateString('pt-BR', { month: 'long' });
 
+  // Fundo do Terreiro: saldo acumulado de tudo que já entrou e saiu (confirmado).
+  const confirmedEntries = entryList.filter((entry) => entry.status !== 'pendente');
+  const fundoBalance = confirmedEntries.reduce(
+    (total, entry) => total + (entry.type === 'entrada' ? entry.amount_cents : -entry.amount_cents),
+    0,
+  );
+
+  // Despesas do mês (para a seção própria e o relatório).
+  const monthExpenses = summary.entries
+    .filter((entry) => entry.type === 'saida')
+    .sort((a, b) => (a.entry_date > b.entry_date ? 1 : -1));
+
+  // Mensalidades do mês: pagas, aguardando comprovante e atrasadas (pendentes de meses anteriores).
+  const monthMensalidades = entryList.filter((entry) => entry.type === 'entrada' && entry.category === 'mensalidade');
+  const mensalidadesPagas = monthMensalidades.filter((entry) => entry.status === 'pago' && entry.entry_date >= start && entry.entry_date <= end).length;
+  const mensalidadesEmAberto = monthMensalidades.filter((entry) => entry.status === 'pendente' && entry.entry_date >= start && entry.entry_date <= end).length;
+  const mensalidadesAtrasadas = monthMensalidades.filter((entry) => entry.status === 'pendente' && entry.entry_date < start).length;
+
+  // Doações confirmadas no mês.
+  const monthDonations = summary.entries
+    .filter((entry) => entry.type === 'entrada' && entry.category === 'doacao')
+    .sort((a, b) => (a.entry_date > b.entry_date ? 1 : -1));
+  const donationsTotal = monthDonations.reduce((total, entry) => total + entry.amount_cents, 0);
+
   return (
     <div className="portal-page">
       <PageHeader
@@ -268,7 +292,65 @@ export function FinanceDashboard({ entries, members = [] }: FinanceDashboardProp
         <MetricCard icon={Landmark} label="Saldo do mês" value={formatBRL(summary.balance)} detail="Entradas menos saídas" tone="gold" />
       </section>
 
-      <section className="portal-layout portal-layout--charts">
+      <article className="portal-panel">
+        <PanelHeader eyebrow="Caixa principal" title="Fundo do Terreiro" />
+        <div className="portal-fundo">
+          <p className="portal-fundo__value">{formatBRL(fundoBalance)}</p>
+          <p className="portal-panel__copy">Saldo acumulado de todas as entradas e saídas confirmadas.</p>
+          <div className="portal-fundo__actions">
+            <NewFinanceEntryButton members={members} label="Adicionar fundo" />
+            <a href="#lancamentos" className="portal-text-link">Ver lançamentos <ArrowRight size={14} /></a>
+          </div>
+        </div>
+      </article>
+
+      <article className="portal-panel">
+        <PanelHeader eyebrow={monthName} title="Despesas" />
+        <div className="portal-fundo__actions">
+          <a href="#historico" className="portal-text-link">Histórico por mês <ArrowRight size={14} /></a>
+          <FinanceExportButton entries={monthExpenses} label="Baixar relatório" />
+        </div>
+        {monthExpenses.length === 0 ? (
+          <p className="portal-panel__copy">Nenhuma despesa cadastrada esse mês ainda.</p>
+        ) : (
+          <ul className="portal-legend-list">
+            {monthExpenses.map((entry) => (
+              <li key={entry.id}>
+                <span>{formatFinanceDate(entry.entry_date)} · {entry.description}</span>
+                <strong className="is-negative">- {formatBRL(entry.amount_cents)}</strong>
+              </li>
+            ))}
+          </ul>
+        )}
+      </article>
+
+      <article className="portal-panel">
+        <PanelHeader eyebrow={`Arrecadação de ${monthName}`} title="Mensalidades" />
+        <section className="portal-metrics portal-metrics--compact">
+          <MetricCard icon={CheckCircle2} label="Pagos" value={String(mensalidadesPagas)} detail="Confirmados no mês" tone="info" />
+          <MetricCard icon={Clock3} label="Em aberto/análise" value={String(mensalidadesEmAberto)} detail="Aguardando comprovante" tone="warning" />
+          <MetricCard icon={BellRing} label="Atrasados" value={String(mensalidadesAtrasadas)} detail="Pendentes de meses anteriores" tone="danger" />
+        </section>
+      </article>
+
+      <article className="portal-panel">
+        <PanelHeader eyebrow={monthName} title="Doações de consulentes" />
+        <p className="portal-panel__copy"><strong>Total confirmado: {formatBRL(donationsTotal)}</strong></p>
+        {monthDonations.length === 0 ? (
+          <p className="portal-panel__copy">Nenhuma doação registrada ainda.</p>
+        ) : (
+          <ul className="portal-legend-list">
+            {monthDonations.map((entry) => (
+              <li key={entry.id}>
+                <span>{formatFinanceDate(entry.entry_date)} · {entry.description}</span>
+                <strong className="is-positive">+ {formatBRL(entry.amount_cents)}</strong>
+              </li>
+            ))}
+          </ul>
+        )}
+      </article>
+
+      <section className="portal-layout portal-layout--charts" id="historico">
         <FinanceTrendChart data={trend} />
 
         <article className="portal-panel">
@@ -292,7 +374,7 @@ export function FinanceDashboard({ entries, members = [] }: FinanceDashboardProp
         </article>
       </section>
 
-      <article className="portal-panel">
+      <article className="portal-panel" id="lancamentos">
         <PanelHeader eyebrow="Conciliação" title="Movimentações recentes" />
         {pendingCount > 0 ? (
           <p className="portal-panel__copy" role="status">
