@@ -74,6 +74,31 @@ export type MuralRosterEntry = {
   delivered: boolean;
 };
 
+export type CamboneStatus = 'escalado' | 'confirmado' | 'recusado';
+
+export type CamboneAssignment = {
+  id: string;
+  event_id: string;
+  profile_id: string;
+  role_note: string | null;
+  status: CamboneStatus;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type CamboneRosterEntry = {
+  event_id: string;
+  profile_id: string;
+  full_name: string | null;
+  status: CamboneStatus;
+};
+
+export type DirectoryMember = {
+  id: string;
+  full_name: string | null;
+};
+
 export type FinanceEntryType = 'entrada' | 'saida';
 
 export type FinanceEntryStatus = 'pendente' | 'pago';

@@ -235,7 +235,13 @@ Margens, paddings e gaps são estritamente múltiplos de 8px:
 *   **Filho (`/dashboard/levar`):** vê a lista de necessidades com progresso por item, nomes de quem já assumiu (view `mural_roster`, security definer — filhos não leem `profiles` de terceiros) e o painel "Seus compromissos". Assume com "Eu levo" (quantidade + observação; upsert por item) e pode desistir antes de entregar.
 *   Somente gestores alteram `delivered` (trigger `protect_mural_pledge_delivered`); RLS garante que o filho só gerencia os próprios compromissos.
 
-### 5.10. Roadmap — onboarding por perfil
+### 5.10. Escala de cambone (tabela `cambone_assignments`, views `cambone_roster` e `directory_members`)
+
+*   Migration `supabase/migrations/202611100003_cambones.sql`. Supera o concorrente (que só atribui e lista): aqui o cambone **confirma ou recusa a escala pelo próprio portal**, todos veem a escala da corrente e a gestão tem um **rodízio** com quantas vezes cada filho já foi escalado — para distribuir com justiça.
+*   **Gestão (`/admin/cambones`, gestores de conteúdo):** escala filhos por gira com função/observação opcional, acompanha respostas (aguardando/confirmado/recusou) e remove da escala. O seletor usa a view `directory_members` (nomes de ativos, security definer — funciona também para o papel editor, que não lê `profiles`).
+*   **Filho (`/dashboard/cambones`):** vê suas escalas, responde com "Confirmar" ou "Não posso" (trigger `protect_cambone_assignment_fields` limita o filho a mudar apenas o próprio status) e acompanha a escala das próximas giras.
+
+### 5.11. Roadmap — onboarding por perfil
 
 *   Criar fluxo de onboarding para cada cadastro novo, específico por papel:
     *   **Filho da casa (member):** boas-vindas, como registrar a frequência (antecipado em `/dashboard/frequencia` ou no dia pelo banner/home), escala de cuidados (`/dashboard/faxinas`) e mensalidade via Pix.
