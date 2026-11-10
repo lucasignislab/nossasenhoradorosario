@@ -228,7 +228,14 @@ Margens, paddings e gaps são estritamente múltiplos de 8px:
 *   Na visão geral, editores não veem os painéis de cadastros pendentes nem o resumo financeiro — no lugar, um painel neutro descreve o escopo do acesso.
 *   A promoção a editor é feita com um clique em `/admin/membros` ("Aprovar como comunicação") ou via SQL pela administração (ver seção de ativação no README do Supabase).
 
-### 5.9. Roadmap — onboarding por perfil
+### 5.9. Quem vai levar — mural de contribuições (tabelas `mural_items`, `mural_pledges`, view `mural_roster`)
+
+*   Migrations `supabase/migrations/202611100001_mural.sql` e `202611100002_mural_sem_gira.sql`. Inspirado no "Mural" do concorrente Terreiro Digital: **lista geral da casa, independente de gira** — quem gerencia publica necessidades a qualquer momento, haja gira marcada ou não — com metas de quantidade, progresso por item e conferência de entrega.
+*   **Gestão (`/admin/mural`, gestores de conteúdo):** cria/edita/exclui itens (nome, categoria, unidade, meta opcional, observação), vê quem leva o quê, confirma ou desfaz entregas e remove compromissos.
+*   **Filho (`/dashboard/levar`):** vê a lista de necessidades com progresso por item, nomes de quem já assumiu (view `mural_roster`, security definer — filhos não leem `profiles` de terceiros) e o painel "Seus compromissos". Assume com "Eu levo" (quantidade + observação; upsert por item) e pode desistir antes de entregar.
+*   Somente gestores alteram `delivered` (trigger `protect_mural_pledge_delivered`); RLS garante que o filho só gerencia os próprios compromissos.
+
+### 5.10. Roadmap — onboarding por perfil
 
 *   Criar fluxo de onboarding para cada cadastro novo, específico por papel:
     *   **Filho da casa (member):** boas-vindas, como registrar a frequência (antecipado em `/dashboard/frequencia` ou no dia pelo banner/home), escala de cuidados (`/dashboard/faxinas`) e mensalidade via Pix.

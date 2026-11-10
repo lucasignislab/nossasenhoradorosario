@@ -795,3 +795,14 @@
 .portal-dropzone .is-spinning { animation: portal-spin 1s linear infinite; }
 .portal-form .portal-text-link { background: none; border: 0; padding: 0; cursor: pointer; }
 @keyframes portal-spin { to { transform: rotate(360deg); } }
+
+/* Mural "Quem vai levar" */
+.portal-mural-list { display: grid; gap: 14px; margin: 14px 0 0; padding: 0; list-style: none; }
+.portal-mural-item { display: grid; gap: 8px; padding: 12px; border: 1px solid var(--portal-border); border-radius: 8px; }
+.portal-mural-item__head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.portal-mural-item__head strong { color: var(--portal-text); font-size: 12px; font-weight: 600; }
+.portal-mural-item__meta { display: block; margin-top: 3px; color: var(--portal-text-faint); font-size: 11px; }
+.portal-mural-item__roster { display: flex; flex-wrap: wrap; gap: 6px 12px; margin: 0; color: var(--portal-text-soft); font-size: 11px; }
+.portal-mural-item__roster span.is-delivered { color: var(--portal-success); }
+.portal-mural-admin__toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
+.portal-mural-admin__toolbar .portal-progress { flex: 1 1 240px; }

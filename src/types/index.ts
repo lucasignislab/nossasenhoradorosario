@@ -41,6 +41,39 @@ export type EventConfirmation = {
   created_at: string;
 };
 
+export type MuralItemCategory = 'velas' | 'flores' | 'mantimentos' | 'bebidas' | 'limpeza' | 'outros';
+
+export type MuralItem = {
+  id: string;
+  name: string;
+  category: MuralItemCategory;
+  quantity_total: number | null;
+  unit: string;
+  note: string | null;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type MuralPledge = {
+  id: string;
+  item_id: string;
+  profile_id: string;
+  quantity: number;
+  note: string | null;
+  delivered: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type MuralRosterEntry = {
+  item_id: string;
+  profile_id: string;
+  full_name: string | null;
+  quantity: number;
+  delivered: boolean;
+};
+
 export type FinanceEntryType = 'entrada' | 'saida';
 
 export type FinanceEntryStatus = 'pendente' | 'pago';

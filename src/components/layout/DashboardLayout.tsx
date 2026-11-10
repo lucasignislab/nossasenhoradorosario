@@ -16,6 +16,7 @@ import {
   HelpCircle,
   Home,
   Menu,
+  PackageCheck,
   Search,
   Settings,
   Sparkles,
@@ -42,6 +43,7 @@ export interface DashboardLayoutProps {
 const memberMenu = [
   { label: 'Visão geral', path: '', icon: Home },
   { label: 'Agenda interna', path: '/agenda', icon: CalendarDays },
+  { label: 'Quem vai levar', path: '/levar', icon: PackageCheck },
   { label: 'Escala de cuidados', path: '/faxinas', icon: Sparkles },
   { label: 'Minha frequência', path: '/frequencia', icon: ClipboardCheck },
   { label: 'Estudos', path: '/aulas', icon: BookOpen },
@@ -54,6 +56,7 @@ const adminMenu = [
   { label: 'Visão geral', path: '', icon: ChartNoAxesCombined },
   { label: 'Filhos da casa', path: '/membros', icon: UsersRound },
   { label: 'Agenda e giras', path: '/agenda', icon: CalendarDays },
+  { label: 'Quem vai levar', path: '/mural', icon: PackageCheck },
   { label: 'Frequência', path: '/frequencia', icon: ClipboardCheck },
   { label: 'Financeiro', path: '/financeiro', icon: CircleDollarSign },
   { label: 'Conteúdos', path: '/conteudos', icon: BookOpen },
