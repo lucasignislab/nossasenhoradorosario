@@ -856,3 +856,35 @@
 .avatar-upload__side strong { font-size: 13px; color: var(--portal-text, #2b2620); }
 .avatar-upload__side small { font-size: 11px; line-height: 1.5; color: var(--portal-text-soft, #6b655b); }
 .portal-member-avatar { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; flex: none; display: block; }
+
+/* Pontos cantados — árvore de pastas (admin e área dos filhos) */
+.ponto-manager__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; margin-bottom: 14px; }
+.ponto-manager__head h2 { margin: 2px 0 6px; font-size: 17px; }
+.ponto-manager__head .portal-eyebrow { margin: 0; }
+.ponto-tree { display: flex; flex-direction: column; gap: 10px; }
+.ponto-folder { border: 1px solid var(--portal-border, #d8d2c7); border-radius: 10px; padding: 12px 14px; background: var(--portal-panel, #f7f4ee); }
+.ponto-folder .ponto-folder { margin-top: 10px; background: rgba(255,255,255,.55); }
+.ponto-folder__header { display: flex; align-items: center; gap: 9px; }
+.ponto-folder__header h3 { margin: 0; font-size: 13.5px; flex: 1; }
+.ponto-folder__icon { color: var(--portal-accent, #8a6d3b); display: grid; place-items: center; }
+.ponto-folder__count { font-size: 11px; color: var(--portal-text-soft, #6b655b); }
+.ponto-file-list { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.ponto-file-list li { display: flex; align-items: center; gap: 9px; padding: 8px 10px; border-radius: 8px; background: rgba(255,255,255,.6); border: 1px solid var(--portal-border, #e4ded2); font-size: 12.5px; }
+.ponto-file-list li svg { color: var(--portal-text-soft, #6b655b); flex: none; }
+.ponto-file-list li a { flex: 1; color: var(--portal-text, #2b2620); text-decoration: none; }
+.ponto-file-list li a:hover { text-decoration: underline; }
+.ponto-file-list li > button { margin-left: auto; }
+.ponto-file-list--member li span { flex: 1; }
+.ponto-file-list--member li > a { flex: none; }
+.ponto-breadcrumb { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; margin-bottom: 18px; }
+.ponto-breadcrumb button { display: inline-flex; align-items: center; gap: 5px; border: 0; background: transparent; padding: 5px 8px; border-radius: 6px; font-size: 12px; color: var(--portal-text-soft, #6b655b); cursor: pointer; }
+.ponto-breadcrumb button:hover { background: rgba(0,0,0,.05); }
+.ponto-breadcrumb button.is-current { font-weight: 650; color: var(--portal-text, #2b2620); }
+.ponto-breadcrumb__step { display: inline-flex; align-items: center; gap: 4px; color: var(--portal-text-soft, #6b655b); }
+.ponto-folder-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px; margin-bottom: 16px; }
+.ponto-folder-card { display: flex; flex-direction: column; align-items: flex-start; gap: 5px; padding: 14px; border: 1px solid var(--portal-border, #d8d2c7); border-radius: 10px; background: var(--portal-panel, #f7f4ee); cursor: pointer; text-align: left; position: relative; transition: border-color .15s ease; }
+.ponto-folder-card:hover { border-color: var(--portal-accent, #8a6d3b); }
+.ponto-folder-card__icon { color: var(--portal-accent, #8a6d3b); }
+.ponto-folder-card strong { font-size: 13.5px; }
+.ponto-folder-card small { font-size: 11px; color: var(--portal-text-soft, #6b655b); }
+.ponto-folder-card > svg:last-child { position: absolute; right: 12px; top: 14px; color: var(--portal-text-soft, #6b655b); }

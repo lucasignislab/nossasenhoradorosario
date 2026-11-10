@@ -258,7 +258,13 @@ Margens, paddings e gaps são estritamente múltiplos de 8px:
 *   **Filho (`/dashboard/perfil`):** componente `AvatarUpload` (`src/components/features/AvatarUpload.tsx`) com preview circular, clique para escolher, validação (JPG/PNG/WebP, até 5 MB) e remoção. O upload sobe na hora para o Storage; a URL é gravada em `profiles.avatar_url` pelo `updateProfile` (campo oculto `avatarUrl`).
 *   **Exibição:** componente `MemberAvatar` (`src/components/portal/MemberAvatar.tsx`) mostra a foto nas listas — membros (`/admin/membros`), chamada/frequência, aprovações e visão geral da administração — caindo na inicial do nome quando não há foto. A foto também aparece no cartão do usuário na barra lateral e no botão da conta no cabeçalho (`DashboardLayout`, prop `user.avatarUrl`).
 
-### 5.14. Roadmap — onboarding por perfil
+### 5.14. Biblioteca em PDF e Pontos Cantados (tabelas `ponto_folders` e `pontos`, buckets `pontos` e `materiais`)
+
+*   Migration `supabase/migrations/202611100007_pontos.sql`: novo tipo de conteúdo `material` (PDF da casa) em `contents`; árvore livre de pastas `ponto_folders` (auto-referência via `parent_id`, ex.: Esquerda > Exus > Pomba Giras > Exus Mirins) e PDFs em `pontos.file_path`. Buckets públicos de leitura autenticada; escrita só de gestores de conteúdo (`is_content_manager()`).
+*   **Gestão (`/admin/conteudos`):** Biblioteca ganha o tipo "Material em PDF" com upload direto (dropzone, até 10 MB) — aparece em Estudos para os filhos; painel "Pontos cantados" (`PontosManager`) permite criar/renomear/excluir pastas (exclusão só de pasta vazia) e subir o PDF do ponto na subpasta correspondente.
+*   **Filhos (`/dashboard/pontos`):** novo item "Pontos Cantados" no menu lateral, entre Estudos e Mensalidades; navegação por pastas com breadcrumb e botão "Abrir PDF" por ponto (`PontosBrowser`).
+
+### 5.15. Roadmap — onboarding por perfil
 
 *   Criar fluxo de onboarding para cada cadastro novo, específico por papel:
     *   **Filho da casa (member):** boas-vindas, como registrar a frequência (antecipado em `/dashboard/frequencia` ou no dia pelo banner/home), escala de cuidados (`/dashboard/faxinas`) e mensalidade via Pix.

@@ -235,7 +235,7 @@ export function MemberAttendance({ history, upcoming }: { history?: MemberAttend
   );
 }
 
-const studyKindIcons = { video: Play, artigo: BookOpen, documento: FileText } as const;
+const studyKindIcons = { video: Play, artigo: BookOpen, documento: FileText, material: FileText } as const;
 
 // Dados demonstrativos usados apenas pela prévia visual (portal-preview / Storybook).
 const previewStudyContents: StudyContent[] = [

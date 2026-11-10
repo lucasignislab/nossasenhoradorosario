@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState, useTransition } from 'react';
-import { Check, Eye, EyeOff, Pencil, Plus, Trash2, X } from 'lucide-react';
+import { useEffect, useRef, useState, useTransition } from 'react';
+import { Check, Eye, EyeOff, FileText, Pencil, Plus, Trash2, UploadCloud, X } from 'lucide-react';
 import {
   createContent,
   deleteContent,
@@ -10,7 +10,20 @@ import {
   type ContentFormInput,
 } from '@/app/(auth)/admin/conteudos/actions';
 import { CONTENT_KIND_OPTIONS } from '@/lib/notices';
+import { createClient } from '@/lib/supabase/client';
 import type { StudyContent } from '@/types';
+
+const MATERIAL_MAX_SIZE = 10 * 1024 * 1024;
+
+function slugify(name: string): string {
+  return name
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .replace(/\.[a-z0-9]+$/i, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '') || 'material';
+}
 
 function emptyForm(): ContentFormInput {
   return { title: '', description: '', kind: 'video', url: '', module: '', duration_minutes: '', published: false };
@@ -35,8 +48,10 @@ type ContentFormModalProps = {
 
 function ContentFormModal({ content, onClose }: ContentFormModalProps) {
   const [form, setForm] = useState<ContentFormInput>(content ? formFromContent(content) : emptyForm());
+  const [materialFile, setMaterialFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const materialInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const handleKey = (keyboardEvent: KeyboardEvent) => {
@@ -54,10 +69,41 @@ function ContentFormModal({ content, onClose }: ContentFormModalProps) {
     submitEvent.preventDefault();
     setError(null);
     startTransition(async () => {
-      const result = content ? await updateContent(content.id, form) : await createContent(form);
+      let nextForm = form;
+      if (form.kind === 'material' && materialFile) {
+        const supabase = createClient();
+        const path = `${Date.now()}-${slugify(materialFile.name)}.pdf`;
+        const { error: uploadError } = await supabase.storage.from('materiais').upload(path, materialFile);
+        if (uploadError) {
+          setError('Não foi possível enviar o PDF. Tente novamente.');
+          return;
+        }
+        const { data } = supabase.storage.from('materiais').getPublicUrl(path);
+        nextForm = { ...form, url: data.publicUrl };
+        setForm(nextForm);
+      }
+      if (form.kind === 'material' && !materialFile && !form.url.trim()) {
+        setError('Envie o PDF do material.');
+        return;
+      }
+      const result = content ? await updateContent(content.id, nextForm) : await createContent(nextForm);
       if (result.ok) onClose();
       else setError(result.error);
     });
+  };
+
+  const pickMaterial = (picked: File | null) => {
+    if (!picked) return;
+    if (picked.type !== 'application/pdf') {
+      setError('Envie o material em PDF.');
+      return;
+    }
+    if (picked.size > MATERIAL_MAX_SIZE) {
+      setError('O PDF pode ter no máximo 10 MB.');
+      return;
+    }
+    setError(null);
+    setMaterialFile(picked);
   };
 
   return (
@@ -94,10 +140,41 @@ function ContentFormModal({ content, onClose }: ContentFormModalProps) {
             </label>
           </div>
 
-          <label className="portal-field">
-            <span>Link *</span>
-            <input required type="url" value={form.url} onChange={set('url')} placeholder="https://youtube.com/..." />
-          </label>
+          {form.kind === 'material' ? (
+            <div className="portal-field">
+              <span>PDF do material *</span>
+              <div
+                className={`portal-dropzone${isPending ? ' is-disabled' : ''}`}
+                role="button"
+                tabIndex={0}
+                aria-label="Enviar PDF do material"
+                onClick={() => !isPending && materialInputRef.current?.click()}
+                onKeyDown={(key) => { if (key.key === 'Enter' || key.key === ' ') materialInputRef.current?.click(); }}
+                onDragOver={(dragEvent) => dragEvent.preventDefault()}
+                onDrop={(dropEvent) => { dropEvent.preventDefault(); pickMaterial(dropEvent.dataTransfer.files?.[0] ?? null); }}
+              >
+                <input
+                  ref={materialInputRef}
+                  type="file"
+                  accept="application/pdf"
+                  className="portal-file-input"
+                  onChange={(change) => { pickMaterial(change.target.files?.[0] ?? null); change.target.value = ''; }}
+                />
+                {materialFile ? (
+                  <><FileText size={22} /><strong>{materialFile.name}</strong><small>Clique ou arraste outro PDF para substituir</small></>
+                ) : form.url ? (
+                  <><FileText size={22} /><strong>PDF atual mantido</strong><small>Clique ou arraste um novo PDF para substituir</small></>
+                ) : (
+                  <><UploadCloud size={22} /><strong>Clique para escolher ou arraste o PDF aqui</strong><small>PDF · até 10 MB</small></>
+                )}
+              </div>
+            </div>
+          ) : (
+            <label className="portal-field">
+              <span>Link *</span>
+              <input required type="url" value={form.url} onChange={set('url')} placeholder="https://youtube.com/..." />
+            </label>
+          )}
 
           <label className="portal-field">
             <span>Módulo / percurso</span>

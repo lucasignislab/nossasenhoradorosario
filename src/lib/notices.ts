@@ -16,6 +16,7 @@ export const CONTENT_KIND_OPTIONS: { value: ContentKind; label: string }[] = [
   { value: 'video', label: 'Vídeo' },
   { value: 'artigo', label: 'Artigo' },
   { value: 'documento', label: 'Documento' },
+  { value: 'material', label: 'Material em PDF' },
 ];
 
 export function contentKindLabel(kind: ContentKind): string {

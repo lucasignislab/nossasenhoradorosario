@@ -152,7 +152,7 @@ export type Notice = {
   updated_at: string;
 };
 
-export type ContentKind = 'video' | 'artigo' | 'documento';
+export type ContentKind = 'video' | 'artigo' | 'documento' | 'material';
 
 export type StudyContent = {
   id: string;
@@ -174,6 +174,27 @@ export type ContentProgress = {
   content_id: string;
   profile_id: string;
   completed_at: string;
+};
+
+export type PontoFolder = {
+  id: string;
+  name: string;
+  parent_id: string | null;
+  sort_order: number;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type Ponto = {
+  id: string;
+  folder_id: string;
+  title: string;
+  file_path: string;
+  file_name: string | null;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
 };
 
 export type CleaningShiftKind = 'thursday' | 'saturday';

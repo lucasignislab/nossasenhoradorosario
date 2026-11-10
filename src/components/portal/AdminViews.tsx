@@ -59,7 +59,8 @@ import {
   formatFinanceDate,
   summarizeMonth,
 } from '@/lib/finance';
-import type { Attendance, CleaningShiftDate, CleaningShiftSignup, FinanceEntry, Notice, PortalEvent, Profile, StudyContent } from '@/types';
+import type { Attendance, CleaningShiftDate, CleaningShiftSignup, FinanceEntry, Notice, Ponto, PontoFolder, PortalEvent, Profile, StudyContent } from '@/types';
+import { PontosManager } from './PontosManager';
 import { AttendanceSheet } from './AttendanceSheet';
 
 // Dados demonstrativos usados apenas pela prévia visual (portal-preview / Storybook).
@@ -659,9 +660,9 @@ const previewContents: StudyContent[] = [
   { id: 'preview-c3', title: 'Ervas de proteção', description: null, kind: 'documento', url: 'https://example.com', module: 'Ervas e fundamentos', duration_minutes: null, published: false, sort_order: 1, created_by: null, created_at: '2026-07-01T00:00:00Z', updated_at: '2026-07-01T00:00:00Z' },
 ];
 
-const contentKindIcons = { video: Play, artigo: BookOpen, documento: FileText } as const;
+const contentKindIcons = { video: Play, artigo: BookOpen, documento: FileText, material: FileText } as const;
 
-export function ContentManagement({ contents }: { contents?: StudyContent[] }) {
+export function ContentManagement({ contents, pontoFolders = [], pontos = [] }: { contents?: StudyContent[]; pontoFolders?: PontoFolder[]; pontos?: Ponto[] }) {
   const contentList = contents ?? previewContents;
   const publishedCount = contentList.filter((content) => content.published).length;
   const modules = new Set(contentList.map((content) => content.module ?? 'Biblioteca geral'));
@@ -701,6 +702,7 @@ export function ContentManagement({ contents }: { contents?: StudyContent[] }) {
           })
         )}
       </div></article>
+      <PontosManager folders={pontoFolders} pontos={pontos} />
     </div>
   );
 }
