@@ -43,7 +43,7 @@ export interface DashboardLayoutProps {
 
 const memberMenu = [
   { label: 'Visão geral', path: '', icon: Home },
-  { label: 'Agenda interna', path: '/agenda', icon: CalendarDays },
+  { label: 'Calendário', path: '/agenda', icon: CalendarDays },
   { label: 'Quem vai levar', path: '/levar', icon: PackageCheck },
   { label: 'Escala de cambone', path: '/cambones', icon: UserRoundCheck },
   { label: 'Escala de cuidados', path: '/faxinas', icon: Sparkles },

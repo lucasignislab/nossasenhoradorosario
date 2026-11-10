@@ -241,7 +241,12 @@ Margens, paddings e gaps são estritamente múltiplos de 8px:
 *   **Gestão (`/admin/cambones`, gestores de conteúdo):** escala filhos por gira com função/observação opcional, acompanha respostas (aguardando/confirmado/recusou) e remove da escala. O seletor usa a view `directory_members` (nomes de ativos, security definer — funciona também para o papel editor, que não lê `profiles`).
 *   **Filho (`/dashboard/cambones`):** vê suas escalas, responde com "Confirmar" ou "Não posso" (trigger `protect_cambone_assignment_fields` limita o filho a mudar apenas o próprio status) e acompanha a escala das próximas giras.
 
-### 5.11. Roadmap — onboarding por perfil
+### 5.11. Calendário da área dos filhos (`/dashboard/agenda`, rota ICS `/api/calendario`)
+
+*   A antiga "Agenda interna" virou **Calendário**: grade mensal navegável (‹ ›, botão "Hoje"), marcadores coloridos por categoria (gira, festividade, ação social, curso) e painel "Atividades do dia" ao tocar em uma data — com confirmação de presença, auto-registro de frequência e link "Salvar no Google Agenda" por evento.
+*   **Assinatura do calendário pessoal** (superando o concorrente): rota pública `/api/calendario` gera um feed ICS de todas as atividades confirmadas (cache de 1h). O filho copia o endereço uma vez e as giras aparecem e atualizam sozinhas no Google Agenda ("Adicionar por URL") e no Apple Calendar ("Nova assinatura de calendário"). Helpers em `src/lib/calendar.ts`.
+
+### 5.12. Roadmap — onboarding por perfil
 
 *   Criar fluxo de onboarding para cada cadastro novo, específico por papel:
     *   **Filho da casa (member):** boas-vindas, como registrar a frequência (antecipado em `/dashboard/frequencia` ou no dia pelo banner/home), escala de cuidados (`/dashboard/faxinas`) e mensalidade via Pix.

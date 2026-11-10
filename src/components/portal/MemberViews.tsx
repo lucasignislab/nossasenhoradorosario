@@ -1,12 +1,10 @@
 import {
-  ArrowRight,
   Bell,
   BookOpen,
   CalendarCheck,
   CalendarDays,
   CheckCircle2,
   Clock3,
-  Download,
   FileText,
   HeartHandshake,
   Play,
@@ -20,7 +18,8 @@ import { ContentProgressToggle } from './ContentProgressToggle';
 import { ShiftSignupButton } from './CleaningShiftControls';
 import { CopyPixKeyButton, ReceiptUploadButton, RegisterMensalidadeForm } from './MensalidadeControls';
 import { SelfAttendanceControls, type SelfAttendanceRecord } from './SelfAttendanceControls';
-import { eventDateParts, formatEventDateLong, formatEventTime } from '@/lib/events';
+import { MemberCalendar } from './CalendarViews';
+import { eventDateParts, formatEventDateLong, formatEventTime, todayISODate } from '@/lib/events';
 import { currentMonthRange, formatBRL, formatFinanceDate } from '@/lib/finance';
 import { CLEANING_SHIFT_MAX, CLEANING_SHIFT_MIN, cleaningKindLabel, cleaningShiftStatus } from '@/lib/cleaning';
 import { contentKindLabel, formatDuration, formatRelativeDate, noticeCategoryLabel } from '@/lib/notices';
@@ -46,11 +45,11 @@ export function MemberAgenda({ events, confirmedEventIds, selfAttendance }: Memb
   const eventList = events ?? previewMemberEvents;
   const confirmed = new Set(confirmedEventIds ?? []);
   const self = selfAttendance ?? {};
-  const nextEvent = eventList[0] ?? null;
+  const nextEvent = eventList.find((event) => event.event_date >= todayISODate()) ?? null;
 
   return (
     <div className="portal-page">
-      <PageHeader eyebrow="Área dos filhos · Agenda" title="Nossa caminhada no mês" description="Giras, estudos, reuniões e compromissos internos organizados em um só lugar." />
+      <PageHeader eyebrow="Área dos filhos · Calendário" title="Nossa caminhada no mês" description="Giras, estudos, reuniões e compromissos internos organizados em um só lugar — navegue pelos meses e toque em um dia." />
       {nextEvent ? (
         <section className="member-feature-card">
           <div>
@@ -73,28 +72,13 @@ export function MemberAgenda({ events, confirmedEventIds, selfAttendance }: Memb
         </section>
       ) : null}
       <section className="portal-layout portal-layout--overview">
-        <article className="portal-panel"><PanelHeader eyebrow="Programação" title="Próximas atividades" />
-          {eventList.length === 0 ? (
-            <p className="portal-panel__copy">Nenhuma atividade agendada no momento. Volte em breve!</p>
-          ) : (
-            <div className="member-agenda-list">
-              {eventList.map((event) => {
-                const parts = eventDateParts(event.event_date);
-                const isConfirmed = confirmed.has(event.id);
-                return (
-                  <div key={event.id}>
-                    <span><strong>{parts.day}</strong><small>{parts.month}</small></span>
-                    <div>
-                      <StatusPill tone={isConfirmed ? 'info' : 'neutral'}>{isConfirmed ? 'Presença confirmada' : (event.entity ?? 'Corrente')}</StatusPill>
-                      <h3>{event.title}</h3>
-                      <p><Clock3 size={13} /> {formatEventTime(event.event_time)} · {event.location}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </article>
+        <div>
+          <MemberCalendar
+            events={eventList}
+            confirmedEventIds={confirmedEventIds ?? []}
+            selfAttendance={self}
+          />
+        </div>
         <div className="portal-stack"><article className="portal-panel"><PanelHeader eyebrow="Sua agenda" title="Resumo" /><dl className="portal-definition-list"><div><dt>Atividades</dt><dd>{eventList.length}</dd></div><div><dt>Confirmadas</dt><dd>{confirmed.size}</dd></div><div><dt>Aguardando você</dt><dd>{eventList.length - confirmed.size}</dd></div></dl></article><article className="portal-note-card portal-note-card--light"><HeartHandshake size={22} /><p>No dia da gira, registre sua presença por aqui mesmo — vale como frequência oficial. Se não puder vir, justifique por aqui também.</p><span>Frequência oficial</span></article></div>
       </section>
     </div>

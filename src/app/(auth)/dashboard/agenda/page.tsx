@@ -8,12 +8,15 @@ export default async function AgendaPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
+  // Do mês anterior em diante: o calendário permite navegar meses para trás.
+  const rangeStart = `${todayISODate().slice(0, 7)}-01`;
+
   const [eventsResult, confirmationsResult] = await Promise.all([
     supabase
       .from('events')
       .select('*')
       .eq('status', 'confirmada')
-      .gte('event_date', todayISODate())
+      .gte('event_date', rangeStart)
       .order('event_date', { ascending: true })
       .order('event_time', { ascending: true }),
     user

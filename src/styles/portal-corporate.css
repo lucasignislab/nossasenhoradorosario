@@ -806,3 +806,27 @@
 .portal-mural-item__roster span.is-delivered { color: var(--portal-success); }
 .portal-mural-admin__toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
 .portal-mural-admin__toolbar .portal-progress { flex: 1 1 240px; }
+
+/* Calendário da área dos filhos */
+.portal-calendar__nav { display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-bottom: 10px; }
+.portal-calendar { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+.portal-calendar__weekday { padding: 4px 0; color: var(--portal-text-faint); font-size: 10px; font-weight: 600; text-align: center; text-transform: uppercase; letter-spacing: .04em; }
+.portal-calendar__day { display: grid; justify-items: center; gap: 3px; min-height: 52px; padding: 7px 2px 5px; border: 1px solid transparent; border-radius: 7px; background: transparent; color: var(--portal-text-soft); font-size: 12px; cursor: pointer; }
+.portal-calendar__day:hover { background: #f5f6f8; }
+.portal-calendar__day.is-outside { color: #c3c6cb; }
+.portal-calendar__day.is-today > span { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--portal-accent); color: #fff; font-weight: 650; }
+.portal-calendar__day.is-selected { border-color: var(--portal-accent); background: var(--portal-accent-soft); }
+.portal-calendar__dots { display: inline-flex; align-items: center; gap: 3px; font-style: normal; }
+.portal-calendar__dots b { width: 6px; height: 6px; border-radius: 50%; background: var(--portal-accent); }
+.portal-calendar__dots b.is-gira { background: var(--portal-accent); }
+.portal-calendar__dots b.is-festividade { background: var(--portal-warning); }
+.portal-calendar__dots b.is-acao-social { background: var(--portal-success); }
+.portal-calendar__dots b.is-curso { background: var(--portal-info); }
+.portal-calendar__dots em { color: var(--portal-text-faint); font-size: 9px; font-style: normal; }
+.portal-calendar__legend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 10px; color: var(--portal-text-faint); font-size: 10px; }
+.portal-calendar__legend b { display: inline-block; width: 7px; height: 7px; margin-right: 4px; border-radius: 50%; }
+.portal-calendar__legend b.is-gira { background: var(--portal-accent); }
+.portal-calendar__legend b.is-festividade { background: var(--portal-warning); }
+.portal-calendar__legend b.is-acao-social { background: var(--portal-success); }
+.portal-calendar__legend b.is-curso { background: var(--portal-info); }
+.portal-calendar__day-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 6px; }
