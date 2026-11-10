@@ -278,3 +278,6 @@
 @media (prefers-reduced-motion: reduce) {
   .dashboard-layout__sidebar { transition: none; }
 }
+
+/* Foto do usuário logado (sidebar e cabeçalho) */
+.dashboard-layout__user-avatar-img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; display: block; }

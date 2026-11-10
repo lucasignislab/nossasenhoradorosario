@@ -246,7 +246,19 @@ Margens, paddings e gaps são estritamente múltiplos de 8px:
 *   A antiga "Agenda interna" virou **Calendário**: grade mensal navegável (‹ ›, botão "Hoje"), marcadores coloridos por categoria (gira, festividade, ação social, curso) e painel "Atividades do dia" ao tocar em uma data — com confirmação de presença, auto-registro de frequência e link "Salvar no Google Agenda" por evento.
 *   **Assinatura do calendário pessoal** (superando o concorrente): rota pública `/api/calendario` gera um feed ICS de todas as atividades confirmadas (cache de 1h). O filho copia o endereço uma vez e as giras aparecem e atualizam sozinhas no Google Agenda ("Adicionar por URL") e no Apple Calendar ("Nova assinatura de calendário"). Helpers em `src/lib/calendar.ts`.
 
-### 5.12. Roadmap — onboarding por perfil
+### 5.12. Ficha espiritual do filho (colunas `guia_frente`, `orixa_cabeca`, `adjunto` em `profiles`)
+
+*   Migration `supabase/migrations/202611100004_ficha_espiritual.sql`. Campos na ordem definida pela casa: **Guia de Frente → Orixá de Cabeça → Adjuntó**.
+*   **Gestão (`/admin/membros`):** botão "Ficha espiritual" por membro ativo abre modal de edição (action `updateSpiritualRecord`, somente administração).
+*   **Filho (`/dashboard/perfil`):** preenche a ficha completa — contato e ficha espiritual (ordem: Guia de Frente → Orixá de Cabeça → Adjuntó). A administração pode corrigir pelo modal "Ficha espiritual" em `/admin/membros`. O trigger `protect_profile_access_fields` protege apenas papel e situação; o salvamento usa upsert (autocria a ficha de quem entrou pelo Google sem linha em `profiles`, via policy "Usuário cria a própria ficha").
+
+### 5.13. Foto de perfil do filho (coluna `avatar_url` em `profiles`, bucket `avatars`)
+
+*   Migration `supabase/migrations/202611100006_avatar.sql`: coluna `avatar_url text` e bucket público `avatars` (leitura aberta a autenticados; escrita apenas dentro da pasta do próprio usuário, `<uid>/...`).
+*   **Filho (`/dashboard/perfil`):** componente `AvatarUpload` (`src/components/features/AvatarUpload.tsx`) com preview circular, clique para escolher, validação (JPG/PNG/WebP, até 5 MB) e remoção. O upload sobe na hora para o Storage; a URL é gravada em `profiles.avatar_url` pelo `updateProfile` (campo oculto `avatarUrl`).
+*   **Exibição:** componente `MemberAvatar` (`src/components/portal/MemberAvatar.tsx`) mostra a foto nas listas — membros (`/admin/membros`), chamada/frequência, aprovações e visão geral da administração — caindo na inicial do nome quando não há foto. A foto também aparece no cartão do usuário na barra lateral e no botão da conta no cabeçalho (`DashboardLayout`, prop `user.avatarUrl`).
+
+### 5.14. Roadmap — onboarding por perfil
 
 *   Criar fluxo de onboarding para cada cadastro novo, específico por papel:
     *   **Filho da casa (member):** boas-vindas, como registrar a frequência (antecipado em `/dashboard/frequencia` ou no dia pelo banner/home), escala de cuidados (`/dashboard/faxinas`) e mensalidade via Pix.

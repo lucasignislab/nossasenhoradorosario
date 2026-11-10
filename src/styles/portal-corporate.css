@@ -830,3 +830,29 @@
 .portal-calendar__legend b.is-acao-social { background: var(--portal-success); }
 .portal-calendar__legend b.is-curso { background: var(--portal-info); }
 .portal-calendar__day-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 6px; }
+
+/* Ficha espiritual no perfil */
+.profile-page__spiritual { display: grid; gap: 10px; margin: 6px 0; padding: 14px; border: 1px solid var(--portal-border); border-radius: 8px; }
+.profile-page__spiritual legend { padding: 0 6px; color: var(--portal-text-faint); font-size: 10px; font-weight: 650; text-transform: uppercase; letter-spacing: .05em; }
+.profile-page__spiritual > small { color: var(--portal-text-faint); font-size: 10px; }
+
+/* Foto de perfil (avatar) do membro */
+.avatar-upload { display: flex; align-items: center; gap: 16px; margin-bottom: 22px; }
+.avatar-upload__preview {
+  position: relative; width: 88px; height: 88px; flex: none; padding: 0;
+  border-radius: 50%; border: 1px solid var(--portal-border, #d8d2c7);
+  background: var(--portal-panel, #f7f4ee); color: var(--portal-text-soft, #6b655b);
+  display: grid; place-items: center; cursor: pointer; overflow: visible; transition: border-color .15s ease;
+}
+.avatar-upload__preview:hover { border-color: var(--portal-accent, #8a6d3b); }
+.avatar-upload__preview:disabled { cursor: wait; opacity: .7; }
+.avatar-upload__preview img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: block; }
+.avatar-upload__badge {
+  position: absolute; right: -2px; bottom: -2px; width: 26px; height: 26px;
+  border-radius: 50%; background: var(--portal-accent, #8a6d3b); color: #fff;
+  display: grid; place-items: center; border: 2px solid var(--portal-panel, #f7f4ee);
+}
+.avatar-upload__side { display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
+.avatar-upload__side strong { font-size: 13px; color: var(--portal-text, #2b2620); }
+.avatar-upload__side small { font-size: 11px; line-height: 1.5; color: var(--portal-text-soft, #6b655b); }
+.portal-member-avatar { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; flex: none; display: block; }

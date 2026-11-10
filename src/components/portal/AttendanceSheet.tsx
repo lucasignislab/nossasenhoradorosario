@@ -4,7 +4,8 @@ import { useMemo, useState, useTransition } from 'react';
 import { Check, ListChecks } from 'lucide-react';
 import { saveAttendance, type AttendanceRecord } from '@/app/(auth)/admin/frequencia/actions';
 import { formatEventDate, todayISODate } from '@/lib/events';
-import { profileDisplayName, profileInitial } from '@/lib/members';
+import { MemberAvatar } from './MemberAvatar';
+import { profileDisplayName } from '@/lib/members';
 import type { PortalEvent, Profile } from '@/types';
 
 type MemberMark = 'present' | 'absent' | 'justified';
@@ -125,7 +126,7 @@ export function AttendanceSheet({ events, members, existing }: AttendanceSheetPr
                 <tr key={member.id} className={effectiveMarks[member.id] ? undefined : 'is-unrecorded'}>
                   <td>
                     <div className="portal-table-person">
-                      <span>{profileInitial(member)}</span>
+                      <MemberAvatar member={member} />
                       <strong>{profileDisplayName(member)}</strong>
                       {!effectiveMarks[member.id] ? <em className="portal-unrecorded-tag">Sem registro</em> : null}
                     </div>

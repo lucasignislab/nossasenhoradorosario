@@ -3,11 +3,11 @@
 import { useMemo, useState } from 'react';
 import { Search } from 'lucide-react';
 import { StatusPill } from './PortalUI';
-import { MemberStatusActions } from './MemberActions';
+import { MemberStatusActions, SpiritualRecordButton } from './MemberActions';
+import { MemberAvatar } from './MemberAvatar';
 import {
   formatJoinedAt,
   profileDisplayName,
-  profileInitial,
   roleLabel,
   statusPresentation,
 } from '@/lib/members';
@@ -50,7 +50,7 @@ export function MembersTable({ members }: { members: Profile[] }) {
                   <tr key={member.id}>
                     <td>
                       <div className="portal-table-person">
-                        <span>{profileInitial(member)}</span>
+                        <MemberAvatar member={member} />
                         <strong>{profileDisplayName(member)}</strong>
                       </div>
                     </td>
@@ -65,6 +65,7 @@ export function MembersTable({ members }: { members: Profile[] }) {
                         role={member.role}
                         name={profileDisplayName(member)}
                       />
+                      {member.status === 'active' ? <SpiritualRecordButton member={member} /> : null}
                     </td>
                   </tr>
                 );

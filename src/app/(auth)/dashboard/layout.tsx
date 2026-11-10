@@ -12,6 +12,7 @@ type Profile = {
   full_name: string;
   role: 'member' | 'admin' | 'developer';
   status: 'pending' | 'active' | 'suspended';
+  avatar_url: string | null;
 };
 
 export default async function AuthenticatedDashboardLayout({ children }: DashboardLayoutRouteProps) {
@@ -32,7 +33,7 @@ export default async function AuthenticatedDashboardLayout({ children }: Dashboa
 
   const { data } = await supabase
     .from('profiles')
-    .select('full_name, role, status')
+    .select('full_name, role, status, avatar_url')
     .eq('id', user.id)
     .single();
   const profile = data as Profile | null;
@@ -41,6 +42,7 @@ export default async function AuthenticatedDashboardLayout({ children }: Dashboa
     name: profile?.full_name || user.user_metadata.full_name || user.email?.split('@')[0] || 'Membro',
     email: user.email || '',
     role: profile?.role || 'member',
+    avatarUrl: profile?.avatar_url || null,
   };
 
   if (!profile || profile.status !== 'active') {

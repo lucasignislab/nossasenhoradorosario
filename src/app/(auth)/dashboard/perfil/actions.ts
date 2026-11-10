@@ -8,12 +8,20 @@ export type ProfileFormState = {
   message: string;
 };
 
+function sanitize(value: FormDataEntryValue | null, max = 120): string {
+  return String(value ?? '').trim().slice(0, max);
+}
+
 export async function updateProfile(
   _previousState: ProfileFormState,
   formData: FormData,
 ): Promise<ProfileFormState> {
-  const fullName = String(formData.get('fullName') ?? '').trim();
-  const phone = String(formData.get('phone') ?? '').trim();
+  const fullName = sanitize(formData.get('fullName'));
+  const phone = sanitize(formData.get('phone'), 30);
+  const guiaFrente = sanitize(formData.get('guiaFrente'));
+  const orixaCabeca = sanitize(formData.get('orixaCabeca'));
+  const adjunto = sanitize(formData.get('adjunto'));
+  const avatarUrl = sanitize(formData.get('avatarUrl'), 500);
 
   if (fullName.length < 3 || fullName.length > 120) {
     return { status: 'error', message: 'Informe seu nome completo.' };
@@ -27,10 +35,21 @@ export async function updateProfile(
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { status: 'error', message: 'Sua sessão expirou. Entre novamente.' };
 
+  // Upsert: cobre quem entrou pelo Google e ficou sem linha em profiles —
+  // a ficha é criada na hora, com papel/situação nos defaults protegidos.
   const { error } = await supabase
     .from('profiles')
-    .update({ full_name: fullName, phone: phone || null })
-    .eq('id', user.id);
+    .upsert({
+      id: user.id,
+      full_name: fullName,
+      phone: phone || null,
+      guia_frente: guiaFrente || null,
+      orixa_cabeca: orixaCabeca || null,
+      adjunto: adjunto || null,
+      avatar_url: avatarUrl || null,
+    })
+    .select('id')
+    .single();
 
   if (error) return { status: 'error', message: 'Não foi possível salvar agora. Tente novamente.' };
 

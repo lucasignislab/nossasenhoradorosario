@@ -38,6 +38,7 @@ export interface DashboardLayoutProps {
     name: string;
     email: string;
     role?: 'member' | 'admin' | 'developer' | 'editor';
+    avatarUrl?: string | null;
   };
 }
 
@@ -166,7 +167,12 @@ export function DashboardLayout({
 
         <div className="dashboard-layout__sidebar-footer">
           <div className="dashboard-layout__user">
-            <div className="dashboard-layout__user-avatar" aria-hidden="true">{user.name.charAt(0).toUpperCase()}</div>
+            <div className="dashboard-layout__user-avatar" aria-hidden="true">
+              {user.avatarUrl
+                // eslint-disable-next-line @next/next/no-img-element
+                ? <img src={user.avatarUrl} alt="" className="dashboard-layout__user-avatar-img" />
+                : user.name.charAt(0).toUpperCase()}
+            </div>
             <div className="dashboard-layout__user-info">
               <p className="dashboard-layout__user-name">{user.name}</p>
               <p className="dashboard-layout__user-email">{roleNames[user.role ?? 'member']}</p>
@@ -203,7 +209,10 @@ export function DashboardLayout({
             <button type="button" aria-label="Central de ajuda"><HelpCircle size={17} /></button>
             <button type="button" aria-label="Notificações"><Bell size={17} /><i /></button>
             <button className="dashboard-layout__header-user" type="button" aria-label="Abrir menu da conta">
-              {user.name.charAt(0).toUpperCase()}
+              {user.avatarUrl
+                // eslint-disable-next-line @next/next/no-img-element
+                ? <img src={user.avatarUrl} alt="" className="dashboard-layout__user-avatar-img" />
+                : user.name.charAt(0).toUpperCase()}
             </button>
           </div>
         </header>

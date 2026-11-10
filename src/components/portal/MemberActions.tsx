@@ -1,15 +1,16 @@
 'use client'
 
-import { useState, useTransition } from 'react'
-import { Megaphone, UserRoundCheck, UserRoundX, UserRoundPen } from 'lucide-react'
+import { useEffect, useState, useTransition } from 'react'
+import { Check, Megaphone, Sparkles as SparklesIcon, UserRoundCheck, UserRoundX, UserRoundPen, X } from 'lucide-react'
 import {
   approveMember,
   rejectMember,
   reactivateMember,
   setMemberRole,
   suspendMember,
+  updateSpiritualRecord,
 } from '@/app/(auth)/admin/membros/actions'
-import type { ProfileRole } from '@/types'
+import type { Profile, ProfileRole } from '@/types'
 
 type ActionResult = { ok: true } | { ok: false; error: string }
 
@@ -160,5 +161,93 @@ export function MemberStatusActions({
       ) : null}
       <ActionError message={error} />
     </div>
+  )
+}
+
+// ---------- Ficha espiritual (somente administração) ----------
+
+export function SpiritualRecordButton({ member }: { member: Profile }) {
+  const [open, setOpen] = useState(false)
+  const [guiaFrente, setGuiaFrente] = useState(member.guia_frente ?? '')
+  const [orixaCabeca, setOrixaCabeca] = useState(member.orixa_cabeca ?? '')
+  const [adjunto, setAdjunto] = useState(member.adjunto ?? '')
+  const [error, setError] = useState<string | null>(null)
+  const [isPending, startTransition] = useTransition()
+
+  useEffect(() => {
+    if (!open) return
+    const handleKey = (keyboardEvent: KeyboardEvent) => {
+      if (keyboardEvent.key === 'Escape') setOpen(false)
+    }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [open])
+
+  const submit = (submitEvent: React.FormEvent) => {
+    submitEvent.preventDefault()
+    setError(null)
+    startTransition(async () => {
+      const result = await updateSpiritualRecord(member.id, {
+        guia_frente: guiaFrente,
+        orixa_cabeca: orixaCabeca,
+        adjunto,
+      })
+      if (result.ok) setOpen(false)
+      else setError(result.error)
+    })
+  }
+
+  return (
+    <>
+      <button
+        type="button"
+        className="portal-button portal-button--secondary portal-button--small"
+        onClick={() => setOpen(true)}
+      >
+        <SparklesIcon size={16} strokeWidth={1.8} />
+        Ficha espiritual
+      </button>
+      {open ? (
+        <div className="portal-modal-overlay" role="presentation" onClick={() => setOpen(false)}>
+          <div
+            className="portal-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Ficha espiritual de ${member.full_name ?? 'membro'}`}
+            onClick={(click) => click.stopPropagation()}
+          >
+            <div className="portal-modal__header">
+              <h2>Ficha espiritual · {member.full_name ?? 'Membro'}</h2>
+              <button type="button" className="portal-icon-button" aria-label="Fechar" onClick={() => setOpen(false)}>
+                <X size={17} />
+              </button>
+            </div>
+            <form onSubmit={submit} className="portal-form">
+              <label className="portal-field">
+                <span>Guia de Frente</span>
+                <input value={guiaFrente} onChange={(change) => setGuiaFrente(change.target.value)} maxLength={120} placeholder="Ex.: Caboclo Sete Flechas" />
+              </label>
+              <label className="portal-field">
+                <span>Orixá de Cabeça</span>
+                <input value={orixaCabeca} onChange={(change) => setOrixaCabeca(change.target.value)} maxLength={120} placeholder="Ex.: Oxóssi" />
+              </label>
+              <label className="portal-field">
+                <span>Adjuntó</span>
+                <input value={adjunto} onChange={(change) => setAdjunto(change.target.value)} maxLength={120} placeholder="Ex.: Ogum" />
+              </label>
+              {error ? <p className="portal-action-error" role="alert">{error}</p> : null}
+              <div className="portal-modal__actions">
+                <button type="button" className="portal-button portal-button--secondary" onClick={() => setOpen(false)} disabled={isPending}>
+                  Cancelar
+                </button>
+                <button type="submit" className="portal-button portal-button--primary" disabled={isPending}>
+                  <Check size={15} /> Salvar ficha
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      ) : null}
+    </>
   )
 }

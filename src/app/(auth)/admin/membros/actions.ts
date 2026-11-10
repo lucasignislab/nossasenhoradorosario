@@ -99,3 +99,34 @@ export async function reactivateMember(profileId: string): Promise<ActionResult>
 export async function rejectMember(profileId: string): Promise<ActionResult> {
   return updateMemberStatus(profileId, 'suspended');
 }
+
+export type SpiritualRecordInput = {
+  guia_frente: string;
+  orixa_cabeca: string;
+  adjunto: string;
+};
+
+// Ficha espiritual do filho: preenchida somente pela administração
+// (o trigger protect_profile_access_fields bloqueia qualquer outro caminho).
+export async function updateSpiritualRecord(profileId: string, input: SpiritualRecordInput): Promise<ActionResult> {
+  if (!profileId) return { ok: false, error: 'Cadastro não informado.' };
+
+  try {
+    const { supabase, error: authError } = await requireAdministrator();
+    if (authError) return { ok: false, error: authError };
+
+    const { error } = await supabase.from('profiles').update({
+      guia_frente: input.guia_frente.trim() || null,
+      orixa_cabeca: input.orixa_cabeca.trim() || null,
+      adjunto: input.adjunto.trim() || null,
+    }).eq('id', profileId);
+
+    if (error) return { ok: false, error: 'Não foi possível salvar a ficha espiritual. Tente novamente.' };
+
+    revalidateMembers();
+    revalidatePath('/dashboard/perfil');
+    return { ok: true };
+  } catch {
+    return { ok: false, error: 'Erro inesperado. Tente novamente.' };
+  }
+}

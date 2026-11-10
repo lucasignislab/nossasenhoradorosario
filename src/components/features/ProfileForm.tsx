@@ -1,8 +1,9 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useActionState, useState } from 'react';
 import { LoaderCircle, Save } from 'lucide-react';
 import { updateProfile, type ProfileFormState } from '@/app/(auth)/dashboard/perfil/actions';
+import { AvatarUpload } from '@/components/features/AvatarUpload';
 
 type ProfileFormProps = {
   fullName: string;
@@ -10,13 +11,18 @@ type ProfileFormProps = {
   email: string;
   role: 'member' | 'admin' | 'developer';
   joinedAt: string | null;
+  guiaFrente: string | null;
+  orixaCabeca: string | null;
+  adjunto: string | null;
+  avatarUrl: string | null;
 };
 
 const initialState: ProfileFormState = { status: 'idle', message: '' };
 const roleNames = { member: 'Filho da casa', admin: 'Administração', developer: 'Acesso técnico' };
 
-export function ProfileForm({ fullName, phone, email, role, joinedAt }: ProfileFormProps) {
+export function ProfileForm({ fullName, phone, email, role, joinedAt, guiaFrente, orixaCabeca, adjunto, avatarUrl }: ProfileFormProps) {
   const [state, formAction, pending] = useActionState(updateProfile, initialState);
+  const [avatar, setAvatar] = useState(avatarUrl ?? '');
 
   return (
     <div className="profile-page">
@@ -28,6 +34,8 @@ export function ProfileForm({ fullName, phone, email, role, joinedAt }: ProfileF
 
       <div className="profile-page__layout profile-page__layout--classic">
         <form action={formAction} className="profile-page__form">
+          <input type="hidden" name="avatarUrl" value={avatar} />
+          <AvatarUpload value={avatar} onChange={setAvatar} name={fullName} />
           <div className="profile-page__field">
             <label htmlFor="fullName">Nome</label>
             <input id="fullName" name="fullName" defaultValue={fullName} minLength={3} maxLength={120} required />
@@ -46,6 +54,23 @@ export function ProfileForm({ fullName, phone, email, role, joinedAt }: ProfileF
             <input id="access" value={roleNames[role]} disabled />
             {joinedAt && <small>Na casa desde {new Intl.DateTimeFormat('pt-BR').format(new Date(`${joinedAt}T12:00:00`))}</small>}
           </div>
+
+          <fieldset className="profile-page__spiritual">
+            <legend>Ficha espiritual</legend>
+            <div className="profile-page__field">
+              <label htmlFor="guiaFrente">Guia de Frente</label>
+              <input id="guiaFrente" name="guiaFrente" defaultValue={guiaFrente ?? ''} maxLength={120} placeholder="Ex.: Caboclo Sete Flechas" />
+            </div>
+            <div className="profile-page__field">
+              <label htmlFor="orixaCabeca">Orixá de Cabeça</label>
+              <input id="orixaCabeca" name="orixaCabeca" defaultValue={orixaCabeca ?? ''} maxLength={120} placeholder="Ex.: Oxóssi" />
+            </div>
+            <div className="profile-page__field">
+              <label htmlFor="adjunto">Adjuntó</label>
+              <input id="adjunto" name="adjunto" defaultValue={adjunto ?? ''} maxLength={120} placeholder="Ex.: Ogum" />
+            </div>
+            <small>Preencha com cuidado — a administração acompanha e pode corrigir se algo estiver divergente.</small>
+          </fieldset>
 
           {state.message && (
             <p className={`profile-page__message is-${state.status}`} role={state.status === 'error' ? 'alert' : 'status'}>

@@ -8,6 +8,10 @@ export type Profile = {
   phone: string | null;
   role: ProfileRole;
   status: ProfileStatus;
+  guia_frente: string | null;
+  orixa_cabeca: string | null;
+  adjunto: string | null;
+  avatar_url: string | null;
   joined_at: string | null;
   created_at: string;
   updated_at: string;

@@ -30,10 +30,10 @@ import { MetricCard, PageHeader, PanelHeader, ProgressBar, StatusPill } from './
 import { FinanceTrendChart } from './FinanceTrendChart';
 import { ApprovalActions } from './MemberActions';
 import { MembersTable } from './MembersTable';
+import { MemberAvatar } from './MemberAvatar';
 import {
   formatJoinedAt,
   profileDisplayName,
-  profileInitial,
   roleLabel,
 } from '@/lib/members';
 import { eventCategoryLabel, eventDateParts, formatEventDateLong, formatEventTime, todayISODate } from '@/lib/events';
@@ -64,10 +64,10 @@ import { AttendanceSheet } from './AttendanceSheet';
 
 // Dados demonstrativos usados apenas pela prévia visual (portal-preview / Storybook).
 const previewAttendanceMembers: Profile[] = [
-  { id: 'preview-a1', full_name: 'Marina de Souza', phone: null, role: 'member', status: 'active', joined_at: null, created_at: '2026-01-01T00:00:00Z', updated_at: '2026-01-01T00:00:00Z' },
-  { id: 'preview-a2', full_name: 'Rafael Santos', phone: null, role: 'member', status: 'active', joined_at: null, created_at: '2026-01-01T00:00:00Z', updated_at: '2026-01-01T00:00:00Z' },
-  { id: 'preview-a3', full_name: 'Clara Oliveira', phone: null, role: 'member', status: 'active', joined_at: null, created_at: '2026-01-01T00:00:00Z', updated_at: '2026-01-01T00:00:00Z' },
-  { id: 'preview-a4', full_name: 'João Pereira', phone: null, role: 'member', status: 'active', joined_at: null, created_at: '2026-01-01T00:00:00Z', updated_at: '2026-01-01T00:00:00Z' },
+  { id: 'preview-a1', full_name: 'Marina de Souza', phone: null, role: 'member', status: 'active', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, joined_at: null, created_at: '2026-01-01T00:00:00Z', updated_at: '2026-01-01T00:00:00Z' },
+  { id: 'preview-a2', full_name: 'Rafael Santos', phone: null, role: 'member', status: 'active', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, joined_at: null, created_at: '2026-01-01T00:00:00Z', updated_at: '2026-01-01T00:00:00Z' },
+  { id: 'preview-a3', full_name: 'Clara Oliveira', phone: null, role: 'member', status: 'active', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, joined_at: null, created_at: '2026-01-01T00:00:00Z', updated_at: '2026-01-01T00:00:00Z' },
+  { id: 'preview-a4', full_name: 'João Pereira', phone: null, role: 'member', status: 'active', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, joined_at: null, created_at: '2026-01-01T00:00:00Z', updated_at: '2026-01-01T00:00:00Z' },
 ];
 
 const previewAttendanceEvents: PortalEvent[] = [
@@ -106,8 +106,8 @@ const previewOverviewEvents: PortalEvent[] = [
 ];
 
 const previewOverviewPending: Profile[] = [
-  { id: 'preview-op1', full_name: 'Marina de Souza', phone: null, role: 'member', status: 'pending', joined_at: null, created_at: '2026-07-21T00:00:00Z', updated_at: '2026-07-21T00:00:00Z' },
-  { id: 'preview-op2', full_name: 'Rafael Santos', phone: null, role: 'member', status: 'pending', joined_at: null, created_at: '2026-07-20T00:00:00Z', updated_at: '2026-07-20T00:00:00Z' },
+  { id: 'preview-op1', full_name: 'Marina de Souza', phone: null, role: 'member', status: 'pending', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, joined_at: null, created_at: '2026-07-21T00:00:00Z', updated_at: '2026-07-21T00:00:00Z' },
+  { id: 'preview-op2', full_name: 'Rafael Santos', phone: null, role: 'member', status: 'pending', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, joined_at: null, created_at: '2026-07-20T00:00:00Z', updated_at: '2026-07-20T00:00:00Z' },
 ];
 
 export function AdminOverview({ basePath = '/admin', activeMembers, pendingMembers, upcomingEvents, pendingProfiles, pinnedNotices, financeSummary, canSeeSensitive = true }: AdminOverviewProps) {
@@ -186,7 +186,7 @@ export function AdminOverview({ basePath = '/admin', activeMembers, pendingMembe
                 <div className="portal-person-list">
                   {pendingList.map((profile) => (
                     <div className="portal-person" key={profile.id}>
-                      <span>{profileInitial(profile)}</span>
+                      <MemberAvatar member={profile} />
                       <div><strong>{profileDisplayName(profile)}</strong><small>Recebido em {formatJoinedAt(profile.created_at)}</small></div>
                       <Link href={`${basePath}/membros`} aria-label={`Revisar cadastro de ${profileDisplayName(profile)}`}><ArrowRight size={16} /></Link>
                     </div>
@@ -529,7 +529,7 @@ export function AttendanceDashboard({ events, members, attendance }: AttendanceD
               ) : (
                 memberRows.map(({ member, present, total, percent, label, tone }) => (
                   <tr key={member.id}>
-                    <td><div className="portal-table-person"><span>{profileInitial(member)}</span><strong>{profileDisplayName(member)}</strong></div></td>
+                    <td><div className="portal-table-person"><MemberAvatar member={member} /><strong>{profileDisplayName(member)}</strong></div></td>
                     <td>{present}</td>
                     <td>{total}</td>
                     <td><strong>{percent}%</strong></td>
@@ -556,16 +556,16 @@ type MembersManagementProps = {
 
 // Dados demonstrativos usados apenas pela prévia visual (portal-preview / Storybook).
 const previewMembers: Profile[] = [
-  { id: 'preview-1', full_name: 'Ana Martins', phone: '(11) 99991-0001', role: 'member', status: 'active', joined_at: '2021-03-10', created_at: '2021-03-10T00:00:00Z', updated_at: '2021-03-10T00:00:00Z' },
-  { id: 'preview-2', full_name: 'Caio Almeida', phone: '(11) 99992-0002', role: 'member', status: 'active', joined_at: '2022-08-15', created_at: '2022-08-15T00:00:00Z', updated_at: '2022-08-15T00:00:00Z' },
-  { id: 'preview-3', full_name: 'Helena Rocha', phone: '(11) 99993-0003', role: 'member', status: 'active', joined_at: '2024-01-20', created_at: '2024-01-20T00:00:00Z', updated_at: '2024-01-20T00:00:00Z' },
-  { id: 'preview-4', full_name: 'Pedro Lima', phone: '(11) 99994-0004', role: 'member', status: 'suspended', joined_at: '2025-05-05', created_at: '2025-05-05T00:00:00Z', updated_at: '2025-05-05T00:00:00Z' },
+  { id: 'preview-1', full_name: 'Ana Martins', phone: '(11) 99991-0001', role: 'member', status: 'active', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, joined_at: '2021-03-10', created_at: '2021-03-10T00:00:00Z', updated_at: '2021-03-10T00:00:00Z' },
+  { id: 'preview-2', full_name: 'Caio Almeida', phone: '(11) 99992-0002', role: 'member', status: 'active', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, joined_at: '2022-08-15', created_at: '2022-08-15T00:00:00Z', updated_at: '2022-08-15T00:00:00Z' },
+  { id: 'preview-3', full_name: 'Helena Rocha', phone: '(11) 99993-0003', role: 'member', status: 'active', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, joined_at: '2024-01-20', created_at: '2024-01-20T00:00:00Z', updated_at: '2024-01-20T00:00:00Z' },
+  { id: 'preview-4', full_name: 'Pedro Lima', phone: '(11) 99994-0004', role: 'member', status: 'suspended', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, joined_at: '2025-05-05', created_at: '2025-05-05T00:00:00Z', updated_at: '2025-05-05T00:00:00Z' },
 ];
 
 const previewPending: Profile[] = [
-  { id: 'preview-p1', full_name: 'Marina de Souza', phone: '(11) 99990-0000', role: 'member', status: 'pending', joined_at: null, created_at: '2026-07-21T00:00:00Z', updated_at: '2026-07-21T00:00:00Z' },
-  { id: 'preview-p2', full_name: 'Rafael Santos', phone: '(11) 99991-0001', role: 'member', status: 'pending', joined_at: null, created_at: '2026-07-20T00:00:00Z', updated_at: '2026-07-20T00:00:00Z' },
-  { id: 'preview-p3', full_name: 'Clara Oliveira', phone: '(11) 99992-0002', role: 'member', status: 'pending', joined_at: null, created_at: '2026-07-19T00:00:00Z', updated_at: '2026-07-19T00:00:00Z' },
+  { id: 'preview-p1', full_name: 'Marina de Souza', phone: '(11) 99990-0000', role: 'member', status: 'pending', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, joined_at: null, created_at: '2026-07-21T00:00:00Z', updated_at: '2026-07-21T00:00:00Z' },
+  { id: 'preview-p2', full_name: 'Rafael Santos', phone: '(11) 99991-0001', role: 'member', status: 'pending', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, joined_at: null, created_at: '2026-07-20T00:00:00Z', updated_at: '2026-07-20T00:00:00Z' },
+  { id: 'preview-p3', full_name: 'Clara Oliveira', phone: '(11) 99992-0002', role: 'member', status: 'pending', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, joined_at: null, created_at: '2026-07-19T00:00:00Z', updated_at: '2026-07-19T00:00:00Z' },
 ];
 
 export function MembersManagement({ pending, members, counts }: MembersManagementProps) {
@@ -598,7 +598,7 @@ export function MembersManagement({ pending, members, counts }: MembersManagemen
             {pendingList.map((member) => (
               <article className="portal-approval-card" key={member.id}>
                 <div className="portal-approval-card__top">
-                  <span>{profileInitial(member)}</span>
+                  <MemberAvatar member={member} />
                   <div>
                     <h3>{profileDisplayName(member)}</h3>
                     <p>Recebido em {formatJoinedAt(member.created_at)}</p>
@@ -872,7 +872,7 @@ export function ChoresManagement({ dates, signups, profiles }: ChoresManagementP
 
         <div className="portal-stack">
           <article className="portal-note-card portal-note-card--light"><Sparkles size={22} /><p>As datas são geradas automaticamente: todas as quintas-feiras e um sábado por mês. O sábado padrão é o último do mês, mas você pode ajustá-lo em cada cartão.</p><span>Geração automática</span></article>
-          <article className="portal-note-card portal-note-card--light"><UsersRound size={22} /><p>Datas com menos de 7 inscritos aparecem com o aviso "Faltam N pessoas" também para os membros.</p><span>Equipe mínima</span></article>
+          <article className="portal-note-card portal-note-card--light"><UsersRound size={22} /><p>Datas com menos de 7 inscritos aparecem com o aviso &ldquo;Faltam N pessoas&rdquo; também para os membros.</p><span>Equipe mínima</span></article>
         </div>
       </section>
     </div>
