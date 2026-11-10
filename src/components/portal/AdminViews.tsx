@@ -65,10 +65,10 @@ import { AttendanceSheet } from './AttendanceSheet';
 
 // Dados demonstrativos usados apenas pela prévia visual (portal-preview / Storybook).
 const previewAttendanceMembers: Profile[] = [
-  { id: 'preview-a1', full_name: 'Marina de Souza', phone: null, role: 'member', status: 'active', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, joined_at: null, created_at: '2026-01-01T00:00:00Z', updated_at: '2026-01-01T00:00:00Z' },
-  { id: 'preview-a2', full_name: 'Rafael Santos', phone: null, role: 'member', status: 'active', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, joined_at: null, created_at: '2026-01-01T00:00:00Z', updated_at: '2026-01-01T00:00:00Z' },
-  { id: 'preview-a3', full_name: 'Clara Oliveira', phone: null, role: 'member', status: 'active', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, joined_at: null, created_at: '2026-01-01T00:00:00Z', updated_at: '2026-01-01T00:00:00Z' },
-  { id: 'preview-a4', full_name: 'João Pereira', phone: null, role: 'member', status: 'active', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, joined_at: null, created_at: '2026-01-01T00:00:00Z', updated_at: '2026-01-01T00:00:00Z' },
+  { id: 'preview-a1', full_name: 'Marina de Souza', phone: null, role: 'member', status: 'active', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, onboarded_at: null, joined_at: null, created_at: '2026-01-01T00:00:00Z', updated_at: '2026-01-01T00:00:00Z' },
+  { id: 'preview-a2', full_name: 'Rafael Santos', phone: null, role: 'member', status: 'active', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, onboarded_at: null, joined_at: null, created_at: '2026-01-01T00:00:00Z', updated_at: '2026-01-01T00:00:00Z' },
+  { id: 'preview-a3', full_name: 'Clara Oliveira', phone: null, role: 'member', status: 'active', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, onboarded_at: null, joined_at: null, created_at: '2026-01-01T00:00:00Z', updated_at: '2026-01-01T00:00:00Z' },
+  { id: 'preview-a4', full_name: 'João Pereira', phone: null, role: 'member', status: 'active', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, onboarded_at: null, joined_at: null, created_at: '2026-01-01T00:00:00Z', updated_at: '2026-01-01T00:00:00Z' },
 ];
 
 const previewAttendanceEvents: PortalEvent[] = [
@@ -107,8 +107,8 @@ const previewOverviewEvents: PortalEvent[] = [
 ];
 
 const previewOverviewPending: Profile[] = [
-  { id: 'preview-op1', full_name: 'Marina de Souza', phone: null, role: 'member', status: 'pending', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, joined_at: null, created_at: '2026-07-21T00:00:00Z', updated_at: '2026-07-21T00:00:00Z' },
-  { id: 'preview-op2', full_name: 'Rafael Santos', phone: null, role: 'member', status: 'pending', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, joined_at: null, created_at: '2026-07-20T00:00:00Z', updated_at: '2026-07-20T00:00:00Z' },
+  { id: 'preview-op1', full_name: 'Marina de Souza', phone: null, role: 'member', status: 'pending', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, onboarded_at: null, joined_at: null, created_at: '2026-07-21T00:00:00Z', updated_at: '2026-07-21T00:00:00Z' },
+  { id: 'preview-op2', full_name: 'Rafael Santos', phone: null, role: 'member', status: 'pending', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, onboarded_at: null, joined_at: null, created_at: '2026-07-20T00:00:00Z', updated_at: '2026-07-20T00:00:00Z' },
 ];
 
 export function AdminOverview({ basePath = '/admin', activeMembers, pendingMembers, upcomingEvents, pendingProfiles, pinnedNotices, financeSummary, canSeeSensitive = true }: AdminOverviewProps) {
@@ -557,16 +557,16 @@ type MembersManagementProps = {
 
 // Dados demonstrativos usados apenas pela prévia visual (portal-preview / Storybook).
 const previewMembers: Profile[] = [
-  { id: 'preview-1', full_name: 'Ana Martins', phone: '(11) 99991-0001', role: 'member', status: 'active', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, joined_at: '2021-03-10', created_at: '2021-03-10T00:00:00Z', updated_at: '2021-03-10T00:00:00Z' },
-  { id: 'preview-2', full_name: 'Caio Almeida', phone: '(11) 99992-0002', role: 'member', status: 'active', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, joined_at: '2022-08-15', created_at: '2022-08-15T00:00:00Z', updated_at: '2022-08-15T00:00:00Z' },
-  { id: 'preview-3', full_name: 'Helena Rocha', phone: '(11) 99993-0003', role: 'member', status: 'active', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, joined_at: '2024-01-20', created_at: '2024-01-20T00:00:00Z', updated_at: '2024-01-20T00:00:00Z' },
-  { id: 'preview-4', full_name: 'Pedro Lima', phone: '(11) 99994-0004', role: 'member', status: 'suspended', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, joined_at: '2025-05-05', created_at: '2025-05-05T00:00:00Z', updated_at: '2025-05-05T00:00:00Z' },
+  { id: 'preview-1', full_name: 'Ana Martins', phone: '(11) 99991-0001', role: 'member', status: 'active', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, onboarded_at: null, joined_at: '2021-03-10', created_at: '2021-03-10T00:00:00Z', updated_at: '2021-03-10T00:00:00Z' },
+  { id: 'preview-2', full_name: 'Caio Almeida', phone: '(11) 99992-0002', role: 'member', status: 'active', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, onboarded_at: null, joined_at: '2022-08-15', created_at: '2022-08-15T00:00:00Z', updated_at: '2022-08-15T00:00:00Z' },
+  { id: 'preview-3', full_name: 'Helena Rocha', phone: '(11) 99993-0003', role: 'member', status: 'active', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, onboarded_at: null, joined_at: '2024-01-20', created_at: '2024-01-20T00:00:00Z', updated_at: '2024-01-20T00:00:00Z' },
+  { id: 'preview-4', full_name: 'Pedro Lima', phone: '(11) 99994-0004', role: 'member', status: 'suspended', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, onboarded_at: null, joined_at: '2025-05-05', created_at: '2025-05-05T00:00:00Z', updated_at: '2025-05-05T00:00:00Z' },
 ];
 
 const previewPending: Profile[] = [
-  { id: 'preview-p1', full_name: 'Marina de Souza', phone: '(11) 99990-0000', role: 'member', status: 'pending', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, joined_at: null, created_at: '2026-07-21T00:00:00Z', updated_at: '2026-07-21T00:00:00Z' },
-  { id: 'preview-p2', full_name: 'Rafael Santos', phone: '(11) 99991-0001', role: 'member', status: 'pending', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, joined_at: null, created_at: '2026-07-20T00:00:00Z', updated_at: '2026-07-20T00:00:00Z' },
-  { id: 'preview-p3', full_name: 'Clara Oliveira', phone: '(11) 99992-0002', role: 'member', status: 'pending', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, joined_at: null, created_at: '2026-07-19T00:00:00Z', updated_at: '2026-07-19T00:00:00Z' },
+  { id: 'preview-p1', full_name: 'Marina de Souza', phone: '(11) 99990-0000', role: 'member', status: 'pending', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, onboarded_at: null, joined_at: null, created_at: '2026-07-21T00:00:00Z', updated_at: '2026-07-21T00:00:00Z' },
+  { id: 'preview-p2', full_name: 'Rafael Santos', phone: '(11) 99991-0001', role: 'member', status: 'pending', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, onboarded_at: null, joined_at: null, created_at: '2026-07-20T00:00:00Z', updated_at: '2026-07-20T00:00:00Z' },
+  { id: 'preview-p3', full_name: 'Clara Oliveira', phone: '(11) 99992-0002', role: 'member', status: 'pending', guia_frente: null, orixa_cabeca: null, adjunto: null, avatar_url: null, onboarded_at: null, joined_at: null, created_at: '2026-07-19T00:00:00Z', updated_at: '2026-07-19T00:00:00Z' },
 ];
 
 export function MembersManagement({ pending, members, counts }: MembersManagementProps) {

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Bell,
   BookOpen,
@@ -28,6 +28,7 @@ import {
   X,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
+import { OnboardingTour } from '@/components/features/OnboardingTour';
 import '../../styles/dashboard-layout.css';
 
 export interface DashboardLayoutProps {
@@ -40,6 +41,7 @@ export interface DashboardLayoutProps {
     email: string;
     role?: 'member' | 'admin' | 'developer' | 'editor';
     avatarUrl?: string | null;
+    onboarded?: boolean;
   };
 }
 
@@ -90,8 +92,15 @@ export function DashboardLayout({
 }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
+  const [tourOpen, setTourOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+
+  // Tour de boas-vindas: abre sozinho no primeiro acesso de quem está ativo.
+  useEffect(() => {
+    if (!previewMode && user.onboarded === false) setTourOpen(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const prefix = navigationPrefix ?? (mode === 'admin' ? '/admin' : '/dashboard');
   const previewRoot = previewMode ? '/portal-preview' : '';
   const baseMenu = mode === 'admin' ? adminMenu : memberMenu;
@@ -208,7 +217,7 @@ export function DashboardLayout({
           </button>
           <div className="dashboard-layout__header-actions">
             {previewMode && <span className="dashboard-layout__environment"><i /> Ambiente de teste</span>}
-            <button type="button" aria-label="Central de ajuda"><HelpCircle size={17} /></button>
+            <button type="button" aria-label="Rever o tour de boas-vindas" onClick={() => setTourOpen(true)}><HelpCircle size={17} /></button>
             <button type="button" aria-label="Notificações"><Bell size={17} /><i /></button>
             <button className="dashboard-layout__header-user" type="button" aria-label="Abrir menu da conta">
               {user.avatarUrl
@@ -220,6 +229,7 @@ export function DashboardLayout({
         </header>
         <div className="dashboard-layout__content">{children}</div>
       </main>
+      <OnboardingTour role={user.role ?? 'member'} open={tourOpen} onClose={() => setTourOpen(false)} />
     </div>
   );
 }

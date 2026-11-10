@@ -888,3 +888,15 @@
 .ponto-folder-card strong { font-size: 13.5px; }
 .ponto-folder-card small { font-size: 11px; color: var(--portal-text-soft, #6b655b); }
 .ponto-folder-card > svg:last-child { position: absolute; right: 12px; top: 14px; color: var(--portal-text-soft, #6b655b); }
+
+/* Onboarding — tour de boas-vindas por perfil */
+.onboarding-tour { max-width: 460px; text-align: center; }
+.onboarding-tour__counter { font-size: 11px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; color: var(--portal-text-soft, #6b655b); }
+.onboarding-tour__body { padding: 8px 4px 4px; }
+.onboarding-tour__icon { display: inline-grid; place-items: center; width: 58px; height: 58px; border-radius: 50%; background: rgba(138,109,59,.12); color: var(--portal-accent, #8a6d3b); margin-bottom: 14px; }
+.onboarding-tour__body h2 { margin: 0 0 8px; font-size: 18px; }
+.onboarding-tour__body p { margin: 0; font-size: 13.5px; line-height: 1.65; color: var(--portal-text-soft, #6b655b); }
+.onboarding-tour__dots { display: flex; justify-content: center; gap: 6px; padding: 16px 0 4px; }
+.onboarding-tour__dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--portal-border, #d8d2c7); transition: background .15s ease, transform .15s ease; }
+.onboarding-tour__dots i.is-current { background: var(--portal-accent, #8a6d3b); transform: scale(1.25); }
+.onboarding-tour__actions { justify-content: space-between; }

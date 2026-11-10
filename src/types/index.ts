@@ -12,6 +12,7 @@ export type Profile = {
   orixa_cabeca: string | null;
   adjunto: string | null;
   avatar_url: string | null;
+  onboarded_at: string | null;
   joined_at: string | null;
   created_at: string;
   updated_at: string;

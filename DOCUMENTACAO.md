@@ -264,9 +264,8 @@ Margens, paddings e gaps são estritamente múltiplos de 8px:
 *   **Gestão (`/admin/conteudos`):** Biblioteca ganha o tipo "Material em PDF" com upload direto (dropzone, até 10 MB) — aparece em Estudos para os filhos; painel "Pontos cantados" (`PontosManager`) permite criar/renomear/excluir pastas (exclusão só de pasta vazia) e subir o PDF do ponto na subpasta correspondente.
 *   **Filhos (`/dashboard/pontos`):** novo item "Pontos Cantados" no menu lateral, entre Estudos e Mensalidades; navegação por pastas com breadcrumb e botão "Abrir PDF" por ponto (`PontosBrowser`).
 
-### 5.15. Roadmap — onboarding por perfil
+### 5.15. Onboarding guiado por perfil (coluna `onboarded_at` em `profiles`)
 
-*   Criar fluxo de onboarding para cada cadastro novo, específico por papel:
-    *   **Filho da casa (member):** boas-vindas, como registrar a frequência (antecipado em `/dashboard/frequencia` ou no dia pelo banner/home), escala de cuidados (`/dashboard/faxinas`) e mensalidade via Pix.
-    *   **Comunicação (editor):** como cadastrar giras, avisos e conteúdos; padrão da arte em 1080×1350 (4:5, formato do feed do Instagram) para não cortar nos cards.
-    *   **Administração (admin):** aprovações de cadastro (com escolha de papel), correções de frequência, visão financeira e configurações.
+*   Migration `supabase/migrations/202611100008_onboarding.sql`: marca quando o usuário concluiu o tour (editável pelo próprio usuário).
+*   Componente `OnboardingTour` (`src/components/features/OnboardingTour.tsx`): tour em etapas com conteúdo específico por papel — **Filho da casa** (8 passos: calendário, quem vai levar, escalas, frequência, estudos e pontos, mensalidades, perfil), **Comunicação** (6 passos: giras e artes, avisos, biblioteca, pontos cantados, área de filho) e **Administração** (8 passos: aprovações, membros, frequência, financeiro, escalas, conteúdos, configurações).
+*   Abre automaticamente no primeiro acesso de quem está ativo (`user.onboarded` no `DashboardLayout`) e pode ser reaberto a qualquer momento pelo botão de ajuda (?) no cabeçalho. Ao concluir ou pular, `markOnboarded` grava `profiles.onboarded_at`.
