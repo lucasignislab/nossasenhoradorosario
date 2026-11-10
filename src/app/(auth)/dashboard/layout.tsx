@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { isSupabaseConfigured } from '@/lib/supabase/config';
+import { TERMS_VERSION } from '@/lib/legal';
 import { createClient } from '@/lib/supabase/server';
 import '@/styles/dashboard-home.css';
 import '@/styles/portal.css';
@@ -14,6 +15,7 @@ type Profile = {
   status: 'pending' | 'active' | 'suspended';
   avatar_url: string | null;
   onboarded_at: string | null;
+  terms_version: string | null;
 };
 
 export default async function AuthenticatedDashboardLayout({ children }: DashboardLayoutRouteProps) {
@@ -34,7 +36,7 @@ export default async function AuthenticatedDashboardLayout({ children }: Dashboa
 
   const { data } = await supabase
     .from('profiles')
-    .select('full_name, role, status, avatar_url, onboarded_at')
+    .select('full_name, role, status, avatar_url, onboarded_at, terms_version')
     .eq('id', user.id)
     .single();
   const profile = data as Profile | null;
@@ -45,6 +47,7 @@ export default async function AuthenticatedDashboardLayout({ children }: Dashboa
     role: profile?.role || 'member',
     avatarUrl: profile?.avatar_url || null,
     onboarded: Boolean(profile?.onboarded_at),
+    termsAccepted: profile?.terms_version === TERMS_VERSION,
   };
 
   if (!profile || profile.status !== 'active') {

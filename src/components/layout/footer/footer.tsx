@@ -41,6 +41,9 @@ export const Footer = () => {
               <li><Link href="/agenda" className="hover:text-[var(--color-sacred-gold)] transition-colors duration-300">Agenda de Giras</Link></li>
               <li><Link href="/eventos" className="hover:text-[var(--color-sacred-gold)] transition-colors duration-300">Eventos</Link></li>
               <li><Link href="/blog" className="hover:text-[var(--color-sacred-gold)] transition-colors duration-300">Fundamentos e Blog</Link></li>
+              <li><Link href="/doar" className="hover:text-[var(--color-sacred-gold)] transition-colors duration-300">Doe</Link></li>
+              <li><Link href="/termos" className="hover:text-[var(--color-sacred-gold)] transition-colors duration-300">Termos de Uso</Link></li>
+              <li><Link href="/privacidade" className="hover:text-[var(--color-sacred-gold)] transition-colors duration-300">Política de Privacidade</Link></li>
               <li><Link href="/design-system" className="hover:text-[var(--color-sacred-gold)] transition-colors duration-300">Design System</Link></li>
             </ul>
           </div>

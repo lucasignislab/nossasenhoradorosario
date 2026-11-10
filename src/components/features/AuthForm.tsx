@@ -165,6 +165,13 @@ export function AuthForm({ configured, returnTo }: AuthFormProps) {
           {mode === 'login' ? 'Entrar com Google' : 'Cadastrar com Google'}
         </button>
 
+        {mode === 'signup' && (
+          <p className="login-form__consent-note">
+            Ao continuar com o Google, você concorda com os <Link href="/termos" target="_blank">Termos de Uso</Link> e a{' '}
+            <Link href="/privacidade" target="_blank">Política de Privacidade</Link>.
+          </p>
+        )}
+
         <div className="login-form__divider" aria-hidden="true"><span>ou com e-mail</span></div>
 
         <form className="login-form__form" onSubmit={handleSubmit}>
@@ -201,6 +208,16 @@ export function AuthForm({ configured, returnTo }: AuthFormProps) {
               <label htmlFor="confirmPassword" className="login-form__label">Confirme a senha</label>
               <input className="login-form__input" id="confirmPassword" name="confirmPassword" type="password" autoComplete="new-password" minLength={8} required />
             </div>
+          )}
+
+          {mode === 'signup' && (
+            <label className="login-form__consent">
+              <input type="checkbox" required />
+              <span>
+                Li e aceito os <Link href="/termos" target="_blank">Termos de Uso</Link> e a{' '}
+                <Link href="/privacidade" target="_blank">Política de Privacidade</Link> da casa (LGPD).
+              </span>
+            </label>
           )}
 
           <button type="submit" className="login-form__submit" disabled={loading || !configured}>

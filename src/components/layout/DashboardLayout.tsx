@@ -31,6 +31,7 @@ import {
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { OnboardingTour } from '@/components/features/OnboardingTour';
+import { ConsentGate } from '@/components/features/ConsentGate';
 import '../../styles/dashboard-layout.css';
 
 export interface DashboardLayoutProps {
@@ -44,6 +45,7 @@ export interface DashboardLayoutProps {
     role?: 'member' | 'admin' | 'developer' | 'editor';
     avatarUrl?: string | null;
     onboarded?: boolean;
+    termsAccepted?: boolean;
   };
 }
 
@@ -234,6 +236,7 @@ export function DashboardLayout({
         <div className="dashboard-layout__content">{children}</div>
       </main>
       <OnboardingTour role={user.role ?? 'member'} open={tourOpen} onClose={() => setTourOpen(false)} />
+      {!previewMode && user.termsAccepted === false ? <ConsentGate /> : null}
     </div>
   );
 }

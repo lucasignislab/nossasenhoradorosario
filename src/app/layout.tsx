@@ -1,5 +1,6 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Inter } from "next/font/google";
+import { ServiceWorkerRegister } from "@/components/features/ServiceWorkerRegister";
 import "../styles/globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -26,6 +27,19 @@ export const metadata: Metadata = {
     locale: "pt_BR",
     type: "website",
   },
+  appleWebApp: {
+    capable: true,
+    title: "Senhora do Rosário",
+    statusBarStyle: "black-translucent",
+  },
+  icons: {
+    icon: "/icons/icon-192.png",
+    apple: "/icons/apple-touch-icon.png",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#1c1d21",
 };
 
 export default function RootLayout({
@@ -37,6 +51,7 @@ export default function RootLayout({
     <html lang="pt-BR">
       <body className={`${cormorant.variable} ${inter.variable} antialiased`}>
         {children}
+        <ServiceWorkerRegister />
       </body>
     </html>
   );
