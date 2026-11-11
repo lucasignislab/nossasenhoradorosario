@@ -282,3 +282,12 @@ Margens, paddings e gaps são estritamente múltiplos de 8px:
 
 *   **LGPD:** migration `supabase/migrations/202611100012_lgpd.sql` (`profiles.terms_accepted_at` + `terms_version`). Páginas públicas `/termos` e `/privacidade` (versão vigente em `src/lib/legal.ts` — `TERMS_VERSION = '2026-11-10'`), linkadas no rodapé do site. Cadastro por e-mail exige checkbox de aceite; cadastro Google traz nota de concordância. Quem já estava cadastrado vê o bloqueio `ConsentGate` na área logada até aceitar (action `acceptTerms`, registra data e versão). Ao alterar os termos, basta subir a `TERMS_VERSION` para exigir novo aceite de todos.
 *   **PWA:** `src/app/manifest.ts` (nome, cores, `start_url /dashboard`, display standalone), ícones gerados em `public/icons/` (192/512, maskable, apple-touch) com o selo SR, metas Apple no `layout.tsx` e service worker `public/sw.js` (cache de estáticos cache-first; páginas network-first com fallback offline) registrado por `ServiceWorkerRegister` apenas em produção.
+
+### 5.18. Atendimento — senhas da gira (tabelas `attendance_sessions` e `attendance_tickets`)
+
+*   **O que é:** distribuição de senhas de atendimento por gira, sem login para o consulente. A administração cria uma sessão (com vínculo opcional a uma gira confirmada da agenda) em `/admin/atendimento`, copia o link público e acompanha a fila em tempo real.
+*   **Consulente (`/senha/[sessionId]`):** página pública standalone. Informa o nome, retira a senha e acompanha ao vivo (Realtime) o número chamado e a posição na fila. A senha fica salva no navegador (`localStorage`) e reaparece ao reabrir o link. Numeração sequencial por sessão com `unique(session_id, number)` e retry em conflito.
+*   **Telão (`/chamada/[sessionId]`):** painel em tela cheia (fundo escuro) com a senha chamada em destaque, o nome do consulente e as próximas da fila, atualizado via Realtime.
+*   **Administração:** botão "Chamar próxima senha" (marca a chamada anterior como atendida e chama a próxima da fila, atualizando `last_called`), ações por senha (atendido / ausente / voltar à fila / remover) e encerrar/reabrir/excluir sessão.
+*   **Permissões (RLS):** leitura pública de sessões e senhas; retirada de senha aberta (somente status `aguardando`); toda a gestão restrita a `is_administrator()`. Editor (comunicação) não vê o item no menu.
+*   **Realtime:** `attendance_tickets` e `attendance_sessions` na publication `supabase_realtime` (`replica identity full` nos tickets para tratar remoções).

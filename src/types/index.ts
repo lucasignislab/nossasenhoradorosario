@@ -211,6 +211,32 @@ export type HouseDocument = {
   updated_at: string;
 };
 
+export type AttendanceSessionStatus = 'aberta' | 'encerrada';
+
+export type AttendanceSession = {
+  id: string;
+  title: string;
+  session_date: string;
+  event_id: string | null;
+  status: AttendanceSessionStatus;
+  last_called: number;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type AttendanceTicketStatus = 'aguardando' | 'chamado' | 'atendido' | 'ausente';
+
+export type AttendanceTicket = {
+  id: string;
+  session_id: string;
+  number: number;
+  visitor_name: string;
+  status: AttendanceTicketStatus;
+  called_at: string | null;
+  created_at: string;
+};
+
 export type CleaningShiftKind = 'thursday' | 'saturday';
 
 export type CleaningShiftDate = {

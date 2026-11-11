@@ -900,3 +900,56 @@
 .onboarding-tour__dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--portal-border, #d8d2c7); transition: background .15s ease, transform .15s ease; }
 .onboarding-tour__dots i.is-current { background: var(--portal-accent, #8a6d3b); transform: scale(1.25); }
 .onboarding-tour__actions { justify-content: space-between; }
+
+/* Atendimento — senhas da gira (admin) */
+.attendance-session { display: flex; align-items: center; gap: 10px; width: 100%; padding: 12px 14px; border: 1px solid var(--portal-border, #d8d2c7); border-radius: 10px; background: var(--portal-panel, #f7f4ee); cursor: pointer; text-align: left; transition: border-color .15s ease, background .15s ease; }
+.attendance-session svg { flex: none; color: var(--portal-accent, #8a6d3b); }
+.attendance-session > div { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.attendance-session strong { font-size: 13.5px; }
+.attendance-session small { font-size: 11.5px; color: var(--portal-text-soft, #6b655b); }
+.attendance-session.is-active { border-color: var(--portal-accent, #8a6d3b); background: rgba(138,109,59,.07); }
+.attendance-call { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.attendance-call__current { display: flex; flex-direction: column; gap: 4px; }
+.attendance-call__current span { font-size: 11px; font-weight: 650; letter-spacing: .07em; text-transform: uppercase; color: var(--portal-text-soft, #6b655b); }
+.attendance-call__current strong { font-size: 56px; line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: .02em; }
+.attendance-call__current small { font-size: 13px; color: var(--portal-text-soft, #6b655b); }
+
+/* Página pública do consulente (/senha) */
+.ticket-page { min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 28px 18px; background: var(--portal-bg, #efece5); }
+.ticket-page__card { width: 100%; max-width: 420px; background: #fbf9f5; border: 1px solid var(--portal-border, #d8d2c7); border-radius: 16px; padding: 28px 24px; text-align: center; box-shadow: 0 12px 32px rgba(43,38,32,.08); }
+.ticket-page__brand { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 650; letter-spacing: .08em; text-transform: uppercase; color: var(--portal-accent, #8a6d3b); margin-bottom: 14px; }
+.ticket-page__card h1 { margin: 0 0 6px; font-size: 20px; }
+.ticket-page__meta { margin: 0 0 20px; font-size: 12.5px; color: var(--portal-text-soft, #6b655b); }
+.ticket-page__closed { margin: 0; font-size: 14px; line-height: 1.6; }
+.ticket-page__status { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.ticket-page__label { font-size: 11px; font-weight: 650; letter-spacing: .08em; text-transform: uppercase; color: var(--portal-text-soft, #6b655b); }
+.ticket-page__number { font-size: 84px; line-height: 1; font-variant-numeric: tabular-nums; color: var(--portal-accent, #8a6d3b); }
+.ticket-page__now { font-size: 13px; }
+.ticket-page__position { display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 600; }
+.ticket-page__called { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700; color: #2f6b3a; animation: ticket-pulse 1.2s ease-in-out infinite; }
+@keyframes ticket-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
+.ticket-page__form { display: flex; flex-direction: column; gap: 14px; text-align: left; }
+.ticket-page__form label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 600; }
+.ticket-page__form input { padding: 12px 14px; border: 1px solid var(--portal-border, #d8d2c7); border-radius: 10px; font-size: 15px; background: #fff; }
+.ticket-page__form input:focus { outline: 2px solid rgba(138,109,59,.4); outline-offset: 1px; }
+.ticket-page__form button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 13px 16px; border: 0; border-radius: 10px; background: var(--portal-accent, #8a6d3b); color: #fff; font-size: 15px; font-weight: 650; cursor: pointer; }
+.ticket-page__form button:disabled { opacity: .6; cursor: not-allowed; }
+.ticket-page__error { margin: 0; font-size: 13px; color: #a13d2d; }
+.ticket-page__foot { font-size: 12px; color: var(--portal-text-soft, #6b655b); text-align: center; max-width: 340px; line-height: 1.5; }
+
+/* Telão da gira (/chamada) */
+.call-board { min-height: 100dvh; display: flex; flex-direction: column; background: #171310; color: #f3eee6; padding: 32px 40px; }
+.call-board__header { display: flex; align-items: center; gap: 14px; }
+.call-board__brand { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 12px; border: 1px solid rgba(243,238,230,.25); font-weight: 700; letter-spacing: .06em; }
+.call-board__header h1 { margin: 0; font-size: 22px; }
+.call-board__header p { margin: 2px 0 0; font-size: 13px; color: rgba(243,238,230,.65); }
+.call-board__closed { margin-left: auto; font-size: 13px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; color: #e0b25a; }
+.call-board__main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; }
+.call-board__label { display: inline-flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 650; letter-spacing: .12em; text-transform: uppercase; color: rgba(243,238,230,.7); }
+.call-board__number { font-size: clamp(120px, 26vw, 280px); line-height: 1; font-variant-numeric: tabular-nums; color: #e0b25a; text-shadow: 0 6px 40px rgba(224,178,90,.25); }
+.call-board__name { font-size: clamp(22px, 4vw, 40px); font-weight: 600; }
+.call-board__footer { border-top: 1px solid rgba(243,238,230,.15); padding-top: 20px; }
+.call-board__next-label { font-size: 12px; font-weight: 650; letter-spacing: .1em; text-transform: uppercase; color: rgba(243,238,230,.55); }
+.call-board__next { display: flex; gap: 14px; margin-top: 10px; }
+.call-board__next-item { font-size: 34px; font-weight: 700; font-variant-numeric: tabular-nums; padding: 10px 22px; border: 1px solid rgba(243,238,230,.2); border-radius: 12px; }
+.call-board__next-empty { font-size: 14px; color: rgba(243,238,230,.5); align-self: center; }

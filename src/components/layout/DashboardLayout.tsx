@@ -23,6 +23,7 @@ import {
   Search,
   Settings,
   Sparkles,
+  TicketCheck,
   UserRound,
   UserRoundCheck,
   UsersRound,
@@ -69,6 +70,7 @@ const adminMenu = [
   { label: 'Visão geral', path: '', icon: ChartNoAxesCombined },
   { label: 'Filhos da casa', path: '/membros', icon: UsersRound },
   { label: 'Agenda e giras', path: '/agenda', icon: CalendarDays },
+  { label: 'Atendimento', path: '/atendimento', icon: TicketCheck },
   { label: 'Quem vai levar', path: '/mural', icon: PackageCheck },
   { label: 'Cambones', path: '/cambones', icon: UserRoundCheck },
   { label: 'Frequência', path: '/frequencia', icon: ClipboardCheck },
@@ -87,7 +89,7 @@ const roleNames = {
 };
 
 // O papel editor (comunicação) administra apenas agenda, avisos e conteúdos.
-const editorHiddenAdminPaths = ['/membros', '/frequencia', '/financeiro', '/faxinas', '/configuracoes'];
+const editorHiddenAdminPaths = ['/membros', '/frequencia', '/financeiro', '/faxinas', '/atendimento', '/configuracoes'];
 
 export function DashboardLayout({
   children,
