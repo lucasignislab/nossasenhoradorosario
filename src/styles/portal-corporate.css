@@ -980,3 +980,8 @@
 .portal-menu__item:disabled { opacity: .55; cursor: not-allowed; }
 .portal-menu__item--danger { color: #a13d2d; }
 .portal-menu__item--danger:hover { background: rgba(161,61,45,.08); }
+
+/* Cargo dentro do menu de ações */
+.portal-menu__cargo { padding: 6px 10px 10px; margin-bottom: 6px; border-bottom: 1px solid var(--portal-border, #d8d2c7); }
+.portal-menu__cargo .portal-cargo-select { display: flex; justify-content: space-between; width: 100%; }
+.portal-menu__cargo .portal-cargo-select select { flex: 1; }
