@@ -3,12 +3,12 @@
 import { useMemo, useState } from 'react';
 import { Search } from 'lucide-react';
 import { StatusPill } from './PortalUI';
-import { MemberStatusActions, SpiritualRecordButton } from './MemberActions';
+import { MemberCargoSelect, MemberRecordButton, MemberStatusActions, SpiritualRecordButton } from './MemberActions';
 import { MemberAvatar } from './MemberAvatar';
 import {
   formatJoinedAt,
+  memberFunctionLabel,
   profileDisplayName,
-  roleLabel,
   statusPresentation,
 } from '@/lib/members';
 import type { Profile } from '@/types';
@@ -54,7 +54,7 @@ export function MembersTable({ members }: { members: Profile[] }) {
                         <strong>{profileDisplayName(member)}</strong>
                       </div>
                     </td>
-                    <td>{roleLabel(member.role)}</td>
+                    <td>{memberFunctionLabel(member)}</td>
                     <td>{formatJoinedAt(member.joined_at)}</td>
                     <td>{member.phone?.trim() || '—'}</td>
                     <td><StatusPill tone={status.tone}>{status.label}</StatusPill></td>
@@ -65,7 +65,13 @@ export function MembersTable({ members }: { members: Profile[] }) {
                         role={member.role}
                         name={profileDisplayName(member)}
                       />
-                      {member.status === 'active' ? <SpiritualRecordButton member={member} /> : null}
+                      {member.status === 'active' ? (
+                        <>
+                          <MemberCargoSelect profileId={member.id} cargo={member.cargo} name={profileDisplayName(member)} />
+                          <MemberRecordButton member={member} />
+                          <SpiritualRecordButton member={member} />
+                        </>
+                      ) : null}
                     </td>
                   </tr>
                 );

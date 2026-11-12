@@ -2,17 +2,23 @@ export type ProfileRole = 'member' | 'admin' | 'developer' | 'editor';
 
 export type ProfileStatus = 'pending' | 'active' | 'suspended';
 
+// Cargos espirituais da casa (atribuídos somente pela administração).
+export type MemberCargo = 'Mãe de Santo' | 'Pai Pequeno' | 'Mãe Pequena' | 'Ogã' | 'Cambone';
+
 export type Profile = {
   id: string;
   full_name: string | null;
   phone: string | null;
   role: ProfileRole;
   status: ProfileStatus;
+  cargo: MemberCargo | null;
   guia_frente: string | null;
   orixa_cabeca: string | null;
   adjunto: string | null;
   avatar_url: string | null;
   onboarded_at: string | null;
+  birth_date?: string | null;
+  terms_accepted_at?: string | null;
   joined_at: string | null;
   created_at: string;
   updated_at: string;

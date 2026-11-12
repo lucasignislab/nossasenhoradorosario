@@ -130,3 +130,71 @@ export async function updateSpiritualRecord(profileId: string, input: SpiritualR
     return { ok: false, error: 'Erro inesperado. Tente novamente.' };
   }
 }
+
+// Cargo espiritual da casa: atribuído somente pela administração
+// (Mães de Santo e administração técnica). O banco limita a 2 Mães de Santo.
+export async function setMemberCargo(profileId: string, cargo: string | null): Promise<ActionResult> {
+  if (!profileId) return { ok: false, error: 'Cadastro não informado.' };
+  const valid = ['Mãe de Santo', 'Pai Pequeno', 'Mãe Pequena', 'Ogã', 'Cambone'];
+  if (cargo !== null && !valid.includes(cargo)) {
+    return { ok: false, error: 'Cargo inválido.' };
+  }
+
+  try {
+    const { supabase, error: authError } = await requireAdministrator();
+    if (authError) return { ok: false, error: authError };
+
+    const { error } = await supabase.from('profiles').update({ cargo }).eq('id', profileId);
+    if (error) {
+      if (error.message.includes('Mães de Santo')) {
+        return { ok: false, error: 'A casa já tem 2 Mães de Santo. Remova uma antes de nomear outra.' };
+      }
+      return { ok: false, error: 'Não foi possível atualizar o cargo. Tente novamente.' };
+    }
+
+    revalidateMembers();
+    revalidatePath('/dashboard/carteirinha');
+    return { ok: true };
+  } catch {
+    return { ok: false, error: 'Erro inesperado. Tente novamente.' };
+  }
+}
+
+export type MemberRecordInput = {
+  full_name: string;
+  phone: string;
+  birth_date: string;
+  joined_at: string;
+};
+
+// Ficha completa do filho: leitura e edição somente pela administração.
+export async function updateMemberRecord(profileId: string, input: MemberRecordInput): Promise<ActionResult> {
+  if (!profileId) return { ok: false, error: 'Cadastro não informado.' };
+  const fullName = input.full_name.trim();
+  if (fullName.length < 3 || fullName.length > 120) {
+    return { ok: false, error: 'Informe o nome completo (3 a 120 letras).' };
+  }
+  const dateOrNull = (value: string) => (/^\d{4}-\d{2}-\d{2}$/.test(value) ? value : null);
+  if (input.birth_date && !dateOrNull(input.birth_date)) return { ok: false, error: 'Data de nascimento inválida.' };
+  if (input.joined_at && !dateOrNull(input.joined_at)) return { ok: false, error: 'Data de entrada inválida.' };
+
+  try {
+    const { supabase, error: authError } = await requireAdministrator();
+    if (authError) return { ok: false, error: authError };
+
+    const { error } = await supabase.from('profiles').update({
+      full_name: fullName,
+      phone: input.phone.trim() || null,
+      birth_date: dateOrNull(input.birth_date),
+      joined_at: dateOrNull(input.joined_at),
+    }).eq('id', profileId);
+
+    if (error) return { ok: false, error: 'Não foi possível salvar a ficha. Tente novamente.' };
+
+    revalidateMembers();
+    revalidatePath('/dashboard/carteirinha');
+    return { ok: true };
+  } catch {
+    return { ok: false, error: 'Erro inesperado. Tente novamente.' };
+  }
+}

@@ -1,10 +1,17 @@
-import type { Profile, ProfileRole, ProfileStatus } from '@/types';
+import type { MemberCargo, Profile, ProfileRole, ProfileStatus } from '@/types';
+
+export const MEMBER_CARGOS: MemberCargo[] = ['Mãe de Santo', 'Pai Pequeno', 'Mãe Pequena', 'Ogã', 'Cambone'];
 
 export function roleLabel(role: ProfileRole): string {
   if (role === 'admin') return 'Administração';
   if (role === 'developer') return 'Acesso técnico';
   if (role === 'editor') return 'Comunicação';
   return 'Filho(a) da casa';
+}
+
+// Função exibida na ficha e na carteirinha: o cargo espiritual, quando definido.
+export function memberFunctionLabel(profile: Pick<Profile, 'role' | 'cargo'>): string {
+  return profile.cargo ?? roleLabel(profile.role);
 }
 
 export function statusPresentation(status: ProfileStatus): { label: string; tone: 'info' | 'warning' | 'danger' } {

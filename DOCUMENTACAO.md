@@ -291,3 +291,15 @@ Margens, paddings e gaps são estritamente múltiplos de 8px:
 *   **Administração:** botão "Chamar próxima senha" (marca a chamada anterior como atendida e chama a próxima da fila, atualizando `last_called`), ações por senha (atendido / ausente / voltar à fila / remover) e encerrar/reabrir/excluir sessão.
 *   **Permissões (RLS):** leitura pública de sessões e senhas; retirada de senha aberta (somente status `aguardando`); toda a gestão restrita a `is_administrator()`. Editor (comunicação) não vê o item no menu.
 *   **Realtime:** `attendance_tickets` e `attendance_sessions` na publication `supabase_realtime` (`replica identity full` nos tickets para tratar remoções).
+
+### 5.19. Cargos espirituais da casa (coluna `cargo` em `profiles`)
+
+*   **Cargos:** Mãe de Santo, Pai Pequeno, Mãe Pequena, Ogã e Cambone (`check` no banco). Não existe Pai de Santo na casa.
+*   **Regra:** Mãe de Santo é limitada a **2 pessoas** — trigger `limit_maes_de_santo` bloqueia a terceira nomeação e a interface mostra a mensagem correspondente.
+*   **Quem atribui:** somente a administração (Mães de Santo e administração técnica), pela tabela em `/admin/membros` (seletor "Cargo" na linha do membro). O trigger `protect_profile_access_fields` impede que o próprio usuário altere seu cargo.
+*   **Onde aparece:** coluna "Função" da gestão de membros e campo "Função na casa" da carteirinha digital (cargo tem prioridade sobre o papel de acesso).
+
+### 5.20. Ficha completa do filho para a administração
+
+*   Em `/admin/membros`, cada membro ativo tem o botão **"Ficha completa"**: modal com foto, cargo, situação, datas de cadastro e aceite dos termos, ficha espiritual (somente leitura) e **dados pessoais editáveis** (nome, WhatsApp, nascimento e entrada na casa).
+*   Edição via action `updateMemberRecord`, restrita a `requireAdministrator()` — vale para a administração técnica e para as Mães de Santo quando se cadastrarem.

@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/server';
 type Profile = {
   full_name: string;
   role: 'member' | 'admin' | 'developer' | 'editor';
+  cargo: string | null;
   avatar_url: string | null;
   guia_frente: string | null;
   orixa_cabeca: string | null;
@@ -30,7 +31,7 @@ export default async function CarteirinhaPage() {
 
   const { data } = await supabase
     .from('profiles')
-    .select('full_name, role, avatar_url, guia_frente, orixa_cabeca, adjunto, birth_date, joined_at')
+    .select('full_name, role, cargo, avatar_url, guia_frente, orixa_cabeca, adjunto, birth_date, joined_at')
     .eq('id', user.id)
     .single();
   const profile = data as Profile | null;
@@ -78,7 +79,7 @@ export default async function CarteirinhaPage() {
               </div>
               <div className="membership-card__field">
                 <dt>Função na casa</dt>
-                <dd>{roleNames[profile.role]}</dd>
+                <dd>{profile.cargo ?? roleNames[profile.role]}</dd>
               </div>
               <div className="membership-card__field">
                 <dt>Data de nascimento</dt>
