@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import { Search } from 'lucide-react';
 import { StatusPill } from './PortalUI';
-import { MemberRowMenu } from './MemberActions';
+import { MemberCargoSelect, MemberRowMenu } from './MemberActions';
 import { MemberAvatar } from './MemberAvatar';
 import {
   formatJoinedAt,
@@ -59,7 +59,12 @@ export function MembersTable({ members }: { members: Profile[] }) {
                     <td>{member.phone?.trim() || '—'}</td>
                     <td><StatusPill tone={status.tone}>{status.label}</StatusPill></td>
                     <td>
-                      <MemberRowMenu member={member} name={profileDisplayName(member)} />
+                      <span className="portal-table__actions">
+                        {member.status === 'active' ? (
+                          <MemberCargoSelect profileId={member.id} cargo={member.cargo} name={profileDisplayName(member)} />
+                        ) : null}
+                        <MemberRowMenu member={member} name={profileDisplayName(member)} />
+                      </span>
                     </td>
                   </tr>
                 );

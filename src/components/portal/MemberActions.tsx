@@ -181,11 +181,6 @@ export function MemberRowMenu({ member, name }: { member: Profile; name?: string
 
       {menuOpen ? (
         <div className="portal-menu__list" role="menu">
-          {status === 'active' ? (
-            <div className="portal-menu__cargo" onClick={(click) => click.stopPropagation()}>
-              <MemberCargoSelect profileId={profileId} cargo={member.cargo} name={displayName} />
-            </div>
-          ) : null}
           {item('Ficha completa', <IdCard size={15} />, () => setModal('record'))}
           {status === 'active' ? item('Ficha espiritual', <SparklesIcon size={15} />, () => setModal('spiritual')) : null}
           {status === 'pending' ? item('Aprovar cadastro', <UserRoundCheck size={15} />, () => runWithRole(approveMember, profileId, 'member')) : null}
