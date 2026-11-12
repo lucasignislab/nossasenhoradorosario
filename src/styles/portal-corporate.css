@@ -954,10 +954,11 @@
 .call-board__next-item { font-size: 34px; font-weight: 700; font-variant-numeric: tabular-nums; padding: 10px 22px; border: 1px solid rgba(243,238,230,.2); border-radius: 12px; }
 .call-board__next-empty { font-size: 14px; color: rgba(243,238,230,.5); align-self: center; }
 
-/* Cargo espiritual do membro (admin) */
-.portal-cargo-select { display: inline-flex; align-items: center; gap: 6px; }
+/* Cargo espiritual do membro (admin) — alinhado à grade de 8px e à altura dos botões pequenos */
+.portal-table__actions { display: flex; align-items: center; gap: 16px; }
+.portal-cargo-select { display: inline-flex; align-items: center; gap: 8px; }
 .portal-cargo-select__label { font-size: 11px; font-weight: 650; letter-spacing: .05em; text-transform: uppercase; color: var(--portal-text-soft, #6b655b); }
-.portal-cargo-select select { padding: 6px 8px; border: 1px solid var(--portal-border, #d8d2c7); border-radius: 8px; background: #fff; font-size: 12.5px; color: var(--portal-text, #2b2620); }
+.portal-cargo-select select { min-height: 30px; padding: 0 8px; border: 1px solid var(--portal-border, #d8d2c7); border-radius: 8px; background: #fff; font-size: 12.5px; color: var(--portal-text, #2b2620); }
 .portal-cargo-select select:disabled { opacity: .6; }
 
 /* Ficha completa do filho (admin) */
@@ -974,14 +975,10 @@
 
 /* Menu de ações da linha (gestão de membros) */
 .portal-menu { position: relative; display: inline-block; }
-.portal-menu__list { position: absolute; right: 0; top: calc(100% + 6px); z-index: 30; min-width: 210px; background: #fff; border: 1px solid var(--portal-border, #d8d2c7); border-radius: 10px; box-shadow: 0 12px 28px rgba(43,38,32,.14); padding: 6px; display: flex; flex-direction: column; }
-.portal-menu__item { display: flex; align-items: center; gap: 9px; width: 100%; padding: 9px 11px; border: 0; background: transparent; border-radius: 7px; font-size: 13px; color: var(--portal-text, #2b2620); text-align: left; cursor: pointer; }
+.portal-menu__list { position: absolute; right: 0; top: calc(100% + 8px); z-index: 30; min-width: 210px; background: #fff; border: 1px solid var(--portal-border, #d8d2c7); border-radius: 10px; box-shadow: 0 12px 28px rgba(43,38,32,.14); padding: 6px; display: flex; flex-direction: column; }
+.portal-menu__item { display: flex; align-items: center; gap: 8px; width: 100%; padding: 8px 12px; border: 0; background: transparent; border-radius: 7px; font-size: 13px; color: var(--portal-text, #2b2620); text-align: left; cursor: pointer; }
 .portal-menu__item:hover { background: rgba(138,109,59,.09); }
 .portal-menu__item:disabled { opacity: .55; cursor: not-allowed; }
 .portal-menu__item--danger { color: #a13d2d; }
 .portal-menu__item--danger:hover { background: rgba(161,61,45,.08); }
 
-/* Cargo dentro do menu de ações */
-.portal-menu__cargo { padding: 6px 10px 10px; margin-bottom: 6px; border-bottom: 1px solid var(--portal-border, #d8d2c7); }
-.portal-menu__cargo .portal-cargo-select { display: flex; justify-content: space-between; width: 100%; }
-.portal-menu__cargo .portal-cargo-select select { flex: 1; }
