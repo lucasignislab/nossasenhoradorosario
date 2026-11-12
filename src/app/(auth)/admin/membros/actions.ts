@@ -198,3 +198,42 @@ export async function updateMemberRecord(profileId: string, input: MemberRecordI
     return { ok: false, error: 'Erro inesperado. Tente novamente.' };
   }
 }
+
+// Promove/rebaixa a administração com um clique (ex.: as Mães de Santo).
+// Somente administradores; nunca o próprio usuário nem acesso técnico (developer).
+export async function setMemberAdmin(profileId: string, makeAdmin: boolean): Promise<ActionResult> {
+  if (!profileId) return { ok: false, error: 'Cadastro não informado.' };
+
+  try {
+    const { supabase, user, error: authError } = await requireAdministrator();
+    if (authError || !user) return { ok: false, error: authError ?? 'Sessão expirada.' };
+    if (profileId === user.id) {
+      return { ok: false, error: 'Você não pode alterar o próprio acesso.' };
+    }
+
+    const { data: target } = await supabase
+      .from('profiles')
+      .select('role, status')
+      .eq('id', profileId)
+      .single();
+
+    if (!target) return { ok: false, error: 'Cadastro não encontrado.' };
+    if (target.role === 'developer') {
+      return { ok: false, error: 'O acesso técnico não pode ser alterado por aqui.' };
+    }
+    if (target.status !== 'active') {
+      return { ok: false, error: 'Aprove o cadastro antes de promover à administração.' };
+    }
+
+    const { error } = await supabase
+      .from('profiles')
+      .update({ role: makeAdmin ? 'admin' : 'member' })
+      .eq('id', profileId);
+    if (error) return { ok: false, error: 'Não foi possível atualizar o acesso. Tente novamente.' };
+
+    revalidateMembers();
+    return { ok: true };
+  } catch {
+    return { ok: false, error: 'Erro inesperado. Tente novamente.' };
+  }
+}

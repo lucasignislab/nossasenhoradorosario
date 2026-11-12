@@ -1,12 +1,13 @@
 'use client'
 
 import { useEffect, useState, useTransition } from 'react'
-import { Check, IdCard, Megaphone, Sparkles as SparklesIcon, UserRoundCheck, UserRoundX, UserRoundPen, X } from 'lucide-react'
+import { Check, IdCard, Megaphone, ShieldCheck, Sparkles as SparklesIcon, UserRoundCheck, UserRoundX, UserRoundPen, X } from 'lucide-react'
 import {
   approveMember,
   rejectMember,
   reactivateMember,
   setMemberCargo,
+  setMemberAdmin,
   setMemberRole,
   suspendMember,
   updateMemberRecord,
@@ -51,7 +52,7 @@ function useMemberAction() {
     })
   }
 
-  return { error, isPending, run, runWithRole }
+  return { error, isPending, run, runWithRole, setError, startTransition }
 }
 
 export function ApprovalActions({ profileId }: { profileId: string }) {
@@ -104,7 +105,7 @@ export function MemberStatusActions({
   role: ProfileRole
   name?: string
 }) {
-  const { error, isPending, run, runWithRole } = useMemberAction()
+  const { error, isPending, run, runWithRole, setError, startTransition } = useMemberAction()
   const canChangeRole = status === 'active' && (role === 'member' || role === 'editor')
   const nextRole: 'member' | 'editor' = role === 'editor' ? 'member' : 'editor'
   const displayName = name?.trim() || 'este membro'
@@ -117,6 +118,21 @@ export function MemberStatusActions({
     )
     if (!confirmed) return
     runWithRole(setMemberRole, profileId, nextRole)
+  }
+
+  const handleAdminChange = () => {
+    const promoting = role !== 'admin'
+    const confirmed = window.confirm(
+      promoting
+        ? `Tornar ${displayName} parte da administração? Terá acesso total à gestão da casa, incluindo fichas, financeiro e frequência.`
+        : `Remover ${displayName} da administração? Voltará a ser filho da casa.`,
+    )
+    if (!confirmed) return
+    setError(null)
+    startTransition(async () => {
+      const result = await setMemberAdmin(profileId, promoting)
+      if (!result.ok) setError(result.error)
+    })
   }
 
   return (
@@ -160,6 +176,17 @@ export function MemberStatusActions({
         >
           <UserRoundPen size={16} strokeWidth={1.8} />
           {role === 'editor' ? 'Tornar filho da casa' : 'Tornar comunicação'}
+        </button>
+      ) : null}
+      {status === 'active' && role !== 'developer' ? (
+        <button
+          type="button"
+          className="portal-button portal-button--secondary portal-button--small"
+          disabled={isPending}
+          onClick={handleAdminChange}
+        >
+          <ShieldCheck size={16} strokeWidth={1.8} />
+          {role === 'admin' ? 'Remover administração' : 'Tornar administração'}
         </button>
       ) : null}
       <ActionError message={error} />

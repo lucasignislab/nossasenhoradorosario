@@ -303,3 +303,8 @@ Margens, paddings e gaps são estritamente múltiplos de 8px:
 
 *   Em `/admin/membros`, cada membro ativo tem o botão **"Ficha completa"**: modal com foto, cargo, situação, datas de cadastro e aceite dos termos, ficha espiritual (somente leitura) e **dados pessoais editáveis** (nome, WhatsApp, nascimento e entrada na casa).
 *   Edição via action `updateMemberRecord`, restrita a `requireAdministrator()` — vale para a administração técnica e para as Mães de Santo quando se cadastrarem.
+
+### 5.21. Promoção à administração com um clique
+
+*   Em `/admin/membros`, membros ativos têm o botão **"Tornar administração"** (e admins, "Remover administração"). Pensado para promover as Mães de Santo assim que se cadastrarem.
+*   Regras: somente administradores executam; ninguém altera o próprio acesso; o papel `developer` (acesso técnico) não é tocado; cadastro precisa estar ativo. Rebaixar um admin o torna filho da casa.
