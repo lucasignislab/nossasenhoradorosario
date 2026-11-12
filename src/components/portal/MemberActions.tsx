@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useState, useTransition } from 'react'
-import { Check, IdCard, Megaphone, ShieldCheck, Sparkles as SparklesIcon, UserRoundCheck, UserRoundX, UserRoundPen, X } from 'lucide-react'
+import { useEffect, useRef, useState, useTransition } from 'react'
+import { Check, IdCard, Megaphone, MoreVertical, ShieldCheck, Sparkles as SparklesIcon, UserRoundCheck, UserRoundX, UserRoundPen, X } from 'lucide-react'
 import {
   approveMember,
   rejectMember,
@@ -14,7 +14,7 @@ import {
   updateSpiritualRecord,
 } from '@/app/(auth)/admin/membros/actions'
 import { MEMBER_CARGOS } from '@/lib/members'
-import type { MemberCargo, Profile, ProfileRole } from '@/types'
+import type { MemberCargo, Profile } from '@/types'
 
 type ActionResult = { ok: true } | { ok: false; error: string }
 
@@ -94,21 +94,52 @@ export function ApprovalActions({ profileId }: { profileId: string }) {
   )
 }
 
-export function MemberStatusActions({
-  profileId,
-  status,
-  role,
-  name,
-}: {
-  profileId: string
-  status: 'active' | 'pending' | 'suspended'
-  role: ProfileRole
-  name?: string
-}) {
+// ---------- Menu de ações da linha (organiza tudo em um dropdown) ----------
+
+export function MemberRowMenu({ member, name }: { member: Profile; name?: string }) {
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [modal, setModal] = useState<null | 'record' | 'spiritual'>(null)
+  const wrapRef = useRef<HTMLDivElement>(null)
   const { error, isPending, run, runWithRole, setError, startTransition } = useMemberAction()
+
+  const { id: profileId, status, role } = member
   const canChangeRole = status === 'active' && (role === 'member' || role === 'editor')
   const nextRole: 'member' | 'editor' = role === 'editor' ? 'member' : 'editor'
   const displayName = name?.trim() || 'este membro'
+
+  // Fecha o dropdown ao clicar fora ou apertar Escape.
+  useEffect(() => {
+    if (!menuOpen) return
+    const handleClick = (mouse: MouseEvent) => {
+      if (wrapRef.current && !wrapRef.current.contains(mouse.target as Node)) setMenuOpen(false)
+    }
+    const handleKey = (keyboardEvent: KeyboardEvent) => {
+      if (keyboardEvent.key === 'Escape') setMenuOpen(false)
+    }
+    document.addEventListener('mousedown', handleClick)
+    document.addEventListener('keydown', handleKey)
+    return () => {
+      document.removeEventListener('mousedown', handleClick)
+      document.removeEventListener('keydown', handleKey)
+    }
+  }, [menuOpen])
+
+  const item = (
+    label: string,
+    icon: React.ReactNode,
+    onSelect: () => void,
+    options?: { danger?: boolean },
+  ) => (
+    <button
+      type="button"
+      className={`portal-menu__item${options?.danger ? ' portal-menu__item--danger' : ''}`}
+      disabled={isPending}
+      onClick={() => { setMenuOpen(false); onSelect() }}
+    >
+      {icon}
+      {label}
+    </button>
+  )
 
   const handleRoleChange = () => {
     const confirmed = window.confirm(
@@ -136,68 +167,51 @@ export function MemberStatusActions({
   }
 
   return (
-    <div className="portal-table__actions">
-      {status === 'active' ? (
-        <button
-          type="button"
-          className="portal-button portal-button--secondary portal-button--small"
-          disabled={isPending}
-          onClick={() => run(suspendMember, profileId)}
-        >
-          Suspender
-        </button>
-      ) : null}
-      {status === 'suspended' ? (
-        <button
-          type="button"
-          className="portal-button portal-button--secondary portal-button--small"
-          disabled={isPending}
-          onClick={() => run(reactivateMember, profileId)}
-        >
-          Reativar
-        </button>
-      ) : null}
-      {status === 'pending' ? (
-        <button
-          type="button"
-          className="portal-button portal-button--primary portal-button--small"
-          disabled={isPending}
-          onClick={() => runWithRole(approveMember, profileId, 'member')}
-        >
-          Aprovar
-        </button>
-      ) : null}
-      {canChangeRole ? (
-        <button
-          type="button"
-          className="portal-button portal-button--secondary portal-button--small"
-          disabled={isPending}
-          onClick={handleRoleChange}
-        >
-          <UserRoundPen size={16} strokeWidth={1.8} />
-          {role === 'editor' ? 'Tornar filho da casa' : 'Tornar comunicação'}
-        </button>
-      ) : null}
-      {status === 'active' && role !== 'developer' ? (
-        <button
-          type="button"
-          className="portal-button portal-button--secondary portal-button--small"
-          disabled={isPending}
-          onClick={handleAdminChange}
-        >
-          <ShieldCheck size={16} strokeWidth={1.8} />
-          {role === 'admin' ? 'Remover administração' : 'Tornar administração'}
-        </button>
+    <div className="portal-menu" ref={wrapRef}>
+      <button
+        type="button"
+        className="portal-button portal-button--secondary portal-button--small"
+        aria-haspopup="menu"
+        aria-expanded={menuOpen}
+        onClick={() => setMenuOpen((current) => !current)}
+      >
+        Ações
+        <MoreVertical size={15} strokeWidth={1.8} />
+      </button>
+
+      {menuOpen ? (
+        <div className="portal-menu__list" role="menu">
+          {item('Ficha completa', <IdCard size={15} />, () => setModal('record'))}
+          {status === 'active' ? item('Ficha espiritual', <SparklesIcon size={15} />, () => setModal('spiritual')) : null}
+          {status === 'pending' ? item('Aprovar cadastro', <UserRoundCheck size={15} />, () => runWithRole(approveMember, profileId, 'member')) : null}
+          {canChangeRole ? item(role === 'editor' ? 'Tornar filho da casa' : 'Tornar comunicação', <UserRoundPen size={15} />, handleRoleChange) : null}
+          {status === 'active' && role !== 'developer' ? item(role === 'admin' ? 'Remover administração' : 'Tornar administração', <ShieldCheck size={15} />, handleAdminChange) : null}
+          {status === 'active' ? item('Suspender', <UserRoundX size={15} />, () => run(suspendMember, profileId), { danger: true }) : null}
+          {status === 'suspended' ? item('Reativar', <UserRoundCheck size={15} />, () => run(reactivateMember, profileId)) : null}
+        </div>
       ) : null}
       <ActionError message={error} />
+
+      <MemberRecordButton member={member} externalOpen={modal === 'record' ? true : undefined} onExternalClose={() => setModal(null)} />
+      <SpiritualRecordButton member={member} externalOpen={modal === 'spiritual' ? true : undefined} onExternalClose={() => setModal(null)} />
     </div>
   )
 }
 
 // ---------- Ficha espiritual (somente administração) ----------
 
-export function SpiritualRecordButton({ member }: { member: Profile }) {
-  const [open, setOpen] = useState(false)
+export function SpiritualRecordButton({
+  member,
+  externalOpen,
+  onExternalClose,
+}: {
+  member: Profile
+  externalOpen?: boolean
+  onExternalClose?: () => void
+}) {
+  const [internalOpen, setInternalOpen] = useState(false)
+  const open = externalOpen ?? internalOpen
+  const close = () => (externalOpen === undefined ? setInternalOpen(false) : onExternalClose?.())
   const [guiaFrente, setGuiaFrente] = useState(member.guia_frente ?? '')
   const [orixaCabeca, setOrixaCabeca] = useState(member.orixa_cabeca ?? '')
   const [adjunto, setAdjunto] = useState(member.adjunto ?? '')
@@ -207,11 +221,11 @@ export function SpiritualRecordButton({ member }: { member: Profile }) {
   useEffect(() => {
     if (!open) return
     const handleKey = (keyboardEvent: KeyboardEvent) => {
-      if (keyboardEvent.key === 'Escape') setOpen(false)
+      if (keyboardEvent.key === 'Escape') close()
     }
     window.addEventListener('keydown', handleKey)
     return () => window.removeEventListener('keydown', handleKey)
-  }, [open])
+  })
 
   const submit = (submitEvent: React.FormEvent) => {
     submitEvent.preventDefault()
@@ -222,23 +236,25 @@ export function SpiritualRecordButton({ member }: { member: Profile }) {
         orixa_cabeca: orixaCabeca,
         adjunto,
       })
-      if (result.ok) setOpen(false)
+      if (result.ok) close()
       else setError(result.error)
     })
   }
 
   return (
     <>
-      <button
-        type="button"
-        className="portal-button portal-button--secondary portal-button--small"
-        onClick={() => setOpen(true)}
-      >
-        <SparklesIcon size={16} strokeWidth={1.8} />
-        Ficha espiritual
-      </button>
+      {externalOpen === undefined ? (
+        <button
+          type="button"
+          className="portal-button portal-button--secondary portal-button--small"
+          onClick={() => setInternalOpen(true)}
+        >
+          <SparklesIcon size={16} strokeWidth={1.8} />
+          Ficha espiritual
+        </button>
+      ) : null}
       {open ? (
-        <div className="portal-modal-overlay" role="presentation" onClick={() => setOpen(false)}>
+        <div className="portal-modal-overlay" role="presentation" onClick={close}>
           <div
             className="portal-modal"
             role="dialog"
@@ -248,7 +264,7 @@ export function SpiritualRecordButton({ member }: { member: Profile }) {
           >
             <div className="portal-modal__header">
               <h2>Ficha espiritual · {member.full_name ?? 'Membro'}</h2>
-              <button type="button" className="portal-icon-button" aria-label="Fechar" onClick={() => setOpen(false)}>
+              <button type="button" className="portal-icon-button" aria-label="Fechar" onClick={close}>
                 <X size={17} />
               </button>
             </div>
@@ -267,7 +283,7 @@ export function SpiritualRecordButton({ member }: { member: Profile }) {
               </label>
               {error ? <p className="portal-action-error" role="alert">{error}</p> : null}
               <div className="portal-modal__actions">
-                <button type="button" className="portal-button portal-button--secondary" onClick={() => setOpen(false)} disabled={isPending}>
+                <button type="button" className="portal-button portal-button--secondary" onClick={close} disabled={isPending}>
                   Cancelar
                 </button>
                 <button type="submit" className="portal-button portal-button--primary" disabled={isPending}>
@@ -323,8 +339,18 @@ export function MemberCargoSelect({
 
 // ---------- Ficha completa do filho (somente administração) ----------
 
-export function MemberRecordButton({ member }: { member: Profile }) {
-  const [open, setOpen] = useState(false)
+export function MemberRecordButton({
+  member,
+  externalOpen,
+  onExternalClose,
+}: {
+  member: Profile
+  externalOpen?: boolean
+  onExternalClose?: () => void
+}) {
+  const [internalOpen, setInternalOpen] = useState(false)
+  const open = externalOpen ?? internalOpen
+  const close = () => (externalOpen === undefined ? setInternalOpen(false) : onExternalClose?.())
   const [fullName, setFullName] = useState(member.full_name ?? '')
   const [phone, setPhone] = useState(member.phone ?? '')
   const [birthDate, setBirthDate] = useState(member.birth_date ?? '')
@@ -335,11 +361,11 @@ export function MemberRecordButton({ member }: { member: Profile }) {
   useEffect(() => {
     if (!open) return
     const handleKey = (keyboardEvent: KeyboardEvent) => {
-      if (keyboardEvent.key === 'Escape') setOpen(false)
+      if (keyboardEvent.key === 'Escape') close()
     }
     window.addEventListener('keydown', handleKey)
     return () => window.removeEventListener('keydown', handleKey)
-  }, [open])
+  })
 
   const submit = (submitEvent: React.FormEvent) => {
     submitEvent.preventDefault()
@@ -351,7 +377,7 @@ export function MemberRecordButton({ member }: { member: Profile }) {
         birth_date: birthDate,
         joined_at: joinedAt,
       })
-      if (result.ok) setOpen(false)
+      if (result.ok) close()
       else setError(result.error)
     })
   }
@@ -364,16 +390,18 @@ export function MemberRecordButton({ member }: { member: Profile }) {
 
   return (
     <>
-      <button
-        type="button"
-        className="portal-button portal-button--secondary portal-button--small"
-        onClick={() => setOpen(true)}
-      >
-        <IdCard size={16} strokeWidth={1.8} />
-        Ficha completa
-      </button>
+      {externalOpen === undefined ? (
+        <button
+          type="button"
+          className="portal-button portal-button--secondary portal-button--small"
+          onClick={() => setInternalOpen(true)}
+        >
+          <IdCard size={16} strokeWidth={1.8} />
+          Ficha completa
+        </button>
+      ) : null}
       {open ? (
-        <div className="portal-modal-overlay" role="presentation" onClick={() => setOpen(false)}>
+        <div className="portal-modal-overlay" role="presentation" onClick={close}>
           <div
             className="portal-modal"
             role="dialog"
@@ -383,7 +411,7 @@ export function MemberRecordButton({ member }: { member: Profile }) {
           >
             <div className="portal-modal__header">
               <h2>Ficha completa · {member.full_name ?? 'Membro'}</h2>
-              <button type="button" className="portal-icon-button" aria-label="Fechar" onClick={() => setOpen(false)}>
+              <button type="button" className="portal-icon-button" aria-label="Fechar" onClick={close}>
                 <X size={17} />
               </button>
             </div>
@@ -434,7 +462,7 @@ export function MemberRecordButton({ member }: { member: Profile }) {
               </div>
               {error ? <p className="portal-action-error" role="alert">{error}</p> : null}
               <div className="portal-modal__actions">
-                <button type="button" className="portal-button portal-button--secondary" onClick={() => setOpen(false)} disabled={isPending}>
+                <button type="button" className="portal-button portal-button--secondary" onClick={close} disabled={isPending}>
                   Cancelar
                 </button>
                 <button type="submit" className="portal-button portal-button--primary" disabled={isPending}>

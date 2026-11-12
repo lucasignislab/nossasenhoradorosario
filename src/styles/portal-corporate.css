@@ -971,3 +971,12 @@
 .member-record__spiritual h3, .member-record__form-title { margin: 0 0 10px; font-size: 12px; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; color: var(--portal-text-soft, #6b655b); }
 .member-record__spiritual dl { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 14px; margin: 0; }
 .portal-form__row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+
+/* Menu de ações da linha (gestão de membros) */
+.portal-menu { position: relative; display: inline-block; }
+.portal-menu__list { position: absolute; right: 0; top: calc(100% + 6px); z-index: 30; min-width: 210px; background: #fff; border: 1px solid var(--portal-border, #d8d2c7); border-radius: 10px; box-shadow: 0 12px 28px rgba(43,38,32,.14); padding: 6px; display: flex; flex-direction: column; }
+.portal-menu__item { display: flex; align-items: center; gap: 9px; width: 100%; padding: 9px 11px; border: 0; background: transparent; border-radius: 7px; font-size: 13px; color: var(--portal-text, #2b2620); text-align: left; cursor: pointer; }
+.portal-menu__item:hover { background: rgba(138,109,59,.09); }
+.portal-menu__item:disabled { opacity: .55; cursor: not-allowed; }
+.portal-menu__item--danger { color: #a13d2d; }
+.portal-menu__item--danger:hover { background: rgba(161,61,45,.08); }
