@@ -114,7 +114,7 @@
 .portal-mark--present.is-active { border-color: #2f7a4f; background: #ecf6ef; color: #27633f; }
 .portal-mark--absent.is-active { border-color: var(--portal-danger); background: var(--portal-danger-soft); color: #a43f33; }
 .portal-mark--justified.is-active { border-color: #b98a1d; background: #fdf6e3; color: #8f6b12; }
-.portal-row-actions--inline { flex-direction: row; align-items: center; gap: 6px; }
+.portal-row-actions--inline { flex-direction: row; align-items: center; gap: 8px; flex-wrap: nowrap; }
 .portal-timeline__item.is-canceled h3, .portal-timeline__item.is-canceled p { opacity: .55; text-decoration: line-through; }
 
 .portal-modal-overlay { position: fixed; inset: 0; z-index: 50; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(13,14,16,.55); backdrop-filter: blur(2px); }
