@@ -1,6 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { formatPhone } from '@/lib/phone';
 import { requireAdministrator } from '@/lib/server/access';
 import type { ProfileStatus } from '@/types';
 
@@ -184,7 +185,7 @@ export async function updateMemberRecord(profileId: string, input: MemberRecordI
 
     const { error } = await supabase.from('profiles').update({
       full_name: fullName,
-      phone: input.phone.trim() || null,
+      phone: input.phone.trim() ? formatPhone(input.phone) : null,
       birth_date: dateOrNull(input.birth_date),
       joined_at: dateOrNull(input.joined_at),
     }).eq('id', profileId);

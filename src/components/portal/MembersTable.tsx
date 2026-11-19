@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { Search } from 'lucide-react';
+import { formatPhoneOrDash } from '@/lib/phone';
 import { StatusPill } from './PortalUI';
 import { MemberCargoSelect, MemberRowMenu } from './MemberActions';
 import { MemberAvatar } from './MemberAvatar';
@@ -56,7 +57,7 @@ export function MembersTable({ members }: { members: Profile[] }) {
                     </td>
                     <td>{memberFunctionLabel(member)}</td>
                     <td>{formatJoinedAt(member.joined_at)}</td>
-                    <td>{member.phone?.trim() || '—'}</td>
+                    <td>{formatPhoneOrDash(member.phone)}</td>
                     <td><StatusPill tone={status.tone}>{status.label}</StatusPill></td>
                     <td>
                       <span className="portal-table__actions">

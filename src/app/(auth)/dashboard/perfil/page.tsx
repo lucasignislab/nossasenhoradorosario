@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 import { ProfileForm } from '@/components/features/ProfileForm';
+import { formatPhone } from '@/lib/phone';
 import { createClient } from '@/lib/supabase/server';
 
 type Profile = {
@@ -30,7 +31,7 @@ export default async function ProfilePage() {
   return (
     <ProfileForm
       fullName={profile.full_name}
-      phone={profile.phone ?? ''}
+      phone={formatPhone(profile.phone)}
       email={user.email ?? ''}
       role={profile.role}
       joinedAt={profile.joined_at}

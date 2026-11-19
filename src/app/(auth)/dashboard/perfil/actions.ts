@@ -1,6 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { formatPhone } from '@/lib/phone';
 import { createClient } from '@/lib/supabase/server';
 
 export type ProfileFormState = {
@@ -47,7 +48,7 @@ export async function updateProfile(
     .upsert({
       id: user.id,
       full_name: fullName,
-      phone: phone || null,
+      phone: phone ? formatPhone(phone) : null,
       guia_frente: guiaFrente || null,
       orixa_cabeca: orixaCabeca || null,
       adjunto: adjunto || null,

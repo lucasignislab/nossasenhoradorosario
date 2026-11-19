@@ -36,6 +36,7 @@ import {
   profileDisplayName,
   roleLabel,
 } from '@/lib/members';
+import { formatPhoneOrDash } from '@/lib/phone';
 import { eventCategoryLabel, eventDateParts, formatEventDateLong, formatEventTime, todayISODate } from '@/lib/events';
 import { AgendaTimeline } from './AgendaTimeline';
 import { NewEventButton } from './EventForm';
@@ -607,7 +608,7 @@ export function MembersManagement({ pending, members, counts }: MembersManagemen
                   </div>
                 </div>
                 <dl>
-                  <div><dt>WhatsApp</dt><dd>{member.phone?.trim() || '—'}</dd></div>
+                  <div><dt>WhatsApp</dt><dd>{formatPhoneOrDash(member.phone)}</dd></div>
                   <div><dt>Solicitação</dt><dd>{roleLabel(member.role)}</dd></div>
                 </dl>
                 <ApprovalActions profileId={member.id} />

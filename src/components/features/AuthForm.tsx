@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FormEvent, useState } from 'react';
 import { ArrowLeft, Eye, EyeOff, LoaderCircle } from 'lucide-react';
+import { formatPhone } from '@/lib/phone';
 import { createClient } from '@/lib/supabase/client';
 import '../../styles/login-form.css';
 
@@ -87,7 +88,7 @@ export function AuthForm({ configured, returnTo }: AuthFormProps) {
             emailRedirectTo: `${window.location.origin}/auth/confirm`,
             data: {
               full_name: String(form.get('fullName') ?? '').trim(),
-              phone: String(form.get('phone') ?? '').trim(),
+              phone: formatPhone(String(form.get('phone') ?? '')),
             },
           },
         });
