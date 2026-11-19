@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState, useTransition } from 'react';
-import { Check, ListChecks } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { saveAttendance, type AttendanceRecord } from '@/app/(auth)/admin/frequencia/actions';
 import { formatEventDate, todayISODate } from '@/lib/events';
 import { MemberAvatar } from './MemberAvatar';
@@ -114,7 +114,7 @@ export function AttendanceSheet({ events, members, existing }: AttendanceSheetPr
       ) : null}
 
       <div className="portal-table-wrap">
-        <table className="portal-table">
+        <table className="portal-table portal-table--chamada">
           <thead>
             <tr><th>Filho da casa</th><th>Presença</th></tr>
           </thead>

@@ -1,8 +1,10 @@
 import { UserRound } from 'lucide-react';
+import QRCode from 'qrcode';
 import { PageHeader } from '@/components/portal/PortalUI';
 
 /** Prévia da carteirinha (modo demonstração, sem dados reais). */
-export default function CarteirinhaPreviewPage() {
+export default async function CarteirinhaPreviewPage() {
+  const qrUrl = await QRCode.toDataURL('PORTAL-PREVIEW-SENHORA-DO-ROSARIO', { width: 240, margin: 0 });
   return (
     <div className="portal-page">
       <PageHeader
@@ -47,7 +49,8 @@ export default function CarteirinhaPreviewPage() {
             </dl>
             <div className="membership-card__side">
               <div className="membership-card__qr">
-                <span style={{ display: 'block', width: 74, height: 74, background: '#fff', border: '1px solid #7a6534', borderRadius: 3 }} />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={qrUrl} alt="QR Code de verificação (demonstração)" width={84} height={84} />
                 <small>Verificação digital</small>
               </div>
               <div className="membership-card__signature">

@@ -233,12 +233,16 @@
 .portal-note-card--light { border: 1px solid #e7e2d3; }
 
 .portal-person-list { display: grid; margin-bottom: 14px; }
-.portal-person { min-height: 48px; display: grid; grid-template-columns: 28px 1fr 22px; align-items: center; gap: 9px; border-top: 1px solid #2a2b30; }
+.portal-person { min-height: 48px; display: grid; grid-template-columns: 28px 1fr 22px; align-items: center; gap: 9px; border-top: 1px solid #eceef0; }
 .portal-person:first-child { border-top: 0; }
 .portal-person > span, .portal-table-person > span { width: 27px; height: 27px; display: grid; place-items: center; border: 0; border-radius: 6px; background: #2a2b30; color: #d8d9dc; font: 650 9px/1 var(--font-body); }
-.portal-person strong { display: block; color: #ebeced; font-size: 9px; font-weight: 580; }
-.portal-person small { display: block; margin-top: 2px; color: #767980; font-size: 7px; }
-.portal-person > button { color: #9b8d60; }
+.portal-person strong { display: block; color: var(--portal-text); font-size: 9px; font-weight: 580; }
+.portal-person small { display: block; margin-top: 2px; color: #858990; font-size: 7px; }
+.portal-person > button, .portal-person > a { color: #8a6d3b; }
+.portal-panel--accent .portal-person { border-top-color: #2a2b30; }
+.portal-panel--accent .portal-person strong { color: #ebeced; }
+.portal-panel--accent .portal-person small { color: #a2a5ad; }
+.portal-panel--accent .portal-person > button, .portal-panel--accent .portal-person > a { color: #c8b578; }
 
 .portal-definition-list { margin: 0 0 14px; display: grid; }
 .portal-definition-list > div { min-height: 34px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #eff0f1; }
@@ -654,7 +658,8 @@
 .portal-note-card p { font-size: 13px; }
 .portal-note-card span { color: #625f56; font-size: 12px; }
 .portal-person strong { font-size: 12px; }
-.portal-person small { color: #a2a5ad; font-size: 12px; }
+.portal-person small { color: #6b6f78; font-size: 12px; }
+.portal-panel--accent .portal-person small { color: #a2a5ad; }
 .portal-definition-list > div { min-height: 42px; }
 .portal-definition-list dt { font-size: 12px; }
 .portal-definition-list dd { font-size: 13px; }
@@ -768,7 +773,7 @@
 
 /* Mensalidades: registro pelo membro */
 .portal-steps { margin: 0 0 16px; padding-left: 18px; display: grid; gap: 6px; color: var(--portal-text-soft); font-size: 12px; line-height: 1.6; }
-.portal-file-input { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.portal-file-input { position: fixed; top: 0; left: 0; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
 
 /* Upload de arte do evento (dropzone) */
 .portal-dropzone {
@@ -982,3 +987,16 @@
 .portal-menu__item--danger { color: #a13d2d; }
 .portal-menu__item--danger:hover { background: rgba(161,61,45,.08); }
 
+
+/* Chamada (Registrar presença): 2 colunas, sem largura mínima de tabela */
+.portal-table--chamada { min-width: 0; }
+
+@media (max-width: 640px) {
+  .portal-table--chamada thead { display: none; }
+  .portal-table--chamada,
+  .portal-table--chamada tbody { display: block; width: 100%; }
+  .portal-table--chamada tbody tr { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; height: auto; padding: 14px 0; border-bottom: 1px solid #eceef0; }
+  .portal-table--chamada tbody tr:last-child { border-bottom: 0; }
+  .portal-table--chamada td { display: block; height: auto; padding: 0; border: 0; }
+  .portal-table--chamada .portal-mark-group { display: flex; flex-wrap: wrap; gap: 8px; }
+}

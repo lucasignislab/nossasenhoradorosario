@@ -146,7 +146,8 @@
 .portal-approval-card dd { margin: 0; font-size: 9px; font-weight: 700; }
 .portal-approval-card__actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
-.portal-calendar-strip { margin-bottom: 24px; padding-bottom: 12px; display: flex; align-items: center; gap: 4px; border-bottom: 1px solid var(--color-border-line); }
+.portal-calendar-strip { margin-bottom: 24px; padding-bottom: 12px; display: flex; align-items: center; gap: 4px; max-width: 100%; overflow-x: auto; border-bottom: 1px solid var(--color-border-line); scrollbar-width: none; }
+.portal-calendar-strip::-webkit-scrollbar { display: none; }
 .portal-calendar-strip > span { flex: 1; }
 .portal-calendar-strip > button:not(.portal-filter) { min-height: 36px; padding: 0 13px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--color-fg-muted); font: 600 10px var(--font-body); cursor: pointer; }
 .portal-calendar-strip > button.is-active { border-color: var(--color-sacred-red); color: var(--color-sacred-red); }
@@ -189,25 +190,25 @@
 .portal-check-list li svg { color: var(--color-ancestral-gold-300); }
 
 @media (max-width: 1080px) {
-  .portal-metrics { grid-template-columns: repeat(2, 1fr); }
-  .portal-layout--overview, .portal-layout--settings { grid-template-columns: 1fr; }
-  .portal-approval-grid { grid-template-columns: 1fr; }
+  .portal-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .portal-layout--overview, .portal-layout--settings { grid-template-columns: minmax(0, 1fr); }
+  .portal-approval-grid { grid-template-columns: minmax(0, 1fr); }
 }
 
 @media (max-width: 820px) {
   .portal-page__header { align-items: flex-start; flex-direction: column; }
   .portal-page__actions { width: 100%; justify-content: flex-start; flex-wrap: wrap; }
-  .portal-layout--charts, .portal-agenda-layout { grid-template-columns: 1fr; }
-  .portal-filter-bar { grid-template-columns: 1fr; }
-  .portal-content-categories { grid-template-columns: 1fr; }
-  .portal-split-metrics { grid-template-columns: 1fr; }
+  .portal-layout--charts, .portal-agenda-layout { grid-template-columns: minmax(0, 1fr); }
+  .portal-filter-bar { grid-template-columns: minmax(0, 1fr); }
+  .portal-content-categories { grid-template-columns: minmax(0, 1fr); }
+  .portal-split-metrics { grid-template-columns: minmax(0, 1fr); }
 }
 
 @media (max-width: 560px) {
   .portal-page { padding: 28px 16px 48px; }
   .portal-page__header { margin-bottom: 30px; }
   .portal-page__header h1 { font-size: 40px; }
-  .portal-metrics, .portal-metrics--compact { grid-template-columns: 1fr; }
+  .portal-metrics, .portal-metrics--compact { grid-template-columns: minmax(0, 1fr); }
   .portal-metric { min-height: 158px; }
   .portal-panel { padding: 20px 16px; }
   .portal-panel__header { flex-direction: column; }
